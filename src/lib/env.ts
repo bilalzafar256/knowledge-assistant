@@ -50,6 +50,13 @@ const envSchema = z.object({
   // ── Inngest (optional — falls back to inline processing if absent) ─────────
   INNGEST_EVENT_KEY: z.string().optional(),
   INNGEST_SIGNING_KEY: z.string().optional(),
+
+  // ── Telegram → GitHub PR bot (optional — only needed for /api/telegram/webhook) ─
+  TELEGRAM_BOT_TOKEN: z.string().optional(),
+  TELEGRAM_CHAT_ID: z.string().optional(),
+  TELEGRAM_WEBHOOK_SECRET: z.string().optional(),
+  GITHUB_PAT: z.string().optional(),
+  GITHUB_REPO: z.string().optional(),
 });
 
 // ── Validation ────────────────────────────────────────────────────────────────

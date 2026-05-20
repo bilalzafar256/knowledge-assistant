@@ -1,0 +1,90 @@
+name: Telegram to PR
+
+on:
+  repository_dispatch:
+    types: [telegram-task]
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git
+        run: |
+          git config user.name "Telegram Bot"
+          git config user.email "telegram-bot@users.noreply.github.com"
+
+      - name: Create branch
+        id: branch
+        run: |
+          BRANCH="telegram/$(date +%s)"
+          git checkout -b "$BRANCH"
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: |
+          claude -p "$MESSAGE" --dangerously-skip-permissions
+
+      - name: Commit and push
+        id: commit
+        env:
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "telegram: $MESSAGE"
+          git push origin "${{ steps.branch.outputs.name }}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        id: pr
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: |
+          URL=$(gh pr create \
+            --title "telegram: $MESSAGE" \
+            --body "Triggered from Telegram.\n\n> $MESSAGE" \
+            --head "${{ steps.branch.outputs.name }}" \
+            --base main)
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Notify Telegram
+        if: always()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          PR_URL: ${{ steps.pr.outputs.url }}
+          CHANGED: ${{ steps.commit.outputs.changed }}
+          STATUS: ${{ job.status }}
+        run: |
+          if [ "$STATUS" = "success" ] && [ "$CHANGED" = "true" ]; then
+            TEXT="✅ PR ready: $PR_URL"
+          elif [ "$STATUS" = "success" ]; then
+            TEXT="ℹ️ Done, but Claude made no file changes."
+          else
+            TEXT="❌ Job failed. Check GitHub Actions logs."
+          fi
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=$TEXT"
