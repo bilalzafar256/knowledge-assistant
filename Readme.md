@@ -122,6 +122,10 @@ Fill in all values in `.env.local`:
 | `ARCJET_KEY` | app.arcjet.com → Sites → API Keys |
 | `INNGEST_EVENT_KEY` | app.inngest.com → App → Keys |
 | `INNGEST_SIGNING_KEY` | app.inngest.com → App → Keys |
+| `TELEGRAM_BOT_TOKEN` | Optional — see "Telegram → PR bot" below |
+| `TELEGRAM_CHAT_ID` | Optional — your numeric chat id |
+| `TELEGRAM_WEBHOOK_SECRET` | Optional — random string (`openssl rand -hex 32`) |
+| `GITHUB_PAT` | Optional — fine-grained PAT with `Contents: Read/Write` |
 
 ### 4. Set up the database
 
@@ -172,6 +176,38 @@ Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to 
 ## Deployment
 
 Deploy to Vercel with one click. Set all environment variables from `.env.local.example` in your Vercel project settings. `DATABASE_URL` must point to your Neon connection string with `?sslmode=require`.
+
+## Telegram → PR bot (optional)
+
+Send a message to your Telegram bot and a PR appears on GitHub with the requested change. Useful for quick edits when you're away from your laptop.
+
+**Flow:** Telegram message → `POST /api/telegram/webhook` (Vercel, sender whitelisted) → `repository_dispatch` event → `.github/workflows/telegram-to-pr.yml` runs Claude Code headless → branch pushed + PR opened → bot replies with the PR URL.
+
+### Setup
+
+1. **Create a bot** — DM `@BotFather` on Telegram, run `/newbot`, copy the token.
+2. **Get your chat id** — message the new bot, then visit `https://api.telegram.org/bot<TOKEN>/getUpdates` and read `chat.id` from the JSON.
+3. **Generate a webhook secret** — `openssl rand -hex 32`.
+4. **Create a fine-grained GitHub PAT** — https://github.com/settings/tokens?type=beta → access limited to this repo → permissions: `Contents: Read/Write`, `Metadata: Read-only`.
+5. **Set environment variables in Vercel** — `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`, `GITHUB_PAT` (+ optional `GITHUB_REPO`).
+6. **Set repo secrets in GitHub** — Settings → Secrets and variables → Actions → add `ANTHROPIC_API_KEY` and `TELEGRAM_BOT_TOKEN`.
+7. **Register the webhook with Telegram** (one-time):
+
+   ```bash
+   curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "url": "https://<your-domain>/api/telegram/webhook",
+       "secret_token": "<TELEGRAM_WEBHOOK_SECRET>",
+       "allowed_updates": ["message"]
+     }'
+   ```
+
+### Notes
+
+- Only messages from `TELEGRAM_CHAT_ID` are processed; everything else is silently dropped.
+- The webhook returns `503` if any Telegram/GitHub env var is missing — so the rest of the app keeps working when the bot isn't configured.
+- The Action runs Claude Code with `--dangerously-skip-permissions` inside an ephemeral runner; it can only push branches (never `main`) and open PRs.
 
 ## Security Model
 

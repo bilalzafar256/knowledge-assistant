@@ -160,6 +160,7 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 | POST | `/api/workflows/ingest` | Trigger ingestion — sends Inngest event, falls back to inline |
 | POST | `/api/inngest` | Inngest webhook handler (`serve`) |
 | GET/PUT | `/api/settings/rag` | Read or upsert per-user chunk settings |
+| POST | `/api/telegram/webhook` | Telegram bot webhook — verifies secret + sender, fires `repository_dispatch` |
 
 ---
 
@@ -238,6 +239,38 @@ Chat query
   └─ rerankChunks()              ← single gpt-4o-mini call scores all candidates
   └─ top-N chunks → LLM context  ← streamed response with source citations
 ```
+
+---
+
+## Telegram → PR Bot
+
+A dev-only side channel for issuing code-change requests over Telegram. Not user-facing.
+
+```
+Telegram message
+  └─ POST /api/telegram/webhook         ← verify x-telegram-bot-api-secret-token header
+       ├─ check chat.id ∈ allowlist     ← single-user whitelist via TELEGRAM_CHAT_ID
+       └─ POST .../dispatches           ← github repository_dispatch (event_type: telegram-task)
+
+GitHub Actions (.github/workflows/telegram-to-pr.yml)
+  └─ checkout + setup-node 20
+  └─ npm i -g @anthropic-ai/claude-code
+  └─ git checkout -b telegram/<timestamp>
+  └─ claude -p "$MESSAGE" --dangerously-skip-permissions
+  └─ git commit + push to branch
+  └─ gh pr create --base main
+  └─ Telegram sendMessage with PR URL (or failure notice)
+```
+
+**Env vars** (all optional; webhook returns 503 if missing):
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`, `GITHUB_PAT`, `GITHUB_REPO`.
+
+**GitHub secrets:** `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN` (for the notify-back step).
+
+**Security boundaries:**
+- Telegram webhook secret + `chat.id` allowlist — both must match.
+- Fine-grained PAT scoped to a single repo with `Contents: RW` only.
+- Action can push to branches but never to `main`; PRs require human review.
 
 ---
 
@@ -335,3 +368,6 @@ These are things that are either missing, partially wired, or need attention bef
 - [ ] **Slack bot integration** — answer questions directly from Slack via webhook
 - [ ] **Google Drive / Notion sync** — auto-ingest from external sources
 - [ ] **E2E tests** — Playwright suite for upload → ingest → chat → share flow
+
+### Tooling / DX
+- [x] **Telegram → PR bot** — message the bot, Claude Code runs in GitHub Actions and opens a PR. See "Telegram → PR Bot" section above.
