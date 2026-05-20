@@ -198,6 +198,66 @@ export const auditLogs = pgTable(
   ]
 );
 
+// ── Telegram Tasks ───────────────────────────────────────────────────────────
+//
+// One row per code-change/discussion request that arrives via the Telegram
+// bot (`/api/telegram/webhook`). State machine drives the multi-step flow:
+//   classifying → discussion (terminal)
+//                ↘ awaiting_plan → planning → awaiting_plan_approval
+//                                 ↘ coding → awaiting_code_approval
+//                                          ↘ creating_pr → done | cancelled
+
+export type TelegramTaskStatus =
+  | "classifying"
+  | "discussion"
+  | "awaiting_plan"
+  | "planning"
+  | "awaiting_plan_approval"
+  | "coding"
+  | "awaiting_code_approval"
+  | "creating_pr"
+  | "done"
+  | "cancelled";
+
+export const telegramTasks = pgTable(
+  "telegram_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    chatId: text("chat_id").notNull(),
+    status: text("status")
+      .$type<TelegramTaskStatus>()
+      .notNull()
+      .default("classifying"),
+    /** Populated by the classifier: 'requirement' | 'discussion' */
+    kind: text("kind").$type<"requirement" | "discussion">(),
+    originalMessage: text("original_message").notNull(),
+    /** Markdown plan produced by the planning Action (Phase 3) */
+    planMarkdown: text("plan_markdown"),
+    /** Branch pushed by the coding Action (Phase 5) */
+    branchName: text("branch_name"),
+    /** Diff summary produced by the coding Action (Phase 5) */
+    diffSummary: text("diff_summary"),
+    /** Final PR URL once the Phase 6 step succeeds */
+    prUrl: text("pr_url"),
+    /** Each "revise" reply from the user is appended here */
+    revisionNotes: jsonb("revision_notes").$type<string[]>().default([]),
+    /** Map of step-name → Telegram message id, so we can edit prior messages */
+    telegramMessageIds: jsonb("telegram_message_ids")
+      .$type<Record<string, number>>()
+      .default({}),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("telegram_tasks_chat_id_status_idx").on(table.chatId, table.status),
+    index("telegram_tasks_created_at_idx").on(table.createdAt),
+  ]
+);
+
 // ── Relations ────────────────────────────────────────────────────────────────
 
 export const collectionsRelations = relations(collections, ({ many }) => ({
@@ -249,3 +309,5 @@ export type RagSettings = typeof ragSettings.$inferSelect;
 export type NewRagSettings = typeof ragSettings.$inferInsert;
 export type Collection = typeof collections.$inferSelect;
 export type NewCollection = typeof collections.$inferInsert;
+export type TelegramTask = typeof telegramTasks.$inferSelect;
+export type NewTelegramTask = typeof telegramTasks.$inferInsert;
