@@ -67,15 +67,14 @@ function validateEnv() {
 
   if (!result.success) {
     const message = formatZodError(result.error);
-    // Use process.stderr so the error is visible even if stdout is piped
-    process.stderr.write(
+    const banner =
       `\n╔══════════════════════════════════════════════════════╗\n` +
       `║        Missing / invalid environment variables        ║\n` +
       `╚══════════════════════════════════════════════════════╝\n` +
       `${message}\n\n` +
-      `  → Copy .env.local.example to .env.local and fill in the values.\n\n`
-    );
-    process.exit(1);
+      `  → Copy .env.local.example to .env.local and fill in the values.\n`;
+    console.error(banner);
+    throw new Error("Invalid environment variables — see log above.");
   }
 
   return result.data;

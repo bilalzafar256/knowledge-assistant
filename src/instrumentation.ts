@@ -23,11 +23,11 @@ function warnIfInngestNotConfigured() {
       .filter(Boolean)
       .join(", ");
 
-    process.stderr.write(
+    console.warn(
       `\n⚠  Inngest not configured (${missing} missing).\n` +
       `   Document ingestion will run inline (blocking, 55 s timeout).\n` +
       `   Large documents may time out. Set these keys to enable background processing with retries.\n` +
-      `   See: https://app.inngest.com → Select app → Keys\n\n`
+      `   See: https://app.inngest.com → Select app → Keys\n`
     );
   }
 }
