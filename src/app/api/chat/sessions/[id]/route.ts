@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { aj } from "@/lib/arcjet";
 import { db } from "@/lib/db";
 import { chatSessions, chatMessages } from "@/lib/schema";
 import { and, eq, asc } from "drizzle-orm";
@@ -10,9 +11,14 @@ export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ id: string }> };
 
 // ── GET /api/chat/sessions/[id] — Get session + messages ─────────────────────
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export async function GET(request: NextRequest, { params }: RouteContext) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await aj.protect(request);
+  if (decision.isDenied()) {
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const { id } = await params;
 
@@ -33,9 +39,14 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 }
 
 // ── DELETE /api/chat/sessions/[id] — Delete session (cascades messages) ──────
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await aj.protect(request);
+  if (decision.isDenied()) {
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const { id } = await params;
 
@@ -50,6 +61,11 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await aj.protect(request);
+  if (decision.isDenied()) {
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const { id } = await params;
   const body = (await request.json()) as { title?: string; pinned?: boolean };

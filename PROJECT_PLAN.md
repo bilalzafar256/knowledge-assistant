@@ -131,15 +131,13 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 | File | Description |
 |---|---|
-| `drizzle/0000_petite_mockingbird.sql` | Full initial schema (all core tables + ivfflat index) |
+| `drizzle/0000_petite_mockingbird.sql` | Enables `vector` extension + full initial schema (all core tables + ivfflat index) |
 | `drizzle/0001_complex_queen_noir.sql` | Adds `rag_settings` table |
 | `drizzle/0002_collections.sql` | Adds `collections` table + `collection_id` FK on `documents` |
 | `scripts/db-migrate.mjs` | Runs pending Drizzle migrations against Neon |
 | `scripts/db-baseline.mjs` | Brownfield helper — registers existing SQL files without re-running them. Do not run on a fresh empty DB. |
 
-> **Note — pgvector prerequisite:** `0000_petite_mockingbird.sql` uses `vector(1536)` but does not `CREATE EXTENSION vector`. On any fresh Neon branch, run `CREATE EXTENSION IF NOT EXISTS vector;` before `pnpm db:migrate`, or the first migration will fail. See README §4.
-
-**Last full rebuild:** 2026-05-20 — schema dropped and rebuilt against a new Neon instance after the previous database was deleted. All three migrations applied via `pnpm db:migrate`; pgvector v0.8.0 enabled manually beforehand.
+**Last full rebuild:** 2026-05-20 — schema dropped and rebuilt against a new Neon instance after the previous database was deleted. All three migrations applied via `pnpm db:migrate`. `CREATE EXTENSION IF NOT EXISTS vector;` was added to the top of `0000_petite_mockingbird.sql` afterwards so future fresh databases no longer need a manual pgvector enable step before migrating.
 
 ---
 

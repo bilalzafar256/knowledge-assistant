@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { uploadAj } from "@/lib/arcjet";
 import { db } from "@/lib/db";
 import { chatSessions } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
@@ -17,9 +18,17 @@ function generateShareId(): string {
 }
 
 // ── POST — Enable sharing, return share URL ───────────────────────────────────
-export async function POST(_request: NextRequest, { params }: RouteContext) {
+export async function POST(request: NextRequest, { params }: RouteContext) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await uploadAj.protect(request, { userId, requested: 1 });
+  if (decision.isDenied()) {
+    if (decision.reason.isRateLimit()) {
+      return NextResponse.json({ error: "Rate limit exceeded." }, { status: 429 });
+    }
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const { id } = await params;
 
@@ -43,9 +52,17 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
 }
 
 // ── DELETE — Revoke sharing ───────────────────────────────────────────────────
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await uploadAj.protect(request, { userId, requested: 1 });
+  if (decision.isDenied()) {
+    if (decision.reason.isRateLimit()) {
+      return NextResponse.json({ error: "Rate limit exceeded." }, { status: 429 });
+    }
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const { id } = await params;
 

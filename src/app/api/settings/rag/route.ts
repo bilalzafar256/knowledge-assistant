@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { aj } from "@/lib/arcjet";
 import { db } from "@/lib/db";
 import { ragSettings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
@@ -13,9 +14,14 @@ const CHUNK_OVERLAP_MIN = 0;
 const CHUNK_OVERLAP_MAX = 300;
 
 // ── GET /api/settings/rag ─────────────────────────────────────────────────────
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   const [row] = await db
     .select()
@@ -33,6 +39,11 @@ export async function GET(_req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    return NextResponse.json({ error: "Request denied." }, { status: 403 });
+  }
 
   let body: { chunkSize?: number; chunkOverlap?: number };
   try {

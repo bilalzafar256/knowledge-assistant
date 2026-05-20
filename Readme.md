@@ -125,19 +125,13 @@ Fill in all values in `.env.local`:
 
 ### 4. Set up the database
 
-The Drizzle migrations assume pgvector is already enabled — they reference `vector(1536)` but do not create the extension. Enable it once in the Neon SQL editor (or via `psql`) before applying migrations:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
-
-Then apply all migrations:
+Apply all migrations against your Neon connection string:
 
 ```bash
 pnpm db:migrate
 ```
 
-This runs `scripts/db-migrate.mjs`, which applies every file in `drizzle/` in order and records them in `drizzle.__drizzle_migrations`. The ivfflat index on `document_chunks.embedding` is created by the initial migration — no manual `CREATE INDEX` step required.
+This runs `scripts/db-migrate.mjs`, which applies every file in `drizzle/` in order and records them in `drizzle.__drizzle_migrations`. The initial migration creates the `vector` extension, all tables, and the ivfflat index on `document_chunks.embedding` — no manual SQL is required for a fresh Neon database.
 
 Do not use `pnpm db:push` (deprecated — it bypasses the migration history).
 
