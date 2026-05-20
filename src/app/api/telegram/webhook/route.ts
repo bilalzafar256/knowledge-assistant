@@ -137,11 +137,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // If there's an active task, this message is either a revision or a "wait".
+  // If there's an active task, this message is either feedback for the
+  // planner (revision or clarification answer) or a "wait" notice.
   const active = await getActiveTask(String(chatId));
   if (active) {
-    if (active.status === "awaiting_plan_approval") {
-      await handleRevision(active.id, chatId, text);
+    if (
+      active.status === "awaiting_plan_approval" ||
+      active.status === "awaiting_clarification"
+    ) {
+      await handleRevision(active.id, chatId, text, active.status);
     } else {
       await sendText(
         chatId,
@@ -218,8 +222,14 @@ async function handleNewMessage(chatId: number, text: string) {
   await sendText(chatId, `📝 Got it. Starting plan for: "${text}"`);
 }
 
-async function handleRevision(taskId: string, chatId: number, text: string) {
-  // Append revision text and re-dispatch planner.
+async function handleRevision(
+  taskId: string,
+  chatId: number,
+  text: string,
+  previousStatus: TelegramTaskStatus,
+) {
+  // Append the user's feedback (revision OR clarification answer) and
+  // re-dispatch the planner with the accumulated notes as context.
   const [task] = await db
     .select({
       originalMessage: telegramTasks.originalMessage,
@@ -233,8 +243,14 @@ async function handleRevision(taskId: string, chatId: number, text: string) {
     return;
   }
 
+  const label =
+    previousStatus === "awaiting_clarification"
+      ? "User answers"
+      : "Revision feedback";
+  const labeled = `[${label}]\n${text}`;
+
   const existing = Array.isArray(task.revisionNotes) ? task.revisionNotes : [];
-  const updatedNotes = [...existing, text];
+  const updatedNotes = [...existing, labeled];
 
   await db
     .update(telegramTasks)
@@ -253,12 +269,17 @@ async function handleRevision(taskId: string, chatId: number, text: string) {
   });
 
   if (!ok) {
-    await setStatus(taskId, "awaiting_plan_approval");
-    await sendText(chatId, "⚠️ Failed to start the revision workflow.");
+    await setStatus(taskId, previousStatus);
+    await sendText(chatId, "⚠️ Failed to start the planning workflow.");
     return;
   }
 
-  await sendText(chatId, "✏️ Got the revision. Re-planning…");
+  await sendText(
+    chatId,
+    previousStatus === "awaiting_clarification"
+      ? "📝 Got it. Planning…"
+      : "✏️ Got the revision. Re-planning…",
+  );
 }
 
 async function handleCallback(cb: {

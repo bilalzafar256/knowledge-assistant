@@ -59,7 +59,20 @@ jobs:
           echo "----- PLAN (pass 1) -----"
           cat plan.md
 
+      - name: Detect output mode (plan vs questions)
+        id: detect
+        run: |
+          FIRST=$(grep -m1 '^# ' plan.md || echo "")
+          if echo "$FIRST" | grep -qi '^# QUESTIONS'; then
+            echo "mode=questions" >> "$GITHUB_OUTPUT"
+            echo "Planner asked clarifying questions — skipping verifier."
+          else
+            echo "mode=plan" >> "$GITHUB_OUTPUT"
+            echo "Planner produced a plan — proceeding to verifier."
+          fi
+
       - name: Verify plan (pass 1)
+        if: steps.detect.outputs.mode == 'plan'
         id: verify1
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -83,7 +96,7 @@ jobs:
           node .github/scripts/parse-verify.mjs verify.json >> "$GITHUB_OUTPUT"
 
       - name: Re-plan (pass 2) if verifier blocked
-        if: steps.verify1.outputs.ok == 'false'
+        if: steps.detect.outputs.mode == 'plan' && steps.verify1.outputs.ok == 'false'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MESSAGE: ${{ github.event.client_payload.message }}
@@ -105,6 +118,7 @@ jobs:
           cat plan.md
 
       - name: Save plan + notify Telegram
+        if: steps.detect.outputs.mode == 'plan'
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -112,6 +126,15 @@ jobs:
           CHAT_ID: ${{ github.event.client_payload.chat_id }}
           WARNINGS: ${{ steps.verify1.outputs.warnings }}
         run: node .github/scripts/telegram-save-plan.mjs
+
+      - name: Save questions + notify Telegram
+        if: steps.detect.outputs.mode == 'questions'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: node .github/scripts/telegram-save-questions.mjs
 
       - name: Notify failure
         if: failure()

@@ -212,6 +212,7 @@ export type TelegramTaskStatus =
   | "discussion"
   | "awaiting_plan"
   | "planning"
+  | "awaiting_clarification"
   | "awaiting_plan_approval"
   | "coding"
   | "awaiting_code_approval"
