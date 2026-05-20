@@ -13,9 +13,11 @@ const TERMINAL_STATUSES: TelegramTaskStatus[] = [
   "cancelled",
 ];
 
+const shortId = (id: string) => id.slice(0, 8);
+
 // ── Telegram helpers ─────────────────────────────────────────────────────────
 
-async function tg(method: string, payload: unknown): Promise<Response | null> {
+async function tg(method: string, payload: unknown) {
   if (!env.TELEGRAM_BOT_TOKEN) return null;
   return fetch(
     `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/${method}`,
@@ -27,8 +29,16 @@ async function tg(method: string, payload: unknown): Promise<Response | null> {
   );
 }
 
-async function sendText(chatId: number | string, text: string) {
-  await tg("sendMessage", { chat_id: chatId, text });
+async function sendText(
+  chatId: number | string,
+  text: string,
+  opts: { markdown?: boolean } = {},
+) {
+  return tg("sendMessage", {
+    chat_id: chatId,
+    text,
+    ...(opts.markdown ? { parse_mode: "Markdown" } : {}),
+  });
 }
 
 async function answerCallback(callbackId: string, text?: string) {
@@ -37,12 +47,10 @@ async function answerCallback(callbackId: string, text?: string) {
 
 // ── GitHub dispatch ──────────────────────────────────────────────────────────
 
-async function dispatchPlanTask(args: {
-  taskId: string;
-  chatId: number;
-  message: string;
-  revisionNotes?: string;
-}): Promise<boolean> {
+async function dispatchWorkflow(
+  eventType: string,
+  payload: Record<string, unknown>,
+): Promise<boolean> {
   const repo = env.GITHUB_REPO ?? "bilalzafar256/knowledge-assistant";
   const res = await fetch(`https://api.github.com/repos/${repo}/dispatches`, {
     method: "POST",
@@ -52,15 +60,13 @@ async function dispatchPlanTask(args: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      event_type: "plan-task",
-      client_payload: {
-        task_id: args.taskId,
-        chat_id: args.chatId,
-        message: args.message,
-        revision_notes: args.revisionNotes ?? "",
-      },
+      event_type: eventType,
+      client_payload: payload,
     }),
   });
+  if (!res.ok) {
+    console.error("[telegram] dispatch failed", eventType, res.status, await res.text());
+  }
   return res.ok;
 }
 
@@ -110,13 +116,11 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  // ── Branch 1: button press (callback_query) ────────────────────────────────
   if (body.callback_query) {
     await handleCallback(body.callback_query);
     return NextResponse.json({ ok: true });
   }
 
-  // ── Branch 2: regular message ──────────────────────────────────────────────
   const message = body.message;
   if (!message?.text) return NextResponse.json({ ok: true });
 
@@ -127,7 +131,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Slash commands take priority over everything else.
   if (text.startsWith("/cancel")) {
     await handleCancel(String(chatId));
     return NextResponse.json({ ok: true });
@@ -136,26 +139,29 @@ export async function POST(req: NextRequest) {
     await handleStatus(String(chatId));
     return NextResponse.json({ ok: true });
   }
+  if (text.startsWith("/help") || text.startsWith("/start")) {
+    await handleHelp(chatId);
+    return NextResponse.json({ ok: true });
+  }
 
-  // If there's an active task, this message is either feedback for the
-  // planner (revision or clarification answer) or a "wait" notice.
   const active = await getActiveTask(String(chatId));
   if (active) {
     if (
       active.status === "awaiting_plan_approval" ||
-      active.status === "awaiting_clarification"
+      active.status === "awaiting_clarification" ||
+      active.status === "awaiting_code_approval"
     ) {
-      await handleRevision(active.id, chatId, text, active.status);
+      await handleFeedback(active.id, chatId, text, active.status);
     } else {
       await sendText(
         chatId,
-        `⏳ A task is already in progress (status: ${active.status}). Reply when prompted, or use /cancel to abort.`,
+        `⏳ Task \`${shortId(active.id)}\` is busy (status: \`${active.status}\`).\n\nReply when prompted, or send /cancel to abort.`,
+        { markdown: true },
       );
     }
     return NextResponse.json({ ok: true });
   }
 
-  // Otherwise: classify a brand-new request.
   await handleNewMessage(chatId, text);
   return NextResponse.json({ ok: true });
 }
@@ -201,16 +207,16 @@ async function handleNewMessage(chatId: number, text: string) {
     return;
   }
 
-  // requirement → kick off planning
   await db
     .update(telegramTasks)
     .set({ kind: "requirement", status: "planning", updatedAt: new Date() })
     .where(eq(telegramTasks.id, task.id));
 
-  const ok = await dispatchPlanTask({
-    taskId: task.id,
-    chatId,
+  const ok = await dispatchWorkflow("plan-task", {
+    task_id: task.id,
+    chat_id: chatId,
     message: text,
+    revision_notes: "",
   });
 
   if (!ok) {
@@ -219,17 +225,19 @@ async function handleNewMessage(chatId: number, text: string) {
     return;
   }
 
-  await sendText(chatId, `📝 Got it. Starting plan for: "${text}"`);
+  await sendText(
+    chatId,
+    `📝 *Got it* · task \`${shortId(task.id)}\`\n\nClassified as a code change. Planning now…`,
+    { markdown: true },
+  );
 }
 
-async function handleRevision(
+async function handleFeedback(
   taskId: string,
   chatId: number,
   text: string,
   previousStatus: TelegramTaskStatus,
 ) {
-  // Append the user's feedback (revision OR clarification answer) and
-  // re-dispatch the planner with the accumulated notes as context.
   const [task] = await db
     .select({
       originalMessage: telegramTasks.originalMessage,
@@ -246,40 +254,48 @@ async function handleRevision(
   const label =
     previousStatus === "awaiting_clarification"
       ? "User answers"
-      : "Revision feedback";
+      : previousStatus === "awaiting_code_approval"
+        ? "Code revision"
+        : "Plan revision";
   const labeled = `[${label}]\n${text}`;
-
   const existing = Array.isArray(task.revisionNotes) ? task.revisionNotes : [];
   const updatedNotes = [...existing, labeled];
+
+  // Code revisions re-dispatch the code workflow; everything else replans.
+  const nextStatus: TelegramTaskStatus =
+    previousStatus === "awaiting_code_approval" ? "coding" : "planning";
+  const eventType =
+    previousStatus === "awaiting_code_approval" ? "code-task" : "plan-task";
 
   await db
     .update(telegramTasks)
     .set({
       revisionNotes: updatedNotes,
-      status: "planning",
+      status: nextStatus,
       updatedAt: new Date(),
     })
     .where(eq(telegramTasks.id, taskId));
 
-  const ok = await dispatchPlanTask({
-    taskId,
-    chatId,
+  const ok = await dispatchWorkflow(eventType, {
+    task_id: taskId,
+    chat_id: chatId,
     message: task.originalMessage,
-    revisionNotes: updatedNotes.join("\n\n---\n\n"),
+    revision_notes: updatedNotes.join("\n\n---\n\n"),
   });
 
   if (!ok) {
     await setStatus(taskId, previousStatus);
-    await sendText(chatId, "⚠️ Failed to start the planning workflow.");
+    await sendText(chatId, "⚠️ Failed to start the follow-up workflow.");
     return;
   }
 
-  await sendText(
-    chatId,
+  const ack =
     previousStatus === "awaiting_clarification"
-      ? "📝 Got it. Planning…"
-      : "✏️ Got the revision. Re-planning…",
-  );
+      ? "📝 Got your answers. Planning…"
+      : previousStatus === "awaiting_code_approval"
+        ? "✏️ Got the revision. Updating code…"
+        : "✏️ Got the revision. Re-planning…";
+  await sendText(chatId, `${ack} · task \`${shortId(taskId)}\``, { markdown: true });
 }
 
 async function handleCallback(cb: {
@@ -288,13 +304,12 @@ async function handleCallback(cb: {
   message?: { chat: { id: number } };
   from?: { id: number };
 }) {
-  await answerCallback(cb.id); // acknowledge instantly
+  await answerCallback(cb.id);
 
   const data = cb.data ?? "";
   const chatId = cb.message?.chat.id;
   if (!chatId || String(chatId) !== env.TELEGRAM_CHAT_ID) return;
 
-  // Expected format: tg:<action>:<task_id>
   const [prefix, action, taskId] = data.split(":");
   if (prefix !== "tg" || !action || !taskId) return;
 
@@ -306,35 +321,81 @@ async function handleCallback(cb: {
     await sendText(chatId, "⚠️ Task not found.");
     return;
   }
-  if (task.status !== "awaiting_plan_approval") {
-    await sendText(
-      chatId,
-      `Task is in status '${task.status}' — buttons no longer apply.`,
-    );
-    return;
-  }
+  const short = shortId(taskId);
 
+  // ── Approve ───────────────────────────────────────────────────────────────
   if (action === "approve") {
-    // Phase 5 placeholder — we'll wire up the code workflow next.
-    await setStatus(taskId, "coding");
+    if (task.status === "awaiting_plan_approval") {
+      await setStatus(taskId, "coding");
+      const ok = await dispatchWorkflow("code-task", {
+        task_id: taskId,
+        chat_id: chatId,
+      });
+      if (!ok) {
+        await setStatus(taskId, "awaiting_plan_approval");
+        await sendText(chatId, `⚠️ Failed to start coding · task \`${short}\``, { markdown: true });
+        return;
+      }
+      await sendText(
+        chatId,
+        `✅ *Plan approved* · task \`${short}\`\n\nStarting the coding workflow now.`,
+        { markdown: true },
+      );
+      return;
+    }
+    if (task.status === "awaiting_code_approval") {
+      await setStatus(taskId, "creating_pr");
+      const ok = await dispatchWorkflow("pr-task", {
+        task_id: taskId,
+        chat_id: chatId,
+      });
+      if (!ok) {
+        await setStatus(taskId, "awaiting_code_approval");
+        await sendText(chatId, `⚠️ Failed to open PR · task \`${short}\``, { markdown: true });
+        return;
+      }
+      await sendText(
+        chatId,
+        `✅ *Diff approved* · task \`${short}\`\n\nOpening the PR now.`,
+        { markdown: true },
+      );
+      return;
+    }
     await sendText(
       chatId,
-      "✅ Plan approved. Coding workflow is Phase 5 — not built yet. Task parked at status='coding'.",
+      `Buttons no longer apply — task is in status \`${task.status}\`.`,
+      { markdown: true },
     );
     return;
   }
 
+  // ── Revise ────────────────────────────────────────────────────────────────
   if (action === "revise") {
+    if (
+      task.status !== "awaiting_plan_approval" &&
+      task.status !== "awaiting_code_approval"
+    ) {
+      await sendText(
+        chatId,
+        `Buttons no longer apply — task is in status \`${task.status}\`.`,
+        { markdown: true },
+      );
+      return;
+    }
+    const what =
+      task.status === "awaiting_code_approval" ? "code" : "plan";
     await sendText(
       chatId,
-      "✏️ Type your revision now (just send a message). To abort: /cancel.",
+      `✏️ *Revise* · task \`${short}\`\n\nReply with what should change in the ${what}. Send /cancel to abort.`,
+      { markdown: true },
     );
     return;
   }
 
+  // ── Cancel ────────────────────────────────────────────────────────────────
   if (action === "cancel") {
     await setStatus(taskId, "cancelled");
-    await sendText(chatId, "❌ Task cancelled.");
+    await sendText(chatId, `❌ *Cancelled* · task \`${short}\``, { markdown: true });
     return;
   }
 }
@@ -346,7 +407,11 @@ async function handleCancel(chatId: string) {
     return;
   }
   await setStatus(active.id, "cancelled");
-  await sendText(chatId, `❌ Cancelled task (was status='${active.status}').`);
+  await sendText(
+    chatId,
+    `❌ *Cancelled* · task \`${shortId(active.id)}\` (was \`${active.status}\`)`,
+    { markdown: true },
+  );
 }
 
 async function handleStatus(chatId: string) {
@@ -355,11 +420,32 @@ async function handleStatus(chatId: string) {
     await sendText(chatId, "No active task.");
     return;
   }
-  // Use raw count for "open since" simplicity
   const ageMs = Date.now() - new Date(active.createdAt).getTime();
   const mins = Math.round(ageMs / 60000);
-  await sendText(
-    chatId,
-    `Active task ${active.id.slice(0, 8)} — status='${active.status}' — opened ${mins}m ago.\n\nOriginal: "${active.originalMessage}"`,
-  );
+  const lines = [
+    `📊 *Task status* · \`${shortId(active.id)}\``,
+    "",
+    `*Status:* \`${active.status}\``,
+    `*Age:* ${mins}m`,
+    `*Original:* ${active.originalMessage}`,
+  ];
+  if (active.branchName) lines.push(`*Branch:* \`${active.branchName}\``);
+  if (active.prUrl) lines.push(`*PR:* ${active.prUrl}`);
+  await sendText(chatId, lines.join("\n"), { markdown: true });
+}
+
+async function handleHelp(chatId: number) {
+  const text = [
+    `👋 *Telegram → PR bot*`,
+    "",
+    "Send any message. I'll either:",
+    "• Answer it (if it's a question)",
+    "• Plan it → code it → open a PR (if it's a code change)",
+    "",
+    "*Commands*",
+    "• /status — show the current task",
+    "• /cancel — abort the active task",
+    "• /help — show this message",
+  ].join("\n");
+  await sendText(chatId, text, { markdown: true });
 }

@@ -1,8 +1,7 @@
 // Variant of telegram-save-plan.mjs for when the planner returned
-// `# QUESTIONS` instead of a plan. Stores the questions text in
-// plan_markdown (re-used as a generic "last planner output" column),
-// flips status to 'awaiting_clarification', and sends the questions
-// to Telegram with a single Cancel button.
+// `# QUESTIONS` instead of a plan. Stores the questions text, flips
+// status to 'awaiting_clarification', and sends them to Telegram with
+// a single Cancel button (the user replies with text to answer).
 //
 // Env vars: DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID
 
@@ -16,6 +15,7 @@ if (!DATABASE_URL || !BOT_TOKEN || !TASK_ID || !CHAT_ID) {
   process.exit(1);
 }
 
+const short = TASK_ID.slice(0, 8);
 const questionsMd = readFileSync("plan.md", "utf8").trim();
 
 const sql = neon(DATABASE_URL);
@@ -27,13 +27,17 @@ await sql`
    WHERE id = ${TASK_ID}::uuid
 `;
 
-const MAX = 3500;
-const header = `❓ I need a couple of clarifications before planning. Reply with your answers (one message is fine).\n\n`;
+const MAX_BODY = 3500;
 let body = questionsMd;
-if (body.length > MAX) {
-  body = body.slice(0, MAX) + "\n\n…(truncated)";
-}
-const text = header + body;
+if (body.length > MAX_BODY) body = body.slice(0, MAX_BODY) + "\n\n…(truncated)";
+
+const text = [
+  `❓ *Clarifications needed* · task \`${short}\``,
+  "",
+  body,
+  "",
+  "_Reply with your answers in one message, or cancel below._",
+].join("\n");
 
 const replyMarkup = {
   inline_keyboard: [
@@ -41,22 +45,27 @@ const replyMarkup = {
   ],
 };
 
-const res = await fetch(
-  `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-  {
+async function send(useMarkdown) {
+  return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chat_id: CHAT_ID,
       text,
+      ...(useMarkdown ? { parse_mode: "Markdown" } : {}),
       reply_markup: replyMarkup,
     }),
-  },
-);
+  });
+}
 
+let res = await send(true);
 if (!res.ok) {
-  console.error("Telegram sendMessage failed:", res.status, await res.text());
-  process.exit(1);
+  console.error("Markdown send failed:", res.status, await res.text());
+  res = await send(false);
+  if (!res.ok) {
+    console.error("Plain send also failed:", res.status, await res.text());
+    process.exit(1);
+  }
 }
 
 console.log("Questions saved + Telegram message sent.");
