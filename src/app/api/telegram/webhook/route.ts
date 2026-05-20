@@ -65,16 +65,19 @@ export async function POST(req: NextRequest) {
   try {
     classification = await classifyMessage(text);
   } catch (err) {
-    console.error("[telegram] classifier failed", err);
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("[telegram] classifier failed:", errMsg, err);
     await db
       .update(telegramTasks)
       .set({ status: "cancelled", updatedAt: new Date() })
       .where(eq(telegramTasks.id, task.id));
     await sendTelegram(
       chatId,
-      "Couldn't read your message (classifier error). Try again in a moment.",
+      `⚠️ Classifier error: ${errMsg.slice(0, 200)}`,
     );
-    return NextResponse.json({ error: "classifier failed" }, { status: 500 });
+    // Return 200 so Telegram does NOT retry — otherwise the user
+    // gets this message over and over for the same input.
+    return NextResponse.json({ ok: true, error: errMsg });
   }
 
   if (classification.kind === "discussion") {
