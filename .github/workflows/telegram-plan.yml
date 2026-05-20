@@ -1,0 +1,124 @@
+name: Telegram Plan
+
+# Triggered by /api/telegram/webhook when a user message is classified as a
+# code-change requirement. Runs the planner skill → plan-verifier skill, with
+# one auto-retry if the verifier blocks. Saves the final plan to Neon and
+# sends it back to Telegram with [Approve / Revise / Cancel] inline buttons.
+
+on:
+  repository_dispatch:
+    types: [plan-task]
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Install DB client (for plan-save script)
+        run: npm install --no-save @neondatabase/serverless
+
+      - name: Notify Telegram — planning started
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=🧠 Planning…"
+
+      - name: Generate plan (pass 1)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MESSAGE: ${{ github.event.client_payload.message }}
+          REVISION_NOTES: ${{ github.event.client_payload.revision_notes }}
+        run: |
+          {
+            echo "Read .agents/skills/planner/SKILL.md and follow it strictly."
+            echo ""
+            echo "## User request"
+            echo "$MESSAGE"
+            if [ -n "$REVISION_NOTES" ]; then
+              echo ""
+              echo "## Revision feedback from a previous plan iteration — incorporate this"
+              echo "$REVISION_NOTES"
+            fi
+          } > planner-prompt.txt
+          claude -p "$(cat planner-prompt.txt)" \
+            --allowedTools "Read,Grep,Glob" \
+            > plan.md
+          echo "----- PLAN (pass 1) -----"
+          cat plan.md
+
+      - name: Verify plan (pass 1)
+        id: verify1
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: |
+          {
+            echo "Read .agents/skills/plan-verifier/SKILL.md and follow it strictly. Output ONLY one JSON object as your final message."
+            echo ""
+            echo "## User's original request"
+            echo "$MESSAGE"
+            echo ""
+            echo "## Candidate plan to audit"
+            echo ""
+            cat plan.md
+          } > verifier-prompt.txt
+          claude -p "$(cat verifier-prompt.txt)" \
+            --allowedTools "Read,Grep,Glob" \
+            > verify.json
+          echo "----- VERIFIER OUTPUT (pass 1) -----"
+          cat verify.json
+          node .github/scripts/parse-verify.mjs verify.json >> "$GITHUB_OUTPUT"
+
+      - name: Re-plan (pass 2) if verifier blocked
+        if: steps.verify1.outputs.ok == 'false'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MESSAGE: ${{ github.event.client_payload.message }}
+          BLOCKERS: ${{ steps.verify1.outputs.blockers }}
+        run: |
+          {
+            echo "Read .agents/skills/planner/SKILL.md and follow it strictly."
+            echo ""
+            echo "## User request"
+            echo "$MESSAGE"
+            echo ""
+            echo "## CRITICAL: a prior plan was rejected by the verifier. Address each of these blockers in your new plan:"
+            echo "$BLOCKERS"
+          } > planner-prompt.txt
+          claude -p "$(cat planner-prompt.txt)" \
+            --allowedTools "Read,Grep,Glob" \
+            > plan.md
+          echo "----- PLAN (pass 2) -----"
+          cat plan.md
+
+      - name: Save plan + notify Telegram
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          WARNINGS: ${{ steps.verify1.outputs.warnings }}
+        run: node .github/scripts/telegram-save-plan.mjs
+
+      - name: Notify failure
+        if: failure()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=❌ Planning failed. Check GitHub Actions logs."
