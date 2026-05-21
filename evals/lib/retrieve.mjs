@@ -187,14 +187,18 @@ export async function searchKnowledge({
   // Diagnostic: also fetch pure-vector top-15 (no fusion) so eval can compare
   // "fused candidate quality" vs "vector-only candidate quality" side-by-side.
   const pureVectorRows = await sql`
-    SELECT id
+    SELECT id, document_id, metadata
     FROM document_chunks
     WHERE user_id = ${userId}
       AND embedding IS NOT NULL
     ORDER BY embedding <=> ${vectorString}::vector
     LIMIT 15
   `;
-  const pureVectorCandidates = pureVectorRows.map((r) => ({ chunkId: r.id }));
+  const pureVectorCandidates = pureVectorRows.map((r) => ({
+    chunkId: r.id,
+    documentId: r.document_id,
+    metadata: r.metadata ?? {},
+  }));
 
   if (rows.length === 0) {
     return { searchQuery, vectorCandidates: [], pureVectorCandidates, rerankedTopK: [] };
@@ -215,6 +219,7 @@ export async function searchKnowledge({
       documentTitle: r.document_title,
       content: r.content,
       chunkIndex: r.chunk_index,
+      metadata: r.metadata ?? {},
       similarity: Math.round((r.similarity ?? 0) * 100) / 100,
     }));
 
@@ -225,6 +230,7 @@ export async function searchKnowledge({
     chunkId: r.id,
     documentId: r.document_id,
     documentTitle: r.document_title,
+    metadata: r.metadata ?? {},
     similarity: r.similarity,
   }));
 

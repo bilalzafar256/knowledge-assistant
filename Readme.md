@@ -173,6 +173,11 @@ Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to 
 | `pnpm db:studio` | Open Drizzle Studio (DB GUI) |
 | `pnpm eval:generate` | Generate a synthetic Q&A golden set from chunks in the DB → `evals/golden/golden-set.json` |
 | `pnpm eval:run -- --label <name>` | Run the eval suite against the current pipeline → timestamped JSON + Markdown in `evals/runs/` |
+| `pnpm eval:ragbench:download` | Download Vectara's Open RAG Benchmark (~743 MB) into `evals/benchmarks/open-ragbench/data/` |
+| `pnpm eval:ragbench:ingest` | Bulk-load benchmark corpus into Neon, tagging chunks with `section_id` for ground-truth recall |
+| `pnpm eval:ragbench:golden -- --sample 2000` | Convert benchmark Q&A → golden set (stratified across modalities) |
+| `pnpm eval:ragbench:run -- --label ragbench-baseline` | Run the full eval against the benchmark → `evals/benchmarks/open-ragbench/runs/` |
+| `pnpm eval:ragbench:report` | Render a shareable `REPORT.md` from the latest benchmark run |
 | `npx inngest-cli@latest dev` | Start Inngest local dev server (background jobs) |
 
 ## Retrieval
@@ -198,6 +203,20 @@ pnpm eval:run -- --label after-hybrid    # compare against baseline
 - Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
 
 Results are committed to `evals/runs/` as `<timestamp>_<label>.{json,md}` so you can diff them in git.
+
+**External benchmark — Vectara Open RAG Benchmark:**
+
+For a stress test against expert-written questions on real arXiv papers (text, tables, images), run:
+
+```bash
+pnpm eval:ragbench:download                          # ~743 MB, idempotent
+pnpm eval:ragbench:ingest                            # ~3–5 min, ~$5 in embeddings
+pnpm eval:ragbench:golden -- --sample 2000           # stratified across modalities
+pnpm eval:ragbench:run -- --label ragbench-baseline  # ~30–45 min, ~$30
+pnpm eval:ragbench:report                            # writes REPORT.md
+```
+
+Requires `OPEN_RAGBENCH_USER_ID` in `.env.local` (any stable string — not a real Clerk user). The benchmark run produces extra breakdowns by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by question type (`extractive` / `abstractive`) so you can see exactly where the pipeline struggles. See `evals/benchmarks/open-ragbench/REPORT.md` for the latest headline numbers.
 
 ## Deployment
 

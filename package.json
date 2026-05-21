@@ -15,7 +15,12 @@
     "db:studio": "drizzle-kit studio",
     "db:push": "echo 'db:push is deprecated — use db:generate + db:migrate instead' && drizzle-kit push",
     "eval:generate": "node evals/generate-golden.mjs",
-    "eval:run": "node evals/run.mjs"
+    "eval:run": "node evals/run.mjs",
+    "eval:ragbench:download": "node evals/benchmarks/open-ragbench/download.mjs",
+    "eval:ragbench:ingest": "node evals/benchmarks/open-ragbench/ingest.mjs",
+    "eval:ragbench:golden": "node evals/benchmarks/open-ragbench/import-golden.mjs",
+    "eval:ragbench:run": "node evals/benchmarks/open-ragbench/run.mjs",
+    "eval:ragbench:report": "node evals/benchmarks/open-ragbench/report.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.48",

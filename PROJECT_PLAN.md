@@ -326,6 +326,38 @@ evals/
 
 `rerankChunks` in `src/lib/ai.ts` and `evals/lib/retrieve.mjs` use Cohere Rerank 3.5 when `COHERE_API_KEY` is set, otherwise fall back to a gpt-4o-mini scoring call. The Cohere path is now the default in production.
 
+### Open RAG Benchmark (external, human-written)
+
+To complement the small synthetic set above, the pipeline is also evaluated against **Vectara's Open RAG Benchmark** (`vectara/open_ragbench` on Hugging Face) — 1,000 arXiv papers (400 with Q&A + 600 hard negatives) and 3,045 expert-written question–answer pairs spanning text, tables, and figures.
+
+```
+evals/benchmarks/open-ragbench/
+├── data/                         ← BEIR files from HF (gitignored, ~743 MB)
+├── download.mjs                  ← idempotent fetcher (queries/qrels/answers + corpus)
+├── ingest.mjs                    ← bulk-load corpus into Neon; chunks tag `section_id` in metadata
+├── import-golden.mjs             ← convert benchmark Q&A → golden-set.json (stratified sampling)
+├── run.mjs                       ← wrapper around evals/run.mjs (benchmark-targeted defaults)
+├── report.mjs                    ← generate shareable REPORT.md from latest run
+├── golden/golden-set.json        ← imported questions with `expected_section_id` ground truth
+├── runs/<timestamp>_<label>.{json,md}
+└── REPORT.md                     ← human-readable effectiveness summary (committed)
+```
+
+**Ground-truth matching:** the benchmark labels each query with `(doc_id, section_id)`. Our chunker splits a section into N chunks, so we tag every chunk's `metadata.section_id` at ingest time. `evals/run.mjs` then scores a hit when any retrieved chunk's `(documentId, section_id)` matches the expected pair. The synthetic chunk-level matching path is preserved for backward compatibility.
+
+**Tenant isolation:** benchmark docs live under `OPEN_RAGBENCH_USER_ID` (separate from the regular eval user) so the existing 25-question baselines remain comparable.
+
+**Run cycle:**
+```
+pnpm eval:ragbench:download        # ~743 MB to evals/benchmarks/open-ragbench/data/
+pnpm eval:ragbench:ingest          # ~3–5 min, ~$5 in embeddings
+pnpm eval:ragbench:golden -- --sample 2000
+pnpm eval:ragbench:run -- --label ragbench-baseline --concurrency 4
+pnpm eval:ragbench:report          # writes REPORT.md
+```
+
+The run output includes two extra breakdown tables — by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by query type (`extractive` / `abstractive`) — so we can see exactly where the pipeline weakens on mixed-modality content.
+
 ---
 
 ## Telegram → PR Bot
