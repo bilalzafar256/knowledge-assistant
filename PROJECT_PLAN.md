@@ -16,7 +16,7 @@
 | Security | Arcjet — shield, bot detection, token bucket + fixed window rate limiting |
 | Background Jobs | Inngest — event-driven ingestion queue with retries |
 | Analytics | Vercel Analytics + Speed Insights |
-| UI | shadcn/ui + Tailwind CSS v4 |
+| UI | shadcn/ui + Tailwind CSS v4 · Geist + Geist Mono (next/font/google) |
 | Package Manager | pnpm |
 
 ---
@@ -170,7 +170,7 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 | Route | Type | Description |
 |---|---|---|
-| `/` | Server | Landing page — hero, 6 feature cards, CTA |
+| `/` | Server | Case-study landing page — hero w/ chat screenshot, eval-stats strip, problem statement, architecture diagram, 5 deep-dive sections (hybrid retrieval, reranking, evals, security, ingestion), product screenshot grid, Telegram-bot bonus, tech stack, "Book a call" CTA → `#contact` |
 | `/sign-in` · `/sign-up` | Server | Clerk-hosted auth pages |
 | `/dashboard` | Server | Overview — 4 stat cards (Docs, Chunks, Conversations, Messages) |
 | `/dashboard/chat` | Server | Chat list on mobile; redirects to last session on desktop |
