@@ -205,7 +205,9 @@ export const auditLogs = pgTable(
 //   classifying → discussion (terminal)
 //                ↘ awaiting_plan → planning → awaiting_plan_approval
 //                                 ↘ coding → awaiting_code_approval
-//                                          ↘ creating_pr → done | cancelled
+//                                          ↘ creating_pr → awaiting_pr_merge
+//                                                          ↘ merging_pr → awaiting_main_pr
+//                                                                          ↘ creating_main_pr → done
 
 export type TelegramTaskStatus =
   | "classifying"
@@ -217,6 +219,10 @@ export type TelegramTaskStatus =
   | "coding"
   | "awaiting_code_approval"
   | "creating_pr"
+  | "awaiting_pr_merge"
+  | "merging_pr"
+  | "awaiting_main_pr"
+  | "creating_main_pr"
   | "done"
   | "cancelled";
 
@@ -238,8 +244,10 @@ export const telegramTasks = pgTable(
     branchName: text("branch_name"),
     /** Diff summary produced by the coding Action (Phase 5) */
     diffSummary: text("diff_summary"),
-    /** Final PR URL once the Phase 6 step succeeds */
+    /** Feature → dev PR URL once the Phase 6 step succeeds */
     prUrl: text("pr_url"),
+    /** dev → main PR URL once the post-merge promote step runs */
+    mainPrUrl: text("main_pr_url"),
     /** Each "revise" reply from the user is appended here */
     revisionNotes: jsonb("revision_notes").$type<string[]>().default([]),
     /** Map of step-name → Telegram message id, so we can edit prior messages */

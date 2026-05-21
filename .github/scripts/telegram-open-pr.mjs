@@ -85,7 +85,7 @@ const prNumber = ghJson.number;
 
 await sql`
   UPDATE telegram_tasks
-     SET pr_url = ${prUrl}, status = 'done', updated_at = NOW()
+     SET pr_url = ${prUrl}, status = 'awaiting_pr_merge', updated_at = NOW()
    WHERE id = ${TASK_ID}::uuid
 `;
 
@@ -95,7 +95,19 @@ const text = [
   `[#${prNumber} — open on GitHub](${prUrl})`,
   "",
   `*Branch:* \`${task.branch_name}\` → \`dev\``,
+  "",
+  "_Merge it to `dev`, request more changes, or pause for later._",
 ].join("\n");
+
+const replyMarkup = {
+  inline_keyboard: [
+    [
+      { text: "✅ Merge to dev", callback_data: `tg:merge:${TASK_ID}` },
+      { text: "✏️ Request changes", callback_data: `tg:revise:${TASK_ID}` },
+      { text: "⏸ Later", callback_data: `tg:later:${TASK_ID}` },
+    ],
+  ],
+};
 
 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
   method: "POST",
@@ -105,6 +117,7 @@ await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     text,
     parse_mode: "Markdown",
     disable_web_page_preview: false,
+    reply_markup: replyMarkup,
   }),
 });
 

@@ -139,6 +139,10 @@ export async function POST(req: NextRequest) {
     await handleStatus(String(chatId));
     return NextResponse.json({ ok: true });
   }
+  if (text.startsWith("/history")) {
+    await handleHistory(String(chatId));
+    return NextResponse.json({ ok: true });
+  }
   if (text.startsWith("/help") || text.startsWith("/start")) {
     await handleHelp(chatId);
     return NextResponse.json({ ok: true });
@@ -149,7 +153,8 @@ export async function POST(req: NextRequest) {
     if (
       active.status === "awaiting_plan_approval" ||
       active.status === "awaiting_clarification" ||
-      active.status === "awaiting_code_approval"
+      active.status === "awaiting_code_approval" ||
+      active.status === "awaiting_pr_merge"
     ) {
       await handleFeedback(active.id, chatId, text, active.status);
     } else {
@@ -251,10 +256,13 @@ async function handleFeedback(
     return;
   }
 
+  const isCodeRevision =
+    previousStatus === "awaiting_code_approval" ||
+    previousStatus === "awaiting_pr_merge";
   const label =
     previousStatus === "awaiting_clarification"
       ? "User answers"
-      : previousStatus === "awaiting_code_approval"
+      : isCodeRevision
         ? "Code revision"
         : "Plan revision";
   const labeled = `[${label}]\n${text}`;
@@ -262,10 +270,8 @@ async function handleFeedback(
   const updatedNotes = [...existing, labeled];
 
   // Code revisions re-dispatch the code workflow; everything else replans.
-  const nextStatus: TelegramTaskStatus =
-    previousStatus === "awaiting_code_approval" ? "coding" : "planning";
-  const eventType =
-    previousStatus === "awaiting_code_approval" ? "code-task" : "plan-task";
+  const nextStatus: TelegramTaskStatus = isCodeRevision ? "coding" : "planning";
+  const eventType = isCodeRevision ? "code-task" : "plan-task";
 
   await db
     .update(telegramTasks)
@@ -292,7 +298,7 @@ async function handleFeedback(
   const ack =
     previousStatus === "awaiting_clarification"
       ? "📝 Got your answers. Planning…"
-      : previousStatus === "awaiting_code_approval"
+      : isCodeRevision
         ? "✏️ Got the revision. Updating code…"
         : "✏️ Got the revision. Re-planning…";
   await sendText(chatId, `${ack} · task \`${shortId(taskId)}\``, { markdown: true });
@@ -373,7 +379,8 @@ async function handleCallback(cb: {
   if (action === "revise") {
     if (
       task.status !== "awaiting_plan_approval" &&
-      task.status !== "awaiting_code_approval"
+      task.status !== "awaiting_code_approval" &&
+      task.status !== "awaiting_pr_merge"
     ) {
       await sendText(
         chatId,
@@ -383,10 +390,76 @@ async function handleCallback(cb: {
       return;
     }
     const what =
-      task.status === "awaiting_code_approval" ? "code" : "plan";
+      task.status === "awaiting_plan_approval" ? "plan" : "code";
     await sendText(
       chatId,
       `✏️ *Revise* · task \`${short}\`\n\nReply with what should change in the ${what}. Send /cancel to abort.`,
+      { markdown: true },
+    );
+    return;
+  }
+
+  // ── Merge feature → dev ───────────────────────────────────────────────────
+  if (action === "merge") {
+    if (task.status !== "awaiting_pr_merge") {
+      await sendText(
+        chatId,
+        `Buttons no longer apply — task is in status \`${task.status}\`.`,
+        { markdown: true },
+      );
+      return;
+    }
+    await setStatus(taskId, "merging_pr");
+    const ok = await dispatchWorkflow("merge-task", {
+      task_id: taskId,
+      chat_id: chatId,
+    });
+    if (!ok) {
+      await setStatus(taskId, "awaiting_pr_merge");
+      await sendText(chatId, `⚠️ Failed to start the merge · task \`${short}\``, { markdown: true });
+      return;
+    }
+    await sendText(
+      chatId,
+      `✅ *Merge requested* · task \`${short}\`\n\nMerging the PR into \`dev\` now.`,
+      { markdown: true },
+    );
+    return;
+  }
+
+  // ── Open dev → main PR ────────────────────────────────────────────────────
+  if (action === "open_main_pr") {
+    if (task.status !== "awaiting_main_pr") {
+      await sendText(
+        chatId,
+        `Buttons no longer apply — task is in status \`${task.status}\`.`,
+        { markdown: true },
+      );
+      return;
+    }
+    await setStatus(taskId, "creating_main_pr");
+    const ok = await dispatchWorkflow("main-pr-task", {
+      task_id: taskId,
+      chat_id: chatId,
+    });
+    if (!ok) {
+      await setStatus(taskId, "awaiting_main_pr");
+      await sendText(chatId, `⚠️ Failed to start the dev → main PR · task \`${short}\``, { markdown: true });
+      return;
+    }
+    await sendText(
+      chatId,
+      `🚀 *Promoting to main* · task \`${short}\`\n\nOpening the \`dev → main\` PR now.`,
+      { markdown: true },
+    );
+    return;
+  }
+
+  // ── Later (pause without state change) ───────────────────────────────────
+  if (action === "later") {
+    await sendText(
+      chatId,
+      `⏸ *Paused* · task \`${short}\`\n\nButtons stay clickable — tap when you're ready, or send /status to check in.`,
       { markdown: true },
     );
     return;
@@ -431,6 +504,7 @@ async function handleStatus(chatId: string) {
   ];
   if (active.branchName) lines.push(`*Branch:* \`${active.branchName}\``);
   if (active.prUrl) lines.push(`*PR:* ${active.prUrl}`);
+  if (active.mainPrUrl) lines.push(`*dev → main PR:* ${active.mainPrUrl}`);
   await sendText(chatId, lines.join("\n"), { markdown: true });
 }
 
@@ -444,8 +518,58 @@ async function handleHelp(chatId: number) {
     "",
     "*Commands*",
     "• /status — show the current task",
+    "• /history — show the last 5 tasks",
     "• /cancel — abort the active task",
     "• /help — show this message",
   ].join("\n");
   await sendText(chatId, text, { markdown: true });
+}
+
+async function handleHistory(chatId: string) {
+  const rows = await db
+    .select({
+      id: telegramTasks.id,
+      status: telegramTasks.status,
+      originalMessage: telegramTasks.originalMessage,
+      prUrl: telegramTasks.prUrl,
+      mainPrUrl: telegramTasks.mainPrUrl,
+      createdAt: telegramTasks.createdAt,
+    })
+    .from(telegramTasks)
+    .where(eq(telegramTasks.chatId, chatId))
+    .orderBy(desc(telegramTasks.createdAt))
+    .limit(5);
+
+  if (rows.length === 0) {
+    await sendText(chatId, "📜 No tasks yet.");
+    return;
+  }
+
+  const now = Date.now();
+  const lines: string[] = [`📜 *Last ${rows.length} task${rows.length === 1 ? "" : "s"}*`, ""];
+  rows.forEach((task, i) => {
+    const ageMs = now - new Date(task.createdAt).getTime();
+    const age = formatAge(ageMs);
+    const msg = task.originalMessage.replace(/\s+/g, " ").slice(0, 70);
+    const truncated = task.originalMessage.length > 70 ? "…" : "";
+    lines.push(
+      `${i + 1}. \`${shortId(task.id)}\` · \`${task.status}\` · ${age}`,
+    );
+    lines.push(`   _${msg}${truncated}_`);
+    if (task.prUrl) lines.push(`   → ${task.prUrl}`);
+    if (task.mainPrUrl) lines.push(`   → dev→main: ${task.mainPrUrl}`);
+    lines.push("");
+  });
+
+  await sendText(chatId, lines.join("\n").trimEnd(), { markdown: true });
+}
+
+function formatAge(ms: number): string {
+  const mins = Math.round(ms / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  return `${days}d ago`;
 }

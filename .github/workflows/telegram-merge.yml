@@ -1,0 +1,49 @@
+name: Telegram Merge
+
+# Triggered when the user taps "Merge to dev" on the PR-opened message.
+# Squash-merges the feature → dev PR, then asks via Telegram whether to
+# open a dev → main PR.
+
+on:
+  repository_dispatch:
+    types: [merge-task]
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Neon client
+        run: npm install --no-save @neondatabase/serverless
+
+      - name: Squash-merge feature → dev
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: node .github/scripts/telegram-merge-pr.mjs
+
+      - name: Notify failure
+        if: failure()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+        run: |
+          SHORT=$(echo "$TASK_ID" | cut -c1-8)
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=❌ Merging failed · task \`$SHORT\`. Check GitHub Actions logs." \
+            --data-urlencode "parse_mode=Markdown"
