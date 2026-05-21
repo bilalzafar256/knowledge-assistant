@@ -1,9 +1,10 @@
 name: Telegram Plan
 
 # Triggered by /api/telegram/webhook when a user message is classified as a
-# code-change requirement. Runs the planner skill → plan-verifier skill, with
-# one auto-retry if the verifier blocks. Saves the final plan to Neon and
-# sends it back to Telegram with [Approve / Revise / Cancel] inline buttons.
+# code-change requirement. Delegates planning to Claude Code's built-in
+# `Plan` subagent (software-architect persona, read-only). Saves the final
+# plan to Neon and sends it back to Telegram with [Approve / Revise / Cancel]
+# inline buttons.
 
 on:
   repository_dispatch:
@@ -36,14 +37,17 @@ jobs:
             --data-urlencode "chat_id=$CHAT_ID" \
             --data-urlencode "text=🧠 Planning…"
 
-      - name: Generate plan (pass 1)
+      - name: Generate plan (Plan subagent)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MESSAGE: ${{ github.event.client_payload.message }}
           REVISION_NOTES: ${{ github.event.client_payload.revision_notes }}
         run: |
           {
-            echo "Read .agents/skills/planner/SKILL.md and follow it strictly."
+            echo "Use the Agent tool with subagent_type=\"Plan\" to plan the code change below."
+            echo "Pass the user request AND the output contract through to the subagent."
+            echo "Return the subagent's final message verbatim as your final output —"
+            echo "no preamble, no trailing commentary. The runner pipes this output into plan.md."
             echo ""
             echo "## User request"
             echo "$MESSAGE"
@@ -51,12 +55,50 @@ jobs:
               echo ""
               echo "## Revision feedback from a previous plan iteration — incorporate this"
               echo "$REVISION_NOTES"
+              echo ""
+              echo "NOTE: revision feedback has already been provided once. The subagent MUST"
+              echo "commit to a plan this round — do not ask clarifying questions a second time."
             fi
+            echo ""
+            echo "## Output contract (relay this to the Plan subagent — mandatory)"
+            echo ""
+            echo "First line of the final output must be either \`# QUESTIONS\` or \`# PLAN\`."
+            echo ""
+            echo "Choose \`# QUESTIONS\` ONLY when the request is genuinely ambiguous —"
+            echo "2+ reasonable interpretations a careful engineer couldn't choose between,"
+            echo "or a named feature/file that doesn't exist in the repo. Otherwise default"
+            echo "to \`# PLAN\` and surface minor ambiguities under \`## Risks & open questions\`."
+            echo ""
+            echo "### If \`# QUESTIONS\`"
+            echo "Max 4 numbered clarifying questions. No plan sections. End with:"
+            echo "\"If you reply with 'go ahead, you decide', I'll proceed with sensible defaults.\""
+            echo ""
+            echo "### If \`# PLAN\`"
+            echo "Use these section headings, in this exact order:"
+            echo ""
+            echo "- ## Goal — 1–3 sentences restating the request and user-visible outcome."
+            echo "- ## Approach — 1 short paragraph: the design idea and why over the obvious alternative."
+            echo "- ## Files I will edit — bulleted \`path — symbol/range — what — why\`."
+            echo "- ## Files I will create — bulleted \`path — purpose\`."
+            echo "- ## Files I read but won't change (proof I looked) — bulleted \`path — what I learned\`."
+            echo "- ## Schema / migrations — DB/env/secret changes. \`N/A — because ...\` if none."
+            echo "- ## Tests — new tests or updates. If repo has zero tests, say so."
+            echo "- ## Breaking changes & backwards compatibility — \`N/A — because ...\` if none."
+            echo "- ## Risks & open questions — honest uncertainties, not pro-forma filler."
+            echo "- ## Done when… — bulleted, concrete, checkable acceptance criteria."
+            echo ""
+            echo "N/A sections must say \`N/A — because <reason>\`, never be omitted."
+            echo ""
+            echo "### Investigation expectations before writing the plan"
+            echo "- Glob/Grep/Read to verify file paths and find callers of touched symbols."
+            echo "- Check \`CLAUDE.md\` for project conventions."
+            echo "- If touching the DB, read \`src/lib/schema.ts\` and check for matching migrations."
+            echo "- If touching auth/API routes, match how existing routes chain \`auth()\` + Arcjet."
           } > planner-prompt.txt
           claude -p "$(cat planner-prompt.txt)" \
-            --allowedTools "Read,Grep,Glob" \
+            --allowedTools "Agent,Read,Grep,Glob" \
             > plan.md
-          echo "----- PLAN (pass 1) -----"
+          echo "----- PLAN -----"
           cat plan.md
 
       - name: Detect output mode (plan vs questions)
@@ -65,57 +107,11 @@ jobs:
           FIRST=$(grep -m1 '^# ' plan.md || echo "")
           if echo "$FIRST" | grep -qi '^# QUESTIONS'; then
             echo "mode=questions" >> "$GITHUB_OUTPUT"
-            echo "Planner asked clarifying questions — skipping verifier."
+            echo "Planner asked clarifying questions."
           else
             echo "mode=plan" >> "$GITHUB_OUTPUT"
-            echo "Planner produced a plan — proceeding to verifier."
+            echo "Planner produced a plan."
           fi
-
-      - name: Verify plan (pass 1)
-        if: steps.detect.outputs.mode == 'plan'
-        id: verify1
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          MESSAGE: ${{ github.event.client_payload.message }}
-        run: |
-          {
-            echo "Read .agents/skills/plan-verifier/SKILL.md and follow it strictly. Output ONLY one JSON object as your final message."
-            echo ""
-            echo "## User's original request"
-            echo "$MESSAGE"
-            echo ""
-            echo "## Candidate plan to audit"
-            echo ""
-            cat plan.md
-          } > verifier-prompt.txt
-          claude -p "$(cat verifier-prompt.txt)" \
-            --allowedTools "Read,Grep,Glob" \
-            > verify.json
-          echo "----- VERIFIER OUTPUT (pass 1) -----"
-          cat verify.json
-          node .github/scripts/parse-verify.mjs verify.json >> "$GITHUB_OUTPUT"
-
-      - name: Re-plan (pass 2) if verifier blocked
-        if: steps.detect.outputs.mode == 'plan' && steps.verify1.outputs.ok == 'false'
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          MESSAGE: ${{ github.event.client_payload.message }}
-          BLOCKERS: ${{ steps.verify1.outputs.blockers }}
-        run: |
-          {
-            echo "Read .agents/skills/planner/SKILL.md and follow it strictly."
-            echo ""
-            echo "## User request"
-            echo "$MESSAGE"
-            echo ""
-            echo "## CRITICAL: a prior plan was rejected by the verifier. Address each of these blockers in your new plan:"
-            echo "$BLOCKERS"
-          } > planner-prompt.txt
-          claude -p "$(cat planner-prompt.txt)" \
-            --allowedTools "Read,Grep,Glob" \
-            > plan.md
-          echo "----- PLAN (pass 2) -----"
-          cat plan.md
 
       - name: Save plan + notify Telegram
         if: steps.detect.outputs.mode == 'plan'
@@ -124,7 +120,6 @@ jobs:
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TASK_ID: ${{ github.event.client_payload.task_id }}
           CHAT_ID: ${{ github.event.client_payload.chat_id }}
-          WARNINGS: ${{ steps.verify1.outputs.warnings }}
         run: node .github/scripts/telegram-save-plan.mjs
 
       - name: Save questions + notify Telegram

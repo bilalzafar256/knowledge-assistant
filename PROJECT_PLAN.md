@@ -218,13 +218,12 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 ## Helper Scripts & Agent Skills
 
-Both directories are load-bearing for the Telegram → PR pipeline. The scripts run inside the GitHub Actions workflows; the skills are loaded by Claude Code (planner / plan-verifier / coder steps).
+Both directories are load-bearing for the Telegram → PR pipeline. The scripts run inside the GitHub Actions workflows. Planning is delegated to Claude Code's built-in `Plan` subagent (read-only software-architect persona); only the `coder` step still loads a custom SKILL.md.
 
 ### `.github/scripts/`
 
 | File | Responsibility |
 |---|---|
-| `parse-verify.mjs` | Reads the plan-verifier's JSON output (tolerating stray markdown fences), emits `ok` / `blockers` / `warnings` to `$GITHUB_OUTPUT` |
 | `telegram-save-plan.mjs` | Persists `plan.md` to `telegram_tasks.plan_markdown`, flips status to `awaiting_plan_approval`, sends the plan to Telegram with Approve / Revise / Cancel buttons |
 | `telegram-save-questions.mjs` | Variant of the above for when the planner returned `# QUESTIONS` — stores the questions, flips status to `awaiting_clarification`, posts with a Cancel button |
 | `telegram-load-task-branch.mjs` | Loads an approved task from Neon, allocates a branch if needed, emits `branch` / `plan` / `revision_notes` / `message` for the coder step |
@@ -236,8 +235,6 @@ Both directories are load-bearing for the Telegram → PR pipeline. The scripts 
 
 | Skill | Purpose |
 |---|---|
-| `planner/` | Produces the implementation plan (or clarifying questions) from a Telegram request |
-| `plan-verifier/` | Skeptical second pass that audits the planner's output and emits strict JSON for downstream automation |
 | `coder/` | Implements an already-approved plan as a minimal diff — runs inside `telegram-code.yml` |
 | `find-skills/` | Helps discover and install additional agent skills from the open ecosystem |
 | `nextjs-developer/` | Specialist for Next.js 14+ App Router work (route handlers, RSC, middleware, deployment) |
@@ -348,9 +345,9 @@ Telegram message
 GitHub Actions — three workflows, one per event_type:
 
 .github/workflows/telegram-plan.yml          (on: repository_dispatch [plan-task])
-  └─ planner skill   → plan.md  (or questions.md)
-  └─ plan-verifier   → verify.json
-       └─ blockers? one auto-retry with feedback, then bail
+  └─ Claude Code `Plan` subagent  → plan.md  (or questions.md)
+       • read-only software-architect persona; tools: Read/Grep/Glob
+       • first line is `# PLAN` or `# QUESTIONS` — routes the next step
   └─ telegram-save-plan.mjs / telegram-save-questions.mjs
        → Neon row updated, Telegram message sent with Approve / Revise / Cancel
 
