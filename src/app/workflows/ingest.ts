@@ -16,6 +16,7 @@ import { db } from "@/lib/db";
 import { documents, documentChunks, ragSettings } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
 import { generateEmbedding } from "@/lib/ai";
+import { logger } from "@/lib/axiom/server";
 import { chunkText, sanitizeText } from "@/lib/utils";
 import type { NewDocumentChunk } from "@/lib/schema";
 
@@ -45,7 +46,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   const startMs = Date.now();
   const { documentId, userId } = input;
 
-  console.info("[ingest] Starting ingestion", { documentId, userId });
+  logger.info("ingest.starting", { documentId, userId });
 
   // ── Step 1: Fetch document ─────────────────────────────────────────────────
   const [doc] = await db
@@ -65,7 +66,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     );
   }
 
-  console.info("[ingest] Document fetched", {
+  logger.info("ingest.document_fetched", {
     documentId,
     title: doc.title,
     contentLength: doc.content.length,
@@ -80,7 +81,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   const chunkTokens = userSettings?.chunkSize ?? DEFAULT_CHUNK_TOKENS;
   const chunkOverlapTokens = userSettings?.chunkOverlap ?? DEFAULT_CHUNK_OVERLAP_TOKENS;
 
-  console.info("[ingest] Using chunk settings", { chunkTokens, chunkOverlapTokens });
+  logger.info("ingest.chunk_settings", { documentId, chunkTokens, chunkOverlapTokens });
 
   // ── Step 3: Sanitize and chunk the text ───────────────────────────────────
   const sanitizedContent = sanitizeText(doc.content);
@@ -90,7 +91,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     throw new Error(`Document has no content to chunk: ${documentId}`);
   }
 
-  console.info("[ingest] Text chunked", {
+  logger.info("ingest.text_chunked", {
     documentId,
     chunkCount: rawChunks.length,
   });
@@ -102,7 +103,8 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     const batchEnd = Math.min(batchStart + EMBEDDING_BATCH_SIZE, rawChunks.length);
     const batch = rawChunks.slice(batchStart, batchEnd);
 
-    console.info("[ingest] Generating embeddings for batch", {
+    logger.info("ingest.embedding_batch", {
+      documentId,
       batchStart,
       batchEnd,
       batchSize: batch.length,
@@ -119,7 +121,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     allEmbeddings.push(...batchEmbeddings);
   }
 
-  console.info("[ingest] All embeddings generated", {
+  logger.info("ingest.embeddings_complete", {
     documentId,
     count: allEmbeddings.length,
   });
@@ -162,7 +164,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
 
   const durationMs = Date.now() - startMs;
 
-  console.info("[ingest] Ingestion complete", {
+  logger.info("ingest.complete", {
     documentId,
     chunkCount: rawChunks.length,
     embeddingsGenerated: allEmbeddings.length,

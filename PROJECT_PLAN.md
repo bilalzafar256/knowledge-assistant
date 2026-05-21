@@ -280,51 +280,53 @@ Chat query
 
 ---
 
-## RAG Evals (offline harness)
+## RAG Evals (Open RAG Benchmark)
 
-Lightweight CLI-only eval suite under `evals/`. Not wired into CI yet — invoked manually before/after pipeline changes to compare versions.
+The pipeline is evaluated against **Vectara's Open RAG Benchmark** (`vectara/open_ragbench` on Hugging Face) — 1,000 arXiv papers (400 with Q&A + 600 hard negatives) and 3,045 expert-written question–answer pairs spanning text, tables, and figures. Because the benchmark's ground truth is public, results are directly comparable to other RAG systems benchmarked on the same set. Not wired into CI — invoked manually before/after pipeline changes.
 
 ```
 evals/
 ├── lib/
-│   ├── env.mjs           ← loads .env.local, exposes DATABASE_URL/OPENAI_API_KEY/model names
+│   ├── env.mjs           ← loads .env.local; exposes DATABASE_URL/OPENAI_API_KEY/model names
 │   ├── db.mjs            ← Neon serverless client
 │   ├── openai.mjs        ← OpenAI client wrapped with 429-aware retry + backoff
-│   ├── retrieve.mjs      ← mirrors src/lib/ai.ts: synthesizeSearchQuery → embed → vector search → rerank
+│   ├── retrieve.mjs      ← mirrors src/lib/ai.ts: synthesizeSearchQuery → embed → hybrid search → rerank
 │   ├── answer.mjs        ← mirrors src/app/api/chat/route.ts: gpt-4o w/ searchKnowledge tool, multi-step loop
 │   └── judges.mjs        ← LLM-as-judge: contextPrecision, faithfulness, correctness; deterministic citation check
-├── generate-golden.mjs   ← samples chunks, asks gpt-4o-mini to write Q&A whose answer is in chunk
-├── run.mjs               ← runs eval over golden set with concurrency, writes timestamped JSON + MD
-├── golden/golden-set.json      ← generated Q&A pairs (regen anytime; can be hand-curated)
-└── runs/<timestamp>_<label>.{json,md}   ← per-run artifacts, committed for diffing
+├── run.mjs               ← runs eval over a golden set with concurrency; writes timestamped JSON + MD
+└── benchmarks/open-ragbench/
+    ├── data/             ← BEIR files from HF (gitignored, ~743 MB)
+    ├── download.mjs      ← idempotent fetcher (queries/qrels/answers + corpus)
+    ├── ingest.mjs        ← bulk-load corpus into Neon; chunks tag `section_id` in metadata
+    ├── import-golden.mjs ← convert benchmark Q&A → golden-set.json (stratified sampling)
+    ├── run.mjs           ← wrapper around evals/run.mjs (benchmark-targeted defaults)
+    ├── report.mjs        ← generate shareable REPORT.md from latest run
+    ├── golden/golden-set.json   ← imported questions with `expected_section_id` ground truth
+    ├── runs/<timestamp>_<label>.{json,md}
+    └── REPORT.md         ← human-readable effectiveness summary (committed)
 ```
 
 **Metrics:**
 - Retrieval: `recall_at_k_reranked`, `recall_vector_at_5/10` (candidate pool), `recall_pure_vector_at_5/10` (diagnostic), `mrr_reranked`, `mrr_vector`, `mrr_pure_vector`, `context_precision`
-- Answer (when `--no-answers` not set): `faithfulness`, `correctness`, `citation`, `avg_latency_ms`, `total_input/output_tokens`, `estimated_cost_usd`
+- Answer: `faithfulness`, `correctness`, `citation`, `avg_latency_ms`, `total_input/output_tokens`, `estimated_cost_usd`
+- Breakdowns (auto-emitted when the golden carries benchmark info): per modality (`text` / `text-image` / `text-table` / `text-table-image`) and per query type (`extractive` / `abstractive`)
 
-**Run cycle:** `pnpm eval:generate` (once) → `pnpm eval:run -- --label baseline` → make changes → `pnpm eval:run -- --label <experiment>` → diff the two MD files.
+**Ground-truth matching:** the benchmark labels each query with `(doc_id, section_id)`. Our chunker splits a section into N chunks, so we tag every chunk's `metadata.section_id` at ingest time. `evals/run.mjs` scores a hit when any retrieved chunk's `(documentId, section_id)` matches the expected pair.
 
-### Run history (25 synthetic Q&A, 24 docs / 37 chunks)
+**Tenant isolation:** benchmark docs live under `OPEN_RAGBENCH_USER_ID` (default `user_open_ragbench_eval`) so a separate ingestion never collides with other corpora in the same Neon instance.
 
-| Run | Recall@5 rerank | MRR rerank | Ctx prec | Faith | Corr | Cite | Latency | Cost |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `baseline` — pure vector, k=5, original prompt | 100% | 0.770 | 28.0% | 60% | 98% | 100% | 6.3 s | $0.247 |
-| `hybrid-search` — + vector+BM25 RRF fusion | 100% | 0.737 | 28.8% | 64% | 100% | 100% | 7.3 s | $0.250 |
-| `limit3-strict-prompt` — + k=3, strict grounding prompt | 100% | 0.731 | **31.2%** | 64% | 96% | 96% | **4.2 s** | **$0.202** |
-| `cohere-rerank` — + Cohere Rerank 3.5 (vs gpt-4o-mini) | 100% | **0.860** | 28.8% | 64% | 96% | 96% | 4.4 s | $0.202 |
-
-**Read of run 3:** Real wins — latency −33%, cost −18%, context precision +3.2pp. The strict grounding prompt only fixed 1 of 10 baseline faithfulness failures (q_12 ARR target). gpt-4o continues to fabricate specific numbers/specs even when told not to (q_6 interest rate, q_9 salary, q_11 expense, q_25 home-office specs). The remaining faithfulness ceiling appears to be a mix of (a) gpt-4o's training to be "helpful" by filling in plausible specifics and (b) the faithfulness judge being strict about paraphrased restatements.
-
-**Read of run 4 (Cohere):** Reranker swap moved MRR from 0.731 → **0.860** (+18%). 6 questions now have the right chunk at rank #1 that previously sat at rank 2-4 (q_2, q_3, q_10, q_11, q_19, q_23). This is the largest single-change improvement so far. Recall@5 already at 100%, so that's unchanged; faithfulness/correctness unaffected because the right chunk was always *somewhere* in the top-K, just not first. The remaining MRR gap (1.0 − 0.86) is questions where Cohere correctly identified the right document but multiple chunks from that doc compete for top spot.
-
-**Caveat:** the run used a Cohere trial key (10 RPM cap), which triggered ~2 graceful fallbacks to gpt-4o-mini mid-run. With a production key, MRR would likely be marginally higher.
-
-**Next levers** if you want to push faithfulness above 64%: swap chat model (Claude Sonnet 4.6 with prompt caching is typically more obedient about grounding), or loosen the faithfulness judge to flag only contradictions, not paraphrasing.
+**Run cycle:**
+```
+pnpm eval:ragbench:download        # ~743 MB to evals/benchmarks/open-ragbench/data/
+pnpm eval:ragbench:ingest          # ~3–5 min, ~$5 in embeddings
+pnpm eval:ragbench:golden -- --sample 2000
+pnpm eval:ragbench:run -- --label ragbench-baseline --concurrency 4
+pnpm eval:ragbench:report          # writes REPORT.md
+```
 
 ### Reranker
 
-`rerankChunks` in `src/lib/ai.ts` and `evals/lib/retrieve.mjs` use Cohere Rerank 3.5 when `COHERE_API_KEY` is set, otherwise fall back to a gpt-4o-mini scoring call. The Cohere path is now the default in production.
+`rerankChunks` in `src/lib/ai.ts` and `evals/lib/retrieve.mjs` use Cohere Rerank 3.5 when `COHERE_API_KEY` is set, otherwise fall back to a gpt-4o-mini scoring call. The Cohere path is the default in production.
 
 ---
 
@@ -387,6 +389,31 @@ GitHub Actions — three workflows, one per event_type:
 | Prompt injection | Arcjet shield on chat endpoint |
 | Audit trail | `audit_logs` captures every upload, delete, and chat message with IP + user agent |
 | Env validation | Zod schema at startup — missing or malformed secrets abort the server before serving traffic |
+
+---
+
+## Observability
+
+Logs, traces, and uncaught errors ship to **Axiom** (free tier: 0.5 TB/mo ingest, 30-day retention). The pipeline:
+
+| Source | Destination | How |
+|---|---|---|
+| `console.*` from Vercel runtime/edge functions | Axiom dataset | One-click Vercel → Axiom Log Drain (dashboard install) |
+| Structured app events (`logger.info(...)`) | Axiom dataset | `@axiomhq/logging` + `@axiomhq/nextjs` via `src/lib/axiom/server.ts` |
+| Uncaught Route Handler errors | Axiom dataset | `onRequestError` export in `instrumentation.ts` (Next.js 16 hook) |
+| AI SDK spans (`streamText`, token usage, latency) | Axiom dataset (OTLP/HTTP) | `experimental_telemetry` on `streamText` + `NodeTracerProvider` registered in `instrumentation.ts` |
+
+**Privacy default**: `recordInputs: false, recordOutputs: false` on the AI SDK telemetry — prompts and completions never leave the server. Only metadata (userId, sessionId, finishReason), token counts, and latency are traced.
+
+**Files:**
+- `src/lib/axiom/axiom.ts` — Axiom client (no-op without `AXIOM_TOKEN`)
+- `src/lib/axiom/server.ts` — `logger` + `withAxiom` route wrapper
+- `src/lib/axiom/otel.ts` — `NodeTracerProvider` → OTLP exporter
+- `src/instrumentation.ts` — registers the tracer on boot, exports `onRequestError`
+
+**Env vars** (all optional — logs fall back to console when unset): `AXIOM_TOKEN`, `AXIOM_DATASET`, `AXIOM_HOST` (default `api.axiom.co`).
+
+**Adding logs in new routes:** import `{ logger, withAxiom }` from `@/lib/axiom/server`, wrap the handler with `withAxiom`, and call `logger.info("event.name", { ...fields })`. Request-scoped context (method, path, status, duration) is attached automatically.
 
 ---
 

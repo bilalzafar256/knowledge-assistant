@@ -1,3 +1,4 @@
+import { logger } from "@/lib/axiom/server";
 import { inngest } from "@/lib/inngest";
 import { db } from "@/lib/db";
 import { documents } from "@/lib/schema";
@@ -38,15 +39,21 @@ export const ingestDocumentFn = inngest.createFunction(
 
       return result;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       // Mark as failed with the error message
       await step.run("mark-failed", async () => {
         await db
           .update(documents)
           .set({
             status: "failed",
-            errorMessage: error instanceof Error ? error.message : String(error),
+            errorMessage,
           })
           .where(eq(documents.id, documentId));
+      });
+      logger.error("ingest.inngest_failed", {
+        documentId,
+        userId,
+        error: errorMessage,
       });
       throw error; // Re-throw so Inngest can retry
     }

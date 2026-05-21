@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { aj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import { isCsrfSafe } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import { documents, documentChunks } from "@/lib/schema";
@@ -58,7 +59,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ document: doc, chunks });
   } catch (error) {
-    console.error("[GET /api/documents/:id]", error);
+    logger.error("api.documents.get_failed", {
+      userId,
+      documentId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to fetch document" },
       { status: 500 }
@@ -104,7 +109,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ document: updated });
   } catch (error) {
-    console.error("[PATCH /api/documents/:id]", error);
+    logger.error("api.documents.patch_failed", {
+      userId,
+      documentId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Failed to update document" }, { status: 500 });
   }
 }
@@ -147,7 +156,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ deleted });
   } catch (error) {
-    console.error("[DELETE /api/documents/:id]", error);
+    logger.error("api.documents.delete_failed", {
+      userId,
+      documentId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to delete document" },
       { status: 500 }

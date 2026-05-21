@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { uploadAj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import { isCsrfSafe } from "@/lib/csrf";
 import { inngest } from "@/lib/inngest";
 
@@ -64,7 +65,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     // Inngest unavailable — fall back to inline processing (dev / cold start)
-    console.warn("[ingest] Inngest unavailable, running inline:", error);
+    logger.warn("ingest.inngest_unavailable", {
+      documentId,
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     try {
       const { ingestDocument } = await import("@/app/workflows/ingest");
 
@@ -89,7 +94,12 @@ export async function POST(request: NextRequest) {
         inlineError instanceof Error &&
         inlineError.message.startsWith("Ingestion timeout");
 
-      console.error("[ingest] Inline ingestion failed:", inlineError);
+      logger.error("ingest.inline_failed", {
+        documentId,
+        userId,
+        timeout: isTimeout,
+        error: inlineError instanceof Error ? inlineError.message : String(inlineError),
+      });
       return NextResponse.json(
         {
           error: isTimeout

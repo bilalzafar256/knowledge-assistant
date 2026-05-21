@@ -7,6 +7,7 @@ import { chatAj } from "@/lib/arcjet";
 import { isCsrfSafe } from "@/lib/csrf";
 import { openai, CHAT_MODEL, SYSTEM_PROMPT, createSearchKnowledgeTool, type ConversationMessage } from "@/lib/ai";
 import { logAudit } from "@/lib/audit";
+import { logger, withAxiom } from "@/lib/axiom/server";
 import { db } from "@/lib/db";
 import { chatSessions, chatMessages } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
@@ -14,7 +15,7 @@ import { and, eq } from "drizzle-orm";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-export async function POST(request: NextRequest) {
+export const POST = withAxiom(async (request: NextRequest) => {
   // ── 0. CSRF check ────────────────────────────────────────────────────────
   if (!isCsrfSafe(request)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -144,8 +145,18 @@ export async function POST(request: NextRequest) {
     },
     stopWhen: stepCountIs(5),
     temperature: 0.3,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: "chat.stream",
+      recordInputs: false,
+      recordOutputs: false,
+      metadata: {
+        userId,
+        sessionId: sessionId ?? "anonymous",
+      },
+    },
     async onFinish({ text, usage, finishReason }) {
-      console.info("[chat]", {
+      logger.info("chat.completion", {
         userId,
         sessionId,
         finishReason,
@@ -163,7 +174,14 @@ export async function POST(request: NextRequest) {
         });
       }
     },
+    onError({ error }) {
+      logger.error("chat.stream_error", {
+        userId,
+        sessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    },
   });
 
   return result.toUIMessageStreamResponse();
-}
+});

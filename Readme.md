@@ -171,8 +171,11 @@ Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to 
 | `pnpm db:generate` | Generate Drizzle migration files |
 | `pnpm db:migrate` | Apply pending migrations to Neon |
 | `pnpm db:studio` | Open Drizzle Studio (DB GUI) |
-| `pnpm eval:generate` | Generate a synthetic Q&A golden set from chunks in the DB → `evals/golden/golden-set.json` |
-| `pnpm eval:run -- --label <name>` | Run the eval suite against the current pipeline → timestamped JSON + Markdown in `evals/runs/` |
+| `pnpm eval:ragbench:download` | Download Vectara's Open RAG Benchmark (~743 MB) into `evals/benchmarks/open-ragbench/data/` |
+| `pnpm eval:ragbench:ingest` | Bulk-load benchmark corpus into Neon, tagging chunks with `section_id` for ground-truth recall |
+| `pnpm eval:ragbench:golden -- --sample 2000` | Convert benchmark Q&A → golden set (stratified across modalities) |
+| `pnpm eval:ragbench:run -- --label ragbench-baseline` | Run the full eval against the benchmark → `evals/benchmarks/open-ragbench/runs/` |
+| `pnpm eval:ragbench:report` | Render a shareable `REPORT.md` from the latest benchmark run |
 | `npx inngest-cli@latest dev` | Start Inngest local dev server (background jobs) |
 
 ## Retrieval
@@ -183,25 +186,48 @@ The chat system prompt is intentionally strict about grounding: the model is ins
 
 ## RAG Evals
 
-A lightweight harness measures retrieval and answer quality so you can A/B-test changes (rerankers, chunk size, hybrid search, model swaps).
+The eval harness measures retrieval and answer quality against **Vectara's Open RAG Benchmark** — 1,000 arXiv papers and 3,045 expert-written Q&A pairs spanning text, tables, and figures. Because the benchmark's ground truth is published, results are directly comparable to other RAG systems benchmarked on the same set.
 
 **Quick start:**
 ```bash
-pnpm eval:generate                       # 25 synthetic Q&A pairs from DB chunks
-pnpm eval:run -- --label baseline        # run baseline, save to evals/runs/
-# make a change to src/lib/ai.ts ...
-pnpm eval:run -- --label after-hybrid    # compare against baseline
+pnpm eval:ragbench:download                          # ~743 MB, idempotent
+pnpm eval:ragbench:ingest                            # ~3–5 min, ~$5 in embeddings
+pnpm eval:ragbench:golden -- --sample 2000           # stratified across modalities
+pnpm eval:ragbench:run -- --label ragbench-baseline  # ~30–45 min, ~$30
+pnpm eval:ragbench:report                            # writes REPORT.md
 ```
 
+The benchmark uses `OPEN_RAGBENCH_USER_ID` from `.env.local` (default: `user_open_ragbench_eval`) as a tenant key so its 1k docs stay isolated from any other corpus you ingest. The run produces breakdowns by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by question type (`extractive` / `abstractive`) so you can see exactly where the pipeline struggles.
+
 **Metrics tracked per run:**
-- Retrieval: Recall@k (reranked + vector-only), MRR, context precision (LLM judge)
+- Retrieval: Recall@k (section-level), MRR, context precision (LLM judge)
 - Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
 
-Results are committed to `evals/runs/` as `<timestamp>_<label>.{json,md}` so you can diff them in git.
+Results are committed to `evals/benchmarks/open-ragbench/runs/` as `<timestamp>_<label>.{json,md}` so you can diff experiments in git. See `evals/benchmarks/open-ragbench/REPORT.md` for the latest headline numbers.
 
 ## Deployment
 
 Deploy to Vercel with one click. Set all environment variables from `.env.local.example` in your Vercel project settings. `DATABASE_URL` must point to your Neon connection string with `?sslmode=require`.
+
+## Observability (Axiom)
+
+Production logs, errors, and AI-call traces ship to [Axiom](https://axiom.co) (free tier: 0.5 TB/mo, 30-day retention). When `AXIOM_TOKEN` is unset, everything falls back to console — so local dev works without any signup.
+
+**One-time setup:**
+
+1. Create a free account at [axiom.co](https://axiom.co) and add a dataset named `knowledge-assistant`.
+2. Settings → API tokens → create a token with ingest scope on that dataset.
+3. In Vercel: **Integrations → Browse Marketplace → Axiom → Add Integration**. Pick this project and the dataset. This forwards `console.*` output from runtime/edge functions automatically.
+4. In Vercel project env vars, add `AXIOM_TOKEN` and `AXIOM_DATASET`. The app uses these to emit structured logs and OpenTelemetry traces on top of the drain.
+
+**What gets logged:**
+
+- Every API request (method, path, status, duration, userId) via `withAxiom` in the route handlers.
+- Chat completions (token usage, finish reason, session id) via `logger.info("chat.completion", ...)`.
+- Every `streamText` call as an OTel trace span (`ai.streamText`) — model, latency, token counts. Prompts and responses are **not** recorded (privacy default).
+- Uncaught Route Handler / Server Component errors via the `onRequestError` hook in `instrumentation.ts`.
+
+Query in Axiom with their SQL-like syntax, e.g. `['knowledge-assistant'] | where ['fields.userId'] == "user_..." | sort by _time desc`.
 
 ## Telegram → PR bot (optional)
 
