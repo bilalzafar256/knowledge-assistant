@@ -3,21 +3,21 @@
 // outputs the workflow needs to (a) check out the branch and (b) feed
 // the coder the right context.
 //
-// Env vars: DATABASE_URL, TASK_ID
+// Env vars: DATABASE_URL, TASK_ID, RUNNER_TEMP
 // Outputs (to $GITHUB_OUTPUT):
 //   branch          — the branch name to check out
 //   is_new_branch   — "true" if we just allocated it, "false" if it already existed
-//   plan            — the approved plan markdown
-//   revision_notes  — concatenated user feedback (may be empty)
-//   message         — the original user request
+//   plan_path       — file path (in $RUNNER_TEMP) holding the approved plan
+//   revision_path   — file path (in $RUNNER_TEMP) holding revision notes (may be empty)
+//   message_path    — file path (in $RUNNER_TEMP) holding the original user request
 
 import { execSync } from "node:child_process";
 import { appendFileSync, writeFileSync } from "node:fs";
 import { neon } from "@neondatabase/serverless";
 
-const { DATABASE_URL, TASK_ID, GITHUB_OUTPUT } = process.env;
-if (!DATABASE_URL || !TASK_ID || !GITHUB_OUTPUT) {
-  console.error("Missing DATABASE_URL, TASK_ID or GITHUB_OUTPUT");
+const { DATABASE_URL, TASK_ID, GITHUB_OUTPUT, RUNNER_TEMP } = process.env;
+if (!DATABASE_URL || !TASK_ID || !GITHUB_OUTPUT || !RUNNER_TEMP) {
+  console.error("Missing DATABASE_URL, TASK_ID, GITHUB_OUTPUT or RUNNER_TEMP");
   process.exit(1);
 }
 
@@ -66,19 +66,20 @@ const notes = Array.isArray(task.revision_notes)
   ? task.revision_notes.join("\n\n---\n\n")
   : "";
 
-// Pass big strings through files to avoid shell escaping landmines,
-// then expose the file paths or contents via outputs.
-writeFileSync("plan.md", task.plan_markdown ?? "");
-writeFileSync("revision-notes.md", notes);
-writeFileSync("message.txt", task.original_message ?? "");
+// Pass big strings through files to avoid shell escaping landmines.
+// Write to $RUNNER_TEMP (outside the repo checkout) so `git add -A` in
+// later steps can't sweep them into the commit.
+const planPath = `${RUNNER_TEMP}/plan.md`;
+const revisionPath = `${RUNNER_TEMP}/revision-notes.md`;
+const messagePath = `${RUNNER_TEMP}/message.txt`;
+writeFileSync(planPath, task.plan_markdown ?? "");
+writeFileSync(revisionPath, notes);
+writeFileSync(messagePath, task.original_message ?? "");
 
-const out = (key, value) => {
-  appendFileSync(GITHUB_OUTPUT, `${key}<<EOFTEL_${key}\n${value}\nEOFTEL_${key}\n`);
-};
 appendFileSync(GITHUB_OUTPUT, `branch=${branch}\n`);
 appendFileSync(GITHUB_OUTPUT, `is_new_branch=${isNew}\n`);
-out("plan", task.plan_markdown ?? "");
-out("revision_notes", notes);
-out("message", task.original_message ?? "");
+appendFileSync(GITHUB_OUTPUT, `plan_path=${planPath}\n`);
+appendFileSync(GITHUB_OUTPUT, `revision_path=${revisionPath}\n`);
+appendFileSync(GITHUB_OUTPUT, `message_path=${messagePath}\n`);
 
 console.log(`Branch: ${branch} (new=${isNew})`);

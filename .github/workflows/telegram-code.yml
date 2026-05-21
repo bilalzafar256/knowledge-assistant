@@ -57,34 +57,38 @@ jobs:
       - name: Run coder
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MESSAGE_PATH: ${{ steps.task.outputs.message_path }}
+          PLAN_PATH: ${{ steps.task.outputs.plan_path }}
+          REVISION_PATH: ${{ steps.task.outputs.revision_path }}
         run: |
           {
             echo "Read .agents/skills/coder/SKILL.md and follow it strictly."
             echo ""
             echo "## Original user request"
-            cat message.txt
+            cat "$MESSAGE_PATH"
             echo ""
             echo "## Approved plan (this is your contract)"
             echo ""
-            cat plan.md
-            if [ -s revision-notes.md ]; then
+            cat "$PLAN_PATH"
+            if [ -s "$REVISION_PATH" ]; then
               echo ""
               echo "## Code revision feedback (apply this on top of any existing branch state)"
-              cat revision-notes.md
+              cat "$REVISION_PATH"
             fi
-          } > coder-prompt.txt
-          claude -p "$(cat coder-prompt.txt)" \
+          } > "$RUNNER_TEMP/coder-prompt.txt"
+          claude -p "$(cat "$RUNNER_TEMP/coder-prompt.txt")" \
             --allowedTools "Read,Grep,Glob,Edit,Write,Bash" \
-            > coder-summary.md
+            > "$RUNNER_TEMP/coder-summary.md"
           echo "----- CODER SUMMARY -----"
-          cat coder-summary.md
+          cat "$RUNNER_TEMP/coder-summary.md"
 
       - name: Commit + push
         id: commit
         env:
           BRANCH: ${{ steps.task.outputs.branch }}
+          MESSAGE_PATH: ${{ steps.task.outputs.message_path }}
         run: |
-          MESSAGE=$(cat message.txt)
+          MESSAGE=$(cat "$MESSAGE_PATH")
           git add -A
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
