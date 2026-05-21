@@ -1,0 +1,48 @@
+name: Telegram Main PR
+
+# Triggered when the user taps "Open dev → main PR" after a feature has been
+# merged into dev. Just opens the PR — no coder, no verifier, no merge.
+
+on:
+  repository_dispatch:
+    types: [main-pr-task]
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Neon client
+        run: npm install --no-save @neondatabase/serverless
+
+      - name: Open dev → main PR
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: node .github/scripts/telegram-open-main-pr.mjs
+
+      - name: Notify failure
+        if: failure()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+        run: |
+          SHORT=$(echo "$TASK_ID" | cut -c1-8)
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=❌ Opening dev → main PR failed · task \`$SHORT\`. Check GitHub Actions logs." \
+            --data-urlencode "parse_mode=Markdown"
