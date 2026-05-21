@@ -137,6 +137,8 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 | `scripts/db-migrate.mjs` | Runs pending Drizzle migrations against Neon |
 | `scripts/db-baseline.mjs` | Brownfield helper — registers existing SQL files without re-running them. Do not run on a fresh empty DB. |
 
+> Migration SQL is generated locally via `pnpm db:generate` and never checked in — `.gitignore` line 20 excludes `drizzle/`. The migration filenames above are illustrative of the current local state, not artefacts you will find in a fresh clone.
+
 **Last full rebuild:** 2026-05-20 — schema dropped and rebuilt against a new Neon instance after the previous database was deleted. All three migrations applied via `pnpm db:migrate`. `CREATE EXTENSION IF NOT EXISTS vector;` was added to the top of `0000_petite_mockingbird.sql` afterwards so future fresh databases no longer need a manual pgvector enable step before migrating.
 
 ---
@@ -214,6 +216,40 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 ---
 
+## Helper Scripts & Agent Skills
+
+Both directories are load-bearing for the Telegram → PR pipeline. The scripts run inside the GitHub Actions workflows; the skills are loaded by Claude Code (planner / plan-verifier / coder steps).
+
+### `.github/scripts/`
+
+| File | Responsibility |
+|---|---|
+| `parse-verify.mjs` | Reads the plan-verifier's JSON output (tolerating stray markdown fences), emits `ok` / `blockers` / `warnings` to `$GITHUB_OUTPUT` |
+| `telegram-save-plan.mjs` | Persists `plan.md` to `telegram_tasks.plan_markdown`, flips status to `awaiting_plan_approval`, sends the plan to Telegram with Approve / Revise / Cancel buttons |
+| `telegram-save-questions.mjs` | Variant of the above for when the planner returned `# QUESTIONS` — stores the questions, flips status to `awaiting_clarification`, posts with a Cancel button |
+| `telegram-load-task-branch.mjs` | Loads an approved task from Neon, allocates a branch if needed, emits `branch` / `plan` / `revision_notes` / `message` for the coder step |
+| `telegram-save-diff.mjs` | Persists branch + diff summary, flips status to `awaiting_code_approval`, posts the diff to Telegram with Approve & open PR / Revise / Cancel buttons |
+| `telegram-no-changes.mjs` | Coder ran but produced no diff — parks the task back at `awaiting_plan_approval` and notifies Telegram |
+| `telegram-open-pr.mjs` | Opens a PR from the task branch into `dev`, saves the URL, marks the task `done`, notifies Telegram |
+
+### `.agents/skills/`
+
+| Skill | Purpose |
+|---|---|
+| `planner/` | Produces the implementation plan (or clarifying questions) from a Telegram request |
+| `plan-verifier/` | Skeptical second pass that audits the planner's output and emits strict JSON for downstream automation |
+| `coder/` | Implements an already-approved plan as a minimal diff — runs inside `telegram-code.yml` |
+| `find-skills/` | Helps discover and install additional agent skills from the open ecosystem |
+| `nextjs-developer/` | Specialist for Next.js 14+ App Router work (route handlers, RSC, middleware, deployment) |
+| `nextjs-app-router-fundamentals/` | Guide for App Router basics, layouts, metadata, Pages-Router migration |
+| `nextjs-app-router-patterns/` | Advanced patterns — streaming, parallel routes, advanced data fetching |
+| `nextjs-best-practices/` | Server Components, data fetching, routing principles |
+| `nextjs-react-typescript/` | TypeScript + Next.js + Shadcn/Radix/Tailwind reference |
+| `neon-postgres/` | Neon serverless Postgres reference (connection methods, auth, CLI, Platform API) |
+| `clerk-nextjs-patterns/` | Advanced Clerk patterns — middleware, Server Actions, caching |
+
+---
+
 ## RAG Pipeline
 
 ```
@@ -244,33 +280,48 @@ Chat query
 
 ## Telegram → PR Bot
 
-A dev-only side channel for issuing code-change requests over Telegram. Not user-facing.
+A dev-only side channel for issuing code-change requests over Telegram. Not user-facing. Task state is persisted to a `telegram_tasks` table in Neon so a single conversation can move through `awaiting_clarification → awaiting_plan_approval → awaiting_code_approval → done` across multiple workflow runs.
 
 ```
 Telegram message
-  └─ POST /api/telegram/webhook         ← verify x-telegram-bot-api-secret-token header
-       ├─ check chat.id ∈ allowlist     ← single-user whitelist via TELEGRAM_CHAT_ID
-       └─ POST .../dispatches           ← github repository_dispatch (event_type: telegram-task)
+  └─ POST /api/telegram/webhook                     ← verify x-telegram-bot-api-secret-token
+       ├─ check chat.id ∈ allowlist                  ← TELEGRAM_CHAT_ID
+       ├─ classifyMessage() (lib/telegram-classifier) → plan | code | pr
+       └─ POST .../dispatches with one of:
+            • event_type: plan-task                  ← new request or revise-plan
+            • event_type: code-task                  ← user approved a plan
+            • event_type: pr-task                    ← user approved the diff
 
-GitHub Actions (.github/workflows/telegram-to-pr.yml)
-  └─ checkout + setup-node 20
-  └─ npm i -g @anthropic-ai/claude-code
-  └─ git checkout -b telegram/<timestamp>
-  └─ claude -p "$MESSAGE" --dangerously-skip-permissions
-  └─ git commit + push to branch
-  └─ gh pr create --base main
-  └─ Telegram sendMessage with PR URL (or failure notice)
+GitHub Actions — three workflows, one per event_type:
+
+.github/workflows/telegram-plan.yml          (on: repository_dispatch [plan-task])
+  └─ planner skill   → plan.md  (or questions.md)
+  └─ plan-verifier   → verify.json
+       └─ blockers? one auto-retry with feedback, then bail
+  └─ telegram-save-plan.mjs / telegram-save-questions.mjs
+       → Neon row updated, Telegram message sent with Approve / Revise / Cancel
+
+.github/workflows/telegram-code.yml          (on: repository_dispatch [code-task])
+  └─ telegram-load-task-branch.mjs           ← pulls approved plan from Neon, picks branch
+  └─ coder skill                             ← writes the diff
+  └─ git commit + push (or telegram-no-changes.mjs if empty)
+  └─ telegram-save-diff.mjs                  ← Neon updated, diff summary sent with
+                                               Approve & open PR / Revise / Cancel
+
+.github/workflows/telegram-pr.yml            (on: repository_dispatch [pr-task])
+  └─ telegram-open-pr.mjs                    ← gh pr create --base dev, save URL,
+                                               mark task done, notify Telegram
 ```
 
-**Env vars** (all optional; webhook returns 503 if missing):
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`, `GITHUB_PAT`, `GITHUB_REPO`.
+**Env vars** (all optional in the Next.js app; webhook returns 503 if missing):
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`, `GITHUB_PAT`, `GITHUB_REPO`, `DATABASE_URL` (the workflows themselves read/write `telegram_tasks` via `DATABASE_URL`).
 
-**GitHub secrets:** `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN` (for the notify-back step).
+**GitHub secrets:** `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DATABASE_URL`, plus a PAT with PR-create rights for `telegram-pr.yml`.
 
 **Security boundaries:**
 - Telegram webhook secret + `chat.id` allowlist — both must match.
 - Fine-grained PAT scoped to a single repo with `Contents: RW` only.
-- Action can push to branches but never to `main`; PRs require human review.
+- Actions can push to task branches but never to `main` or `dev`; PRs require human review.
 
 ---
 
