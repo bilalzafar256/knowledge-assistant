@@ -171,7 +171,33 @@ Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to 
 | `pnpm db:generate` | Generate Drizzle migration files |
 | `pnpm db:migrate` | Apply pending migrations to Neon |
 | `pnpm db:studio` | Open Drizzle Studio (DB GUI) |
+| `pnpm eval:generate` | Generate a synthetic Q&A golden set from chunks in the DB → `evals/golden/golden-set.json` |
+| `pnpm eval:run -- --label <name>` | Run the eval suite against the current pipeline → timestamped JSON + Markdown in `evals/runs/` |
 | `npx inngest-cli@latest dev` | Start Inngest local dev server (background jobs) |
+
+## Retrieval
+
+The chat uses **hybrid search** — vector similarity (pgvector cosine) and lexical search (Postgres `tsvector` BM25-style ranking) are run in parallel inside one SQL CTE, then fused via Reciprocal Rank Fusion (k=60). The fused top-15 is then re-ranked by **Cohere Rerank 3.5** (set `COHERE_API_KEY`) — or gpt-4o-mini as a graceful fallback — and the top 3 are passed to the LLM. See `src/lib/ai.ts` (`createSearchKnowledgeTool`) and migration `drizzle/0005_hybrid_search.sql`.
+
+The chat system prompt is intentionally strict about grounding: the model is instructed to use only retrieved chunks and to refuse to fill in specific numbers/dates/names when the chunks don't contain them.
+
+## RAG Evals
+
+A lightweight harness measures retrieval and answer quality so you can A/B-test changes (rerankers, chunk size, hybrid search, model swaps).
+
+**Quick start:**
+```bash
+pnpm eval:generate                       # 25 synthetic Q&A pairs from DB chunks
+pnpm eval:run -- --label baseline        # run baseline, save to evals/runs/
+# make a change to src/lib/ai.ts ...
+pnpm eval:run -- --label after-hybrid    # compare against baseline
+```
+
+**Metrics tracked per run:**
+- Retrieval: Recall@k (reranked + vector-only), MRR, context precision (LLM judge)
+- Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
+
+Results are committed to `evals/runs/` as `<timestamp>_<label>.{json,md}` so you can diff them in git.
 
 ## Deployment
 

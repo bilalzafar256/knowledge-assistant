@@ -106,10 +106,8 @@ export const documentChunks = pgTable(
   (table) => [
     index("chunks_document_id_idx").on(table.documentId),
     index("chunks_user_id_idx").on(table.userId),
-    // For vector similarity search — requires pgvector extension
-    // The actual ivfflat index is created via raw SQL migration:
-    // CREATE INDEX chunks_embedding_idx ON document_chunks
-    //   USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+    // Vector index (ivfflat) + content_tsv generated column + GIN index
+    // for hybrid search are created in raw SQL migrations (0000, 0005).
   ]
 );
 

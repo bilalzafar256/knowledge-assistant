@@ -13,7 +13,9 @@
     "db:migrate": "node scripts/db-migrate.mjs",
     "db:baseline": "node scripts/db-baseline.mjs",
     "db:studio": "drizzle-kit studio",
-    "db:push": "echo 'db:push is deprecated — use db:generate + db:migrate instead' && drizzle-kit push"
+    "db:push": "echo 'db:push is deprecated — use db:generate + db:migrate instead' && drizzle-kit push",
+    "eval:generate": "node evals/generate-golden.mjs",
+    "eval:run": "node evals/run.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.48",
