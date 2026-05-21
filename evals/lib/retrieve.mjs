@@ -44,24 +44,33 @@ async function cohereRerank(query, candidates, topK) {
   const documents = candidates.map(
     (c) => `[${c.documentTitle}] ${c.content.slice(0, 1500)}`
   );
-  const res = await fetch("https://api.cohere.com/v2/rerank", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${COHERE_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: COHERE_RERANK_MODEL,
-      query,
-      documents,
-      top_n: topK,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Cohere ${res.status}: ${await res.text()}`);
+  // Hard timeout — Cohere trial keys under heavy contention can leave fetch
+  // calls hanging indefinitely, blocking the entire eval worker pool.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
+  try {
+    const res = await fetch("https://api.cohere.com/v2/rerank", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${COHERE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: COHERE_RERANK_MODEL,
+        query,
+        documents,
+        top_n: topK,
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      throw new Error(`Cohere ${res.status}: ${await res.text()}`);
+    }
+    const data = await res.json();
+    return data.results.map((r) => r.index);
+  } finally {
+    clearTimeout(timer);
   }
-  const data = await res.json();
-  return data.results.map((r) => r.index);
 }
 
 async function llmRerank(query, candidates, topK) {

@@ -109,6 +109,21 @@ async function embedBatch(texts) {
 // ── Discover papers ───────────────────────────────────────────────────────────
 let files = readdirSync(CORPUS_DIR).filter((f) => f.endsWith(".json"));
 if (LIMIT) files = files.slice(0, LIMIT);
+
+// Skip papers whose paper_id is already in the DB for this user. Lets a
+// crashed run be resumed without --reset (which wipes everything).
+const existingRows = await sql`
+  SELECT metadata->>'paper_id' AS paper_id
+  FROM documents
+  WHERE user_id = ${USER_ID}
+    AND metadata->>'benchmark' = 'open_ragbench'
+`;
+const existingPaperIds = new Set(existingRows.map((r) => r.paper_id).filter(Boolean));
+if (existingPaperIds.size > 0) {
+  const before = files.length;
+  files = files.filter((f) => !existingPaperIds.has(f.replace(/\.json$/, "")));
+  console.log(`▸ Skipping ${before - files.length} already-ingested papers (resume mode)`);
+}
 console.log(`▸ Ingesting ${files.length} papers for user ${USER_ID}`);
 
 // ── Per-paper ingestion ───────────────────────────────────────────────────────

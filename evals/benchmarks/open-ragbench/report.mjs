@@ -18,13 +18,16 @@ import { dirname, join, resolve } from "node:path";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const RUNS_DIR = join(__dir, "runs");
-const OUT_PATH = join(__dir, "REPORT.md");
 
 const argv = process.argv.slice(2);
 function arg(name) {
   const i = argv.indexOf(`--${name}`);
   return i === -1 ? null : argv[i + 1];
 }
+const outArg = arg("out");
+const OUT_PATH = outArg
+  ? (outArg.startsWith("/") ? outArg : resolve(__dir, outArg))
+  : join(__dir, "REPORT.md");
 
 function findLatestRun() {
   if (!existsSync(RUNS_DIR)) return null;
