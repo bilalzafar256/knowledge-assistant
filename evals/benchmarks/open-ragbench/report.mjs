@@ -88,6 +88,40 @@ const costPerQ = s.estimated_cost_usd != null
   ? (s.estimated_cost_usd / per.length).toFixed(4)
   : "—";
 
+// ── Verdict tiers ─────────────────────────────────────────────────────────────
+//
+// Informal community baselines for RAG eval. The Open RAG Benchmark itself
+// does not publish official pass/fail cutoffs — it's a dataset, not a graded
+// test. These thresholds reflect typical "what looks production-ready vs
+// research-grade" splits from RAG papers and vendor blog posts (Cohere,
+// Vectara, LlamaIndex). Treat the verdicts as directional, not definitive.
+const TIERS = [
+  { key: "recall_at_k_reranked", label: "Recall@5",       fmt: pct,  strong: 0.85, acceptable: 0.70 },
+  { key: "mrr_reranked",         label: "MRR",            fmt: (x) => num(x, 3), strong: 0.65, acceptable: 0.45 },
+  { key: "context_precision",    label: "Context prec.",  fmt: pct,  strong: 0.60, acceptable: 0.40 },
+  { key: "faithfulness",         label: "Faithfulness",   fmt: pct,  strong: 0.80, acceptable: 0.65 },
+  { key: "correctness",          label: "Correctness",    fmt: pct,  strong: 0.75, acceptable: 0.55 },
+  { key: "citation",             label: "Citation acc.",  fmt: pct,  strong: 0.80, acceptable: 0.60 },
+];
+function tier(metric, value) {
+  if (value == null || Number.isNaN(value)) return { name: "—", marker: "·" };
+  if (value >= metric.strong) return { name: "Strong", marker: "🟢" };
+  if (value >= metric.acceptable) return { name: "Acceptable", marker: "🟡" };
+  return { name: "Needs work", marker: "🔴" };
+}
+const verdicts = TIERS
+  .filter((m) => s[m.key] != null)
+  .map((m) => ({ ...m, value: s[m.key], ...tier(m, s[m.key]) }));
+const strongCount = verdicts.filter((v) => v.name === "Strong").length;
+const acceptableCount = verdicts.filter((v) => v.name === "Acceptable").length;
+const needsWorkCount = verdicts.filter((v) => v.name === "Needs work").length;
+const overall =
+  needsWorkCount === 0 && strongCount >= acceptableCount
+    ? { name: "Production-ready", marker: "🟢" }
+    : needsWorkCount <= 1 && strongCount + acceptableCount >= 4
+    ? { name: "Acceptable for pilot", marker: "🟡" }
+    : { name: "Needs work before production", marker: "🔴" };
+
 // ── Render ────────────────────────────────────────────────────────────────────
 const lines = [];
 lines.push("# How effective is this RAG system?");
@@ -109,6 +143,21 @@ if (run.config.ranAnswers) {
   lines.push(`- **Citation accuracy** — fraction of answers that name the source document: **${pct(s.citation)}**`);
   lines.push(`- **Avg latency:** ${avgLatencyS}s per query · **Cost per query:** $${costPerQ}`);
 }
+lines.push("");
+
+lines.push("## Verdict");
+lines.push("");
+lines.push(`${overall.marker} **Overall: ${overall.name}**`);
+lines.push("");
+lines.push("Per-metric scoring against informal RAG community baselines. The Open RAG Benchmark does not publish official pass/fail cutoffs — these thresholds are directional, drawn from typical splits in RAG research and vendor blog posts (Cohere, Vectara, LlamaIndex).");
+lines.push("");
+lines.push("| Metric | Value | Tier | Strong ≥ | Acceptable ≥ |");
+lines.push("| --- | ---: | :---: | ---: | ---: |");
+for (const v of verdicts) {
+  lines.push(`| ${v.label} | ${v.fmt(v.value)} | ${v.marker} ${v.name} | ${v.fmt(v.strong)} | ${v.fmt(v.acceptable)} |`);
+}
+lines.push("");
+lines.push("Legend: 🟢 Strong (production-grade) · 🟡 Acceptable (pilot-ready) · 🔴 Needs work (below typical production bar).");
 lines.push("");
 
 lines.push("## What this means");
