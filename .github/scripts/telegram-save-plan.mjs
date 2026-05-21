@@ -2,12 +2,12 @@
 // 'awaiting_plan_approval', and sends the plan to Telegram with an inline
 // keyboard (Approve / Revise / Cancel).
 //
-// Env vars: DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID, WARNINGS (optional)
+// Env vars: DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID
 
 import { readFileSync } from "node:fs";
 import { neon } from "@neondatabase/serverless";
 
-const { DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID, WARNINGS } = process.env;
+const { DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID } = process.env;
 
 if (!DATABASE_URL || !BOT_TOKEN || !TASK_ID || !CHAT_ID) {
   console.error("Missing one of DATABASE_URL, BOT_TOKEN, TASK_ID, CHAT_ID");
@@ -32,16 +32,10 @@ if (body.length > MAX_BODY) {
   body = body.slice(0, MAX_BODY) + "\n\n…(truncated — see GitHub Actions logs for full plan)";
 }
 
-const warningsBlock =
-  WARNINGS && WARNINGS.trim()
-    ? `\n\n⚠️ *Verifier notes:*\n${WARNINGS}`
-    : "";
-
 const text = [
   `📋 *Plan ready* · task \`${short}\``,
   "",
   body,
-  warningsBlock,
   "",
   "_Approve, revise, or cancel below._",
 ].join("\n");

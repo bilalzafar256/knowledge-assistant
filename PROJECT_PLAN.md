@@ -16,7 +16,7 @@
 | Security | Arcjet — shield, bot detection, token bucket + fixed window rate limiting |
 | Background Jobs | Inngest — event-driven ingestion queue with retries |
 | Analytics | Vercel Analytics + Speed Insights |
-| UI | shadcn/ui + Tailwind CSS v4 |
+| UI | shadcn/ui + Tailwind CSS v4 · Geist + Geist Mono (next/font/google) |
 | Package Manager | pnpm |
 
 ---
@@ -170,7 +170,7 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 | Route | Type | Description |
 |---|---|---|
-| `/` | Server | Landing page — hero, 6 feature cards, CTA |
+| `/` | Server | Case-study landing page — hero w/ chat screenshot, eval-stats strip, problem statement, architecture diagram, 5 deep-dive sections (hybrid retrieval, reranking, evals, security, ingestion), product screenshot grid, Telegram-bot bonus, tech stack, "Book a call" CTA → `#contact` |
 | `/sign-in` · `/sign-up` | Server | Clerk-hosted auth pages |
 | `/dashboard` | Server | Overview — 4 stat cards (Docs, Chunks, Conversations, Messages) |
 | `/dashboard/chat` | Server | Chat list on mobile; redirects to last session on desktop |
@@ -218,13 +218,12 @@ Append-only log of significant actions. Fire-and-forget via `logAudit()`.
 
 ## Helper Scripts & Agent Skills
 
-Both directories are load-bearing for the Telegram → PR pipeline. The scripts run inside the GitHub Actions workflows; the skills are loaded by Claude Code (planner / plan-verifier / coder steps).
+Both directories are load-bearing for the Telegram → PR pipeline. The scripts run inside the GitHub Actions workflows. Planning is delegated to Claude Code's built-in `Plan` subagent (read-only software-architect persona); only the `coder` step still loads a custom SKILL.md.
 
 ### `.github/scripts/`
 
 | File | Responsibility |
 |---|---|
-| `parse-verify.mjs` | Reads the plan-verifier's JSON output (tolerating stray markdown fences), emits `ok` / `blockers` / `warnings` to `$GITHUB_OUTPUT` |
 | `telegram-save-plan.mjs` | Persists `plan.md` to `telegram_tasks.plan_markdown`, flips status to `awaiting_plan_approval`, sends the plan to Telegram with Approve / Revise / Cancel buttons |
 | `telegram-save-questions.mjs` | Variant of the above for when the planner returned `# QUESTIONS` — stores the questions, flips status to `awaiting_clarification`, posts with a Cancel button |
 | `telegram-load-task-branch.mjs` | Loads an approved task from Neon, allocates a branch if needed, emits `branch` / `plan` / `revision_notes` / `message` for the coder step |
@@ -236,8 +235,6 @@ Both directories are load-bearing for the Telegram → PR pipeline. The scripts 
 
 | Skill | Purpose |
 |---|---|
-| `planner/` | Produces the implementation plan (or clarifying questions) from a Telegram request |
-| `plan-verifier/` | Skeptical second pass that audits the planner's output and emits strict JSON for downstream automation |
 | `coder/` | Implements an already-approved plan as a minimal diff — runs inside `telegram-code.yml` |
 | `find-skills/` | Helps discover and install additional agent skills from the open ecosystem |
 | `nextjs-developer/` | Specialist for Next.js 14+ App Router work (route handlers, RSC, middleware, deployment) |
@@ -271,10 +268,63 @@ Background (Inngest)
 Chat query
   └─ synthesizeSearchQuery()     ← gpt-4o-mini rewrites follow-up as standalone query
   └─ generateEmbedding()         ← embed the synthesized query
-  └─ pgvector cosine search      ← fetch 3× candidates (max 15)
+  └─ Hybrid retrieval (single SQL CTE):
+       ├─ vector_hits             ← pgvector cosine top-N (semantic)
+       ├─ bm25_hits               ← ts_rank_cd on content_tsv (lexical, via GIN index)
+       └─ RRF fusion              ← Σ 1 / (60 + rank_i)  → fused top 15 candidates
   └─ rerankChunks()              ← single gpt-4o-mini call scores all candidates
   └─ top-N chunks → LLM context  ← streamed response with source citations
 ```
+
+**Hybrid search note:** `content_tsv` is a `tsvector GENERATED ALWAYS AS (to_tsvector('english', content)) STORED` column on `document_chunks`, kept in sync by Postgres. GIN index `chunks_content_tsv_idx` makes lookup constant-time. Vector and BM25 results are fused in-database via Reciprocal Rank Fusion (k=60) inside one query, so retrieval latency stays ~same as pure vector. See `0005_hybrid_search.sql`.
+
+---
+
+## RAG Evals (offline harness)
+
+Lightweight CLI-only eval suite under `evals/`. Not wired into CI yet — invoked manually before/after pipeline changes to compare versions.
+
+```
+evals/
+├── lib/
+│   ├── env.mjs           ← loads .env.local, exposes DATABASE_URL/OPENAI_API_KEY/model names
+│   ├── db.mjs            ← Neon serverless client
+│   ├── openai.mjs        ← OpenAI client wrapped with 429-aware retry + backoff
+│   ├── retrieve.mjs      ← mirrors src/lib/ai.ts: synthesizeSearchQuery → embed → vector search → rerank
+│   ├── answer.mjs        ← mirrors src/app/api/chat/route.ts: gpt-4o w/ searchKnowledge tool, multi-step loop
+│   └── judges.mjs        ← LLM-as-judge: contextPrecision, faithfulness, correctness; deterministic citation check
+├── generate-golden.mjs   ← samples chunks, asks gpt-4o-mini to write Q&A whose answer is in chunk
+├── run.mjs               ← runs eval over golden set with concurrency, writes timestamped JSON + MD
+├── golden/golden-set.json      ← generated Q&A pairs (regen anytime; can be hand-curated)
+└── runs/<timestamp>_<label>.{json,md}   ← per-run artifacts, committed for diffing
+```
+
+**Metrics:**
+- Retrieval: `recall_at_k_reranked`, `recall_vector_at_5/10` (candidate pool), `recall_pure_vector_at_5/10` (diagnostic), `mrr_reranked`, `mrr_vector`, `mrr_pure_vector`, `context_precision`
+- Answer (when `--no-answers` not set): `faithfulness`, `correctness`, `citation`, `avg_latency_ms`, `total_input/output_tokens`, `estimated_cost_usd`
+
+**Run cycle:** `pnpm eval:generate` (once) → `pnpm eval:run -- --label baseline` → make changes → `pnpm eval:run -- --label <experiment>` → diff the two MD files.
+
+### Run history (25 synthetic Q&A, 24 docs / 37 chunks)
+
+| Run | Recall@5 rerank | MRR rerank | Ctx prec | Faith | Corr | Cite | Latency | Cost |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `baseline` — pure vector, k=5, original prompt | 100% | 0.770 | 28.0% | 60% | 98% | 100% | 6.3 s | $0.247 |
+| `hybrid-search` — + vector+BM25 RRF fusion | 100% | 0.737 | 28.8% | 64% | 100% | 100% | 7.3 s | $0.250 |
+| `limit3-strict-prompt` — + k=3, strict grounding prompt | 100% | 0.731 | **31.2%** | 64% | 96% | 96% | **4.2 s** | **$0.202** |
+| `cohere-rerank` — + Cohere Rerank 3.5 (vs gpt-4o-mini) | 100% | **0.860** | 28.8% | 64% | 96% | 96% | 4.4 s | $0.202 |
+
+**Read of run 3:** Real wins — latency −33%, cost −18%, context precision +3.2pp. The strict grounding prompt only fixed 1 of 10 baseline faithfulness failures (q_12 ARR target). gpt-4o continues to fabricate specific numbers/specs even when told not to (q_6 interest rate, q_9 salary, q_11 expense, q_25 home-office specs). The remaining faithfulness ceiling appears to be a mix of (a) gpt-4o's training to be "helpful" by filling in plausible specifics and (b) the faithfulness judge being strict about paraphrased restatements.
+
+**Read of run 4 (Cohere):** Reranker swap moved MRR from 0.731 → **0.860** (+18%). 6 questions now have the right chunk at rank #1 that previously sat at rank 2-4 (q_2, q_3, q_10, q_11, q_19, q_23). This is the largest single-change improvement so far. Recall@5 already at 100%, so that's unchanged; faithfulness/correctness unaffected because the right chunk was always *somewhere* in the top-K, just not first. The remaining MRR gap (1.0 − 0.86) is questions where Cohere correctly identified the right document but multiple chunks from that doc compete for top spot.
+
+**Caveat:** the run used a Cohere trial key (10 RPM cap), which triggered ~2 graceful fallbacks to gpt-4o-mini mid-run. With a production key, MRR would likely be marginally higher.
+
+**Next levers** if you want to push faithfulness above 64%: swap chat model (Claude Sonnet 4.6 with prompt caching is typically more obedient about grounding), or loosen the faithfulness judge to flag only contradictions, not paraphrasing.
+
+### Reranker
+
+`rerankChunks` in `src/lib/ai.ts` and `evals/lib/retrieve.mjs` use Cohere Rerank 3.5 when `COHERE_API_KEY` is set, otherwise fall back to a gpt-4o-mini scoring call. The Cohere path is now the default in production.
 
 ---
 
@@ -295,9 +345,9 @@ Telegram message
 GitHub Actions — three workflows, one per event_type:
 
 .github/workflows/telegram-plan.yml          (on: repository_dispatch [plan-task])
-  └─ planner skill   → plan.md  (or questions.md)
-  └─ plan-verifier   → verify.json
-       └─ blockers? one auto-retry with feedback, then bail
+  └─ Claude Code `Plan` subagent  → plan.md  (or questions.md)
+       • read-only software-architect persona; tools: Read/Grep/Glob
+       • first line is `# PLAN` or `# QUESTIONS` — routes the next step
   └─ telegram-save-plan.mjs / telegram-save-questions.mjs
        → Neon row updated, Telegram message sent with Approve / Revise / Cancel
 

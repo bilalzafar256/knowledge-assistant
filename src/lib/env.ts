@@ -23,6 +23,9 @@ const envSchema = z.object({
     .string({ required_error: "OPENAI_API_KEY is required" })
     .min(1, "OPENAI_API_KEY must not be empty"),
 
+  // ── Cohere (optional — reranker; falls back to gpt-4o-mini if absent) ──────
+  COHERE_API_KEY: z.string().optional(),
+
   // ── Clerk ──────────────────────────────────────────────────────────────────
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
     .string({ required_error: "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required" })
