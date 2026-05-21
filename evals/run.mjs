@@ -20,7 +20,7 @@ import {
   answerCorrectness,
   citationAccuracy,
 } from "./lib/judges.mjs";
-import { EVAL_USER_ID, CHAT_MODEL, EMBEDDING_MODEL, JUDGE_MODEL } from "./lib/env.mjs";
+import { CHAT_MODEL, EMBEDDING_MODEL, JUDGE_MODEL } from "./lib/env.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dir, "..");
@@ -50,9 +50,14 @@ const goldenPath = goldenArg
     : resolve(REPO_ROOT, goldenArg)
   : join(__dir, "golden", "golden-set.json");
 const userId =
-  userIdArg ??
-  (userEnvArg ? process.env[userEnvArg] : null) ??
-  EVAL_USER_ID;
+  userIdArg ?? (userEnvArg ? process.env[userEnvArg] : null);
+if (!userId) {
+  console.error(
+    "✗ Pass --user <id> or --user-env <ENV_VAR>. " +
+      "For the Open RAG Benchmark, use `pnpm eval:ragbench:run` which wires this up."
+  );
+  process.exit(1);
+}
 const runsDir = runsDirArg
   ? isAbsolute(runsDirArg)
     ? runsDirArg

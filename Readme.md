@@ -171,8 +171,6 @@ Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to 
 | `pnpm db:generate` | Generate Drizzle migration files |
 | `pnpm db:migrate` | Apply pending migrations to Neon |
 | `pnpm db:studio` | Open Drizzle Studio (DB GUI) |
-| `pnpm eval:generate` | Generate a synthetic Q&A golden set from chunks in the DB → `evals/golden/golden-set.json` |
-| `pnpm eval:run -- --label <name>` | Run the eval suite against the current pipeline → timestamped JSON + Markdown in `evals/runs/` |
 | `pnpm eval:ragbench:download` | Download Vectara's Open RAG Benchmark (~743 MB) into `evals/benchmarks/open-ragbench/data/` |
 | `pnpm eval:ragbench:ingest` | Bulk-load benchmark corpus into Neon, tagging chunks with `section_id` for ground-truth recall |
 | `pnpm eval:ragbench:golden -- --sample 2000` | Convert benchmark Q&A → golden set (stratified across modalities) |
@@ -188,26 +186,9 @@ The chat system prompt is intentionally strict about grounding: the model is ins
 
 ## RAG Evals
 
-A lightweight harness measures retrieval and answer quality so you can A/B-test changes (rerankers, chunk size, hybrid search, model swaps).
+The eval harness measures retrieval and answer quality against **Vectara's Open RAG Benchmark** — 1,000 arXiv papers and 3,045 expert-written Q&A pairs spanning text, tables, and figures. Because the benchmark's ground truth is published, results are directly comparable to other RAG systems benchmarked on the same set.
 
 **Quick start:**
-```bash
-pnpm eval:generate                       # 25 synthetic Q&A pairs from DB chunks
-pnpm eval:run -- --label baseline        # run baseline, save to evals/runs/
-# make a change to src/lib/ai.ts ...
-pnpm eval:run -- --label after-hybrid    # compare against baseline
-```
-
-**Metrics tracked per run:**
-- Retrieval: Recall@k (reranked + vector-only), MRR, context precision (LLM judge)
-- Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
-
-Results are committed to `evals/runs/` as `<timestamp>_<label>.{json,md}` so you can diff them in git.
-
-**External benchmark — Vectara Open RAG Benchmark:**
-
-For a stress test against expert-written questions on real arXiv papers (text, tables, images), run:
-
 ```bash
 pnpm eval:ragbench:download                          # ~743 MB, idempotent
 pnpm eval:ragbench:ingest                            # ~3–5 min, ~$5 in embeddings
@@ -216,7 +197,13 @@ pnpm eval:ragbench:run -- --label ragbench-baseline  # ~30–45 min, ~$30
 pnpm eval:ragbench:report                            # writes REPORT.md
 ```
 
-Requires `OPEN_RAGBENCH_USER_ID` in `.env.local` (any stable string — not a real Clerk user). The benchmark run produces extra breakdowns by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by question type (`extractive` / `abstractive`) so you can see exactly where the pipeline struggles. See `evals/benchmarks/open-ragbench/REPORT.md` for the latest headline numbers.
+The benchmark uses `OPEN_RAGBENCH_USER_ID` from `.env.local` (default: `user_open_ragbench_eval`) as a tenant key so its 1k docs stay isolated from any other corpus you ingest. The run produces breakdowns by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by question type (`extractive` / `abstractive`) so you can see exactly where the pipeline struggles.
+
+**Metrics tracked per run:**
+- Retrieval: Recall@k (section-level), MRR, context precision (LLM judge)
+- Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
+
+Results are committed to `evals/benchmarks/open-ragbench/runs/` as `<timestamp>_<label>.{json,md}` so you can diff experiments in git. See `evals/benchmarks/open-ragbench/REPORT.md` for the latest headline numbers.
 
 ## Deployment
 

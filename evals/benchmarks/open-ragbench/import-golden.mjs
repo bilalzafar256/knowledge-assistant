@@ -2,14 +2,12 @@
  * Convert Vectara Open RAG Benchmark Q&A files into a golden set compatible
  * with `evals/run.mjs`.
  *
- * Differences from `evals/generate-golden.mjs`:
- *   - Reads pre-written human Q&A (no LLM generation).
- *   - Ground truth is (doc_id, section_id) — stored as `expected_section_id`.
- *     `expected_chunk_id` is intentionally absent; run.mjs falls back to
- *     section-level matching when it sees `expected_section_id`.
- *   - Stratified sampling across modality (text | text-image | text-table |
- *     text-table-image) and type (abstractive | extractive) so smaller
- *     samples still exercise every facet of the benchmark.
+ * - Reads pre-written human Q&A (no LLM generation).
+ * - Ground truth is (doc_id, section_id) — stored as `expected_section_id`,
+ *   which `evals/run.mjs` uses for section-level recall matching.
+ * - Stratified sampling across modality (text | text-image | text-table |
+ *   text-table-image) and type (abstractive | extractive) so smaller
+ *   samples still exercise every facet of the benchmark.
  *
  * Usage:
  *   node evals/benchmarks/open-ragbench/import-golden.mjs                # all

@@ -16,8 +16,6 @@ function require(name) {
 export const DATABASE_URL = require("DATABASE_URL");
 export const OPENAI_API_KEY = require("OPENAI_API_KEY");
 export const COHERE_API_KEY = process.env.COHERE_API_KEY || null;
-export const EVAL_USER_ID =
-  process.env.EVAL_USER_ID || "user_3Bdjd8LKb7q8FwtvfIKmr27LjVN";
 export const OPEN_RAGBENCH_USER_ID =
   process.env.OPEN_RAGBENCH_USER_ID || "user_open_ragbench_eval";
 

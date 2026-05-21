@@ -88,14 +88,13 @@ export async function POST(request: NextRequest) {
   //  Every action ends with logAudit({ userId, action, ... })
 }`;
 
-const evalSnippet = `$ pnpm eval:run -- --label cohere-rerank
-✓ 25/25 questions answered
-✓ wrote evals/runs/2026-05-20_1247_cohere-rerank.json
-✓ wrote evals/runs/2026-05-20_1247_cohere-rerank.md
+const evalSnippet = `$ pnpm eval:ragbench:run -- --label ragbench-baseline
+✓ ran 2000/2000 questions from Vectara Open RAG Benchmark
+✓ wrote evals/benchmarks/open-ragbench/runs/...ragbench-baseline.{json,md}
 
-Recall@5 (reranked)  100%      MRR (rerank)   0.860
-Faithfulness         64%       Correctness    96%
-Avg latency          4.4 s     Cost           $0.202`;
+Recall@5 (section)   75%       MRR (rerank)   0.443
+Faithfulness         40%       Correctness    53%
+Avg latency          2.6 s     Cost           $0.0062 / query`;
 
 export default function LandingPage() {
   return (
