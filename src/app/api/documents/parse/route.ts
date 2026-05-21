@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { aj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import {
   extractText,
   isSupportedType,
@@ -67,7 +68,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ text, wordCount });
   } catch (error) {
-    console.error("[parse]", error);
+    logger.error("api.documents.parse_failed", {
+      userId,
+      fileName: file.name,
+      mimeType,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         error:

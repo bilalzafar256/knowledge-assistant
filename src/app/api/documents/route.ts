@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { uploadAj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import { isCsrfSafe } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import { documents } from "@/lib/schema";
@@ -43,7 +44,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ documents: docs });
   } catch (error) {
-    console.error("[GET /api/documents]", error);
+    logger.error("api.documents.list_failed", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to fetch documents" },
       { status: 500 }
@@ -125,7 +129,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ document: created }, { status: 201 });
   } catch (error) {
-    console.error("[POST /api/documents]", error);
+    logger.error("api.documents.create_failed", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to create document" },
       { status: 500 }

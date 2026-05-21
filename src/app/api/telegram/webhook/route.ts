@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/axiom/server";
 import { env } from "@/lib/env";
 import { db } from "@/lib/db";
 import { telegramTasks, type TelegramTaskStatus } from "@/lib/schema";
@@ -65,7 +66,11 @@ async function dispatchWorkflow(
     }),
   });
   if (!res.ok) {
-    console.error("[telegram] dispatch failed", eventType, res.status, await res.text());
+    logger.error("telegram.dispatch_failed", {
+      eventType,
+      status: res.status,
+      body: await res.text(),
+    });
   }
   return res.ok;
 }
@@ -193,7 +198,10 @@ async function handleNewMessage(chatId: number, text: string) {
     classification = await classifyMessage(text);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error("[telegram] classifier failed:", errMsg, err);
+    logger.error("telegram.classifier_failed", {
+      taskId: task.id,
+      error: errMsg,
+    });
     await setStatus(task.id, "cancelled");
     await sendText(chatId, `⚠️ Classifier error: ${errMsg.slice(0, 200)}`);
     return;

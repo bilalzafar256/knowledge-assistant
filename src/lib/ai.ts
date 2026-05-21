@@ -2,6 +2,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { tool, embed, generateText } from "ai";
 import { z } from "zod";
 import { env } from "./env";
+import { logger } from "./axiom/server";
 import { db } from "./db";
 import { documentChunks } from "./schema";
 import { sql, eq, and } from "drizzle-orm";
@@ -102,8 +103,11 @@ async function synthesizeSearchQuery(
 
     const synthesized = text.trim();
     return synthesized.length > 0 ? synthesized : latestQuery;
-  } catch {
+  } catch (error) {
     // Graceful fallback — never break the main chat flow
+    logger.warn("rag.query_synthesis_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return latestQuery;
   }
 }
@@ -138,7 +142,9 @@ async function rerankChunks(
     try {
       return await cohereRerank(query, candidates, topK, env.COHERE_API_KEY);
     } catch (e) {
-      console.warn("[rag] Cohere rerank failed, falling back to gpt-4o-mini:", e);
+      logger.warn("rag.rerank.cohere_failed", {
+        error: e instanceof Error ? e.message : String(e),
+      });
     }
   }
 
@@ -213,8 +219,12 @@ async function llmRerank(
       .sort((a, b) => b.score - a.score)
       .slice(0, topK)
       .map((x) => x.idx);
-  } catch {
+  } catch (error) {
     // Graceful fallback — return first topK in original vector order
+    logger.warn("rag.rerank.llm_failed", {
+      candidateCount: candidates.length,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return candidates.slice(0, topK).map((_, i) => i);
   }
 }
@@ -252,7 +262,11 @@ export function createSearchKnowledgeTool(
     execute: async ({ query, limit }: { query: string; limit: number }) => {
       // Synthesize a context-complete standalone query before embedding
       const searchQuery = await synthesizeSearchQuery(query, priorMessages);
-      console.info("[rag] Query synthesis", { original: query, synthesized: searchQuery });
+      logger.info("rag.query_synthesized", {
+        userId,
+        original: query,
+        synthesized: searchQuery,
+      });
       try {
         // Embed the synthesized query (context-complete)
         const queryEmbedding = await generateEmbedding(searchQuery);
@@ -340,7 +354,8 @@ export function createSearchKnowledgeTool(
           limit
         );
 
-        console.info("[rag] Re-ranking", {
+        logger.info("rag.rerank", {
+          userId,
           candidates: rows.length,
           kept: topIndices.length,
           topDoc: topIndices[0] !== undefined ? rows[topIndices[0]]?.document_title : undefined,
@@ -359,7 +374,10 @@ export function createSearchKnowledgeTool(
           message: `Found ${reranked.length} relevant sections from the knowledge base.`,
         };
       } catch (error) {
-        console.error("Knowledge search error:", error);
+        logger.error("rag.search_failed", {
+          userId,
+          error: error instanceof Error ? error.message : String(error),
+        });
         return {
           results: [],
           message:

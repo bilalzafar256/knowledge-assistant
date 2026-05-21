@@ -392,6 +392,31 @@ GitHub Actions — three workflows, one per event_type:
 
 ---
 
+## Observability
+
+Logs, traces, and uncaught errors ship to **Axiom** (free tier: 0.5 TB/mo ingest, 30-day retention). The pipeline:
+
+| Source | Destination | How |
+|---|---|---|
+| `console.*` from Vercel runtime/edge functions | Axiom dataset | One-click Vercel → Axiom Log Drain (dashboard install) |
+| Structured app events (`logger.info(...)`) | Axiom dataset | `@axiomhq/logging` + `@axiomhq/nextjs` via `src/lib/axiom/server.ts` |
+| Uncaught Route Handler errors | Axiom dataset | `onRequestError` export in `instrumentation.ts` (Next.js 16 hook) |
+| AI SDK spans (`streamText`, token usage, latency) | Axiom dataset (OTLP/HTTP) | `experimental_telemetry` on `streamText` + `NodeTracerProvider` registered in `instrumentation.ts` |
+
+**Privacy default**: `recordInputs: false, recordOutputs: false` on the AI SDK telemetry — prompts and completions never leave the server. Only metadata (userId, sessionId, finishReason), token counts, and latency are traced.
+
+**Files:**
+- `src/lib/axiom/axiom.ts` — Axiom client (no-op without `AXIOM_TOKEN`)
+- `src/lib/axiom/server.ts` — `logger` + `withAxiom` route wrapper
+- `src/lib/axiom/otel.ts` — `NodeTracerProvider` → OTLP exporter
+- `src/instrumentation.ts` — registers the tracer on boot, exports `onRequestError`
+
+**Env vars** (all optional — logs fall back to console when unset): `AXIOM_TOKEN`, `AXIOM_DATASET`, `AXIOM_HOST` (default `api.axiom.co`).
+
+**Adding logs in new routes:** import `{ logger, withAxiom }` from `@/lib/axiom/server`, wrap the handler with `withAxiom`, and call `logger.info("event.name", { ...fields })`. Request-scoped context (method, path, status, duration) is attached automatically.
+
+---
+
 ## TODO — Gaps & Incomplete Items
 
 These are things that are either missing, partially wired, or need attention before the app is fully production-ready. Unlike the Roadmap (which is new features), this section tracks what should already work but doesn't yet.

@@ -209,6 +209,26 @@ Results are committed to `evals/benchmarks/open-ragbench/runs/` as `<timestamp>_
 
 Deploy to Vercel with one click. Set all environment variables from `.env.local.example` in your Vercel project settings. `DATABASE_URL` must point to your Neon connection string with `?sslmode=require`.
 
+## Observability (Axiom)
+
+Production logs, errors, and AI-call traces ship to [Axiom](https://axiom.co) (free tier: 0.5 TB/mo, 30-day retention). When `AXIOM_TOKEN` is unset, everything falls back to console — so local dev works without any signup.
+
+**One-time setup:**
+
+1. Create a free account at [axiom.co](https://axiom.co) and add a dataset named `knowledge-assistant`.
+2. Settings → API tokens → create a token with ingest scope on that dataset.
+3. In Vercel: **Integrations → Browse Marketplace → Axiom → Add Integration**. Pick this project and the dataset. This forwards `console.*` output from runtime/edge functions automatically.
+4. In Vercel project env vars, add `AXIOM_TOKEN` and `AXIOM_DATASET`. The app uses these to emit structured logs and OpenTelemetry traces on top of the drain.
+
+**What gets logged:**
+
+- Every API request (method, path, status, duration, userId) via `withAxiom` in the route handlers.
+- Chat completions (token usage, finish reason, session id) via `logger.info("chat.completion", ...)`.
+- Every `streamText` call as an OTel trace span (`ai.streamText`) — model, latency, token counts. Prompts and responses are **not** recorded (privacy default).
+- Uncaught Route Handler / Server Component errors via the `onRequestError` hook in `instrumentation.ts`.
+
+Query in Axiom with their SQL-like syntax, e.g. `['knowledge-assistant'] | where ['fields.userId'] == "user_..." | sort by _time desc`.
+
 ## Telegram → PR bot (optional)
 
 Send a message to your Telegram bot and a PR appears on GitHub with the requested change. Useful for quick edits when you're away from your laptop.

@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { aj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import { isCsrfSafe } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import { collections } from "@/lib/schema";
@@ -64,7 +65,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ collection: updated });
   } catch (error) {
-    console.error("[PATCH /api/collections/:id]", error);
+    logger.error("api.collections.patch_failed", {
+      userId,
+      collectionId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Failed to update collection" }, { status: 500 });
   }
 }
@@ -100,7 +105,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ deleted });
   } catch (error) {
-    console.error("[DELETE /api/collections/:id]", error);
+    logger.error("api.collections.delete_failed", {
+      userId,
+      collectionId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Failed to delete collection" }, { status: 500 });
   }
 }

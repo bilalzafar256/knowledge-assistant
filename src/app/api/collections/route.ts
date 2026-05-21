@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { aj } from "@/lib/arcjet";
+import { logger } from "@/lib/axiom/server";
 import { isCsrfSafe } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import { collections } from "@/lib/schema";
@@ -31,7 +32,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ collections: rows });
   } catch (error) {
-    console.error("[GET /api/collections]", error);
+    logger.error("api.collections.list_failed", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Failed to fetch collections" }, { status: 500 });
   }
 }
@@ -78,7 +82,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ collection: created }, { status: 201 });
   } catch (error) {
-    console.error("[POST /api/collections]", error);
+    logger.error("api.collections.create_failed", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Failed to create collection" }, { status: 500 });
   }
 }

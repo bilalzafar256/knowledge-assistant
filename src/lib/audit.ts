@@ -1,3 +1,4 @@
+import { logger } from "@/lib/axiom/server";
 import { db } from "@/lib/db";
 import { auditLogs } from "@/lib/schema";
 import type { NextRequest } from "next/server";
@@ -16,9 +17,8 @@ interface AuditParams {
  * Call with `void logAudit(...)` to avoid blocking the response.
  */
 export async function logAudit(params: AuditParams): Promise<void> {
+  const { userId, action, resourceType, resourceId, metadata = {}, request } = params;
   try {
-    const { userId, action, resourceType, resourceId, metadata = {}, request } = params;
-
     const ipAddress =
       request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       request?.headers.get("x-real-ip") ??
@@ -35,7 +35,16 @@ export async function logAudit(params: AuditParams): Promise<void> {
       ipAddress,
       userAgent,
     });
-  } catch {
-    // Audit logging must never break the main request
+  } catch (error) {
+    // Audit logging must never break the main request, but the failure
+    // itself is important — surface it to Axiom so we can detect a broken
+    // compliance trail without scraping the DB.
+    logger.error("audit.write_failed", {
+      userId,
+      action,
+      resourceType,
+      resourceId,
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
