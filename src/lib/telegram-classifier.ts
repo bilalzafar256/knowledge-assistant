@@ -10,9 +10,9 @@ const ClassificationSchema = z.object({
   kind: z.enum(["requirement", "discussion"]),
   reply: z
     .string()
-    .optional()
+    .nullable()
     .describe(
-      "A concise answer to the user's question. REQUIRED when kind='discussion'. Leave empty for 'requirement'.",
+      "A concise answer to the user's question. REQUIRED (non-null) when kind='discussion'. MUST be null when kind='requirement'.",
     ),
   reasoning: z
     .string()

@@ -1,0 +1,139 @@
+name: Telegram Code
+
+# Triggered when a user approves a plan via /api/telegram/webhook button.
+# Reads the approved plan from telegram_tasks, runs the coder skill to
+# implement it on a branch off `dev`, pushes the branch (no PR yet),
+# and sends a diff summary back to Telegram for code-approval.
+
+on:
+  repository_dispatch:
+    types: [code-task]
+
+jobs:
+  code:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: dev
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Install Neon client (for helper scripts)
+        run: npm install --no-save @neondatabase/serverless
+
+      - name: Notify Telegram — coding started
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+        run: |
+          SHORT=$(echo "$TASK_ID" | cut -c1-8)
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=🛠️ Coding · task \`$SHORT\`" \
+            --data-urlencode "parse_mode=Markdown"
+
+      - name: Configure git
+        run: |
+          git config user.name "Telegram Bot"
+          git config user.email "telegram-bot@users.noreply.github.com"
+
+      - name: Load task + checkout branch
+        id: task
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+        run: node .github/scripts/telegram-load-task-branch.mjs
+
+      - name: Run coder
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          {
+            echo "Read .agents/skills/coder/SKILL.md and follow it strictly."
+            echo ""
+            echo "## Original user request"
+            cat message.txt
+            echo ""
+            echo "## Approved plan (this is your contract)"
+            echo ""
+            cat plan.md
+            if [ -s revision-notes.md ]; then
+              echo ""
+              echo "## Code revision feedback (apply this on top of any existing branch state)"
+              cat revision-notes.md
+            fi
+          } > coder-prompt.txt
+          claude -p "$(cat coder-prompt.txt)" \
+            --allowedTools "Read,Grep,Glob,Edit,Write,Bash" \
+            > coder-summary.md
+          echo "----- CODER SUMMARY -----"
+          cat coder-summary.md
+
+      - name: Commit + push
+        id: commit
+        env:
+          BRANCH: ${{ steps.task.outputs.branch }}
+        run: |
+          MESSAGE=$(cat message.txt)
+          git add -A
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "telegram: $MESSAGE"
+          git push origin "$BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          DIFF_STAT=$(git diff --stat HEAD~1 HEAD)
+          DIFF_FILES=$(git diff --name-only HEAD~1 HEAD)
+          {
+            echo "diff_stat<<EOFD"
+            echo "$DIFF_STAT"
+            echo "EOFD"
+            echo "diff_files<<EOFF"
+            echo "$DIFF_FILES"
+            echo "EOFF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Save diff + notify Telegram
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          BRANCH: ${{ steps.task.outputs.branch }}
+          DIFF_STAT: ${{ steps.commit.outputs.diff_stat }}
+          DIFF_FILES: ${{ steps.commit.outputs.diff_files }}
+        run: node .github/scripts/telegram-save-diff.mjs
+
+      - name: Notify — no changes
+        if: steps.commit.outputs.changed == 'false'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: node .github/scripts/telegram-no-changes.mjs
+
+      - name: Notify failure
+        if: failure()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          TASK_ID: ${{ github.event.client_payload.task_id }}
+        run: |
+          SHORT=$(echo "$TASK_ID" | cut -c1-8)
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$CHAT_ID" \
+            --data-urlencode "text=❌ Coding failed · task \`$SHORT\`. Check GitHub Actions logs." \
+            --data-urlencode "parse_mode=Markdown"
