@@ -1,145 +1,122 @@
-# Company Knowledge Assistant
+<div align="center">
 
-A production-grade AI assistant that answers questions from your company's internal knowledge base. Upload documents, and the assistant retrieves relevant context via vector search to give accurate, cited answers.
+# 🧠 Company Knowledge Assistant
 
-## Tech Stack
+### Upload your documents. Ask anything. Get answers grounded in **your** content — with citations, never invented.
+
+A production-grade **RAG** application built on the 2026 Vercel stack. It retrieves the most relevant passages from your knowledge base via **hybrid search** (vector + keyword), reranks them, and answers with citations — grounded strictly in your documents.
+
+<br/>
+
+![Next.js 16](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
+![Vercel AI SDK v6](https://img.shields.io/badge/Vercel%20AI%20SDK-v6-000000?logo=vercel&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-gpt--4o-412991?logo=openai&logoColor=white)
+![Neon Postgres](https://img.shields.io/badge/Neon-Postgres-00E599?logo=postgresql&logoColor=white)
+![pgvector](https://img.shields.io/badge/pgvector-1536d-4169E1)
+![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?logo=drizzle&logoColor=black)
+![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk&logoColor=white)
+![Arcjet](https://img.shields.io/badge/Arcjet-Security-FF5A1F)
+![Inngest](https://img.shields.io/badge/Inngest-Jobs-000000?logo=inngest&logoColor=white)
+![Tailwind v4](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-10-F69220?logo=pnpm&logoColor=white)
+
+</div>
+
+---
+
+## ✨ Overview
+
+The Knowledge Assistant lets a team upload its internal documents and query them in natural language. Instead of guessing, the assistant **retrieves** the passages most relevant to each question and answers **only** from that evidence — the system prompt forbids it from inventing numbers, dates, or names that aren't in the retrieved chunks. Every answer is streamed with citations back to its source.
+
+### Features
+
+- **Grounded RAG chat** — streams cited answers; the system prompt forbids inventing numbers, dates, or names not present in retrieved chunks.
+- **Hybrid retrieval** — pgvector cosine + Postgres full-text (BM25-style) fused with Reciprocal Rank Fusion, then reranked.
+- **Conversation-aware search** — follow-up questions are rewritten into standalone queries using chat history.
+- **Multi-format ingestion** — PDF, DOC/DOCX, XLS/XLSX, JPG/PNG (OCR via gpt-4o vision), TXT, MD, JSON (up to 50 MB).
+- **Chat sessions** — multiple threads with full history, auto-titling, pin, inline rename, and public read-only share links.
+- **Collections** — group documents into folders.
+- **Background ingestion** — large docs index in an Inngest job with a `pending → processing → ready/failed` status the UI polls.
+- **Per-user RAG settings** — tunable chunk size and overlap.
+- **Tenant isolation** — every query is scoped by `userId`.
+- **Security-first routes** — Clerk auth + Arcjet (shield, bot detection, rate limits) + CSRF on every mutating route, with an audit log of key actions.
+- **Observability** — structured logs and AI-call traces to Axiom (console fallback in dev).
+
+---
+
+## 🧰 Tech Stack at a Glance
+
+The badges above are the quick glance; the table is the detail.
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16+ (App Router, TypeScript) |
-| AI | Vercel AI SDK v6 (streaming, tools, RAG) |
+| Framework | Next.js 16 (App Router, React 19, TypeScript) |
+| AI | Vercel AI SDK v6 (streaming, tool calls, `UIMessage` protocol) |
+| Models | OpenAI — gpt-4o (chat + image OCR), text-embedding-3-small (1536-d), gpt-4o-mini (query synthesis + rerank fallback) |
+| Reranker | Cohere Rerank 3.5 (optional; falls back to gpt-4o-mini) |
 | Database | Neon (Postgres + pgvector) via Drizzle ORM |
-| Auth | Clerk (RBAC) |
-| Security | Arcjet (rate limiting, bot detection, prompt injection shield) |
+| Auth | Clerk |
+| Security | Arcjet (shield, bot detection, rate limiting) + Origin-based CSRF checks |
+| Ingestion | Inngest (event-driven queue with retries; inline fallback) |
 | UI | shadcn/ui + Tailwind CSS v4 |
-| Package Manager | pnpm |
+| Observability | Axiom (logs + OpenTelemetry traces) |
+| Package manager | pnpm |
 
-## Features
+---
 
-- **RAG-powered chat** — streams answers with citations from uploaded documents
-- **Chat sessions** — multiple independent conversations with full history, like ChatGPT
-- **Pinned conversations** — pin important chats to the top of the sidebar; pin/unpin with one click
-- **Conversation export** — download as Markdown or print/save as PDF with styled formatting
-- **Shared conversation links** — generate a public read-only URL; revoke sharing at any time
-- **Usage dashboard** — 4 stat cards: Documents, Knowledge Chunks, Conversations, Messages Sent
-- **Bulk document upload** — drag multiple files at once; each file parses in parallel with per-file status chips; editable title per file before indexing
-- **Document search & filter** — live title search, file-type group filter pills with count badges, and sort (Newest, Oldest, A→Z, Z→A, Largest)
-- **Tenant isolation** — all DB queries are scoped by `userId`; users only see their own data
-- **Security-first API routes** — every route chains Clerk auth + Arcjet protection (shield + bot detection + 10/hr token bucket + 50/day fixed window)
-- **Background ingestion (Inngest)** — large documents are indexed in a background job; `status` badge shows `Pending → Indexing → Indexed` in the document list; UI polls until complete
-- **Vercel Analytics + Speed Insights** — zero-config page view and Web Vitals tracking
-- **Audit log** — every document upload/delete is recorded in `audit_logs` with `userId`, action, resource, IP, and user-agent
-- **Responsive dashboard** — works on mobile and desktop with a collapsible sidebar nav
-- **Inline session rename** — hover to rename any conversation with Enter/Escape support
-- **Keyboard shortcuts** — `⌘K` new chat, `⌘↵` send message, `Escape` dismiss confirmations
+## 🚀 Getting Started
 
-## Project Structure
+### Prerequisites
 
-```
-src/
-├── app/
-│   ├── (auth)/                    # Clerk sign-in / sign-up pages
-│   ├── share/[shareId]/           # Public read-only shared conversation page
-│   ├── api/
-│   │   ├── chat/
-│   │   │   ├── route.ts           # POST — streaming RAG chat (persists messages)
-│   │   │   └── sessions/
-│   │   │       ├── route.ts       # GET/POST — list and create chat sessions
-│   │   │       └── [id]/
-│   │   │           ├── route.ts   # GET/DELETE/PATCH — session CRUD (title, pinned)
-│   │   │           └── share/route.ts  # POST/DELETE — generate/revoke share link
-│   │   ├── inngest/route.ts           # Inngest serve handler (GET/POST/PUT)
-│   │   ├── documents/
-│   │   │   ├── route.ts           # GET/POST — list and create documents
-│   │   │   ├── [id]/route.ts      # DELETE — single document
-│   │   │   └── parse/route.ts     # POST — server-side file text extraction
-│   │   └── workflows/ingest/      # POST — document chunking + embedding pipeline
-│   ├── dashboard/
-│   │   ├── chat/
-│   │   │   ├── layout.tsx         # Chat layout with sessions sidebar
-│   │   │   ├── page.tsx           # Empty state / mobile sessions list
-│   │   │   └── [sessionId]/       # Per-session chat page with history
-│   │   ├── documents/
-│   │   │   ├── page.tsx           # Document library
-│   │   │   ├── upload/            # Upload form
-│   │   │   └── [id]/              # Document + chunks viewer
-│   │   ├── settings/              # Profile & account settings
-│   │   ├── layout.tsx             # Dashboard shell (auth, sidebar)
-│   │   └── page.tsx               # Overview with stats
-│   └── page.tsx                   # Landing page
-├── components/
-│   ├── ui/                        # shadcn/ui primitives
-│   ├── chat-actions.tsx           # Export (Markdown/PDF) + share popover
-│   ├── document-list.tsx          # Search, filter pills, sort, ingestion status badge
-│   ├── chat-interface.tsx         # Chat UI (streaming, sources, optimistic)
-│   ├── chat-sessions-sidebar.tsx  # Sessions list with rename/pin/delete/Cmd+K
-│   ├── dashboard-shell.tsx        # Mobile-responsive layout shell
-│   ├── delete-document-button.tsx # Inline confirm with Escape support
-│   ├── document-list.tsx          # Search, filter pills, sort dropdown
-│   ├── document-upload.tsx        # Multi-format file upload
-│   └── sidebar-nav.tsx            # Primary navigation
-└── lib/
-    ├── ai.ts             # OpenAI client, system prompt, RAG tool
-    ├── arcjet.ts         # Arcjet clients (chat, upload: token bucket + fixed window)
-    ├── audit.ts          # logAudit() — fire-and-forget audit log writer
-    ├── db.ts             # Neon + Drizzle client (lazy-initialized)
-    ├── inngest.ts        # Inngest client + event type definitions
-    ├── schema.ts         # documents (+ status), document_chunks, chat_sessions, chat_messages, audit_logs
-    └── utils.ts          # cn(), timeAgo(), formatFileSize(), truncate()
-```
-
-## Getting Started
-
-### 1. Prerequisites
-
-- Node.js 20+
-- pnpm (`npm install -g pnpm`)
-- A [Neon](https://neon.tech) database with pgvector enabled
+- Node.js 20+ and pnpm (`npm install -g pnpm`)
+- A [Neon](https://neon.tech) Postgres database
 - A [Clerk](https://clerk.com) application
 - An [Arcjet](https://arcjet.com) site
 - An [OpenAI](https://platform.openai.com) API key
 
-### 2. Install dependencies
+### 1. Install
 
 ```bash
 pnpm install
 ```
 
-### 3. Configure environment variables
+### 2. Configure environment
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Fill in all values in `.env.local`:
+Fill in the required values:
 
-| Variable | Where to get it |
-|----------|----------------|
-| `DATABASE_URL` | Neon → Project Settings → Connection String |
-| `OPENAI_API_KEY` | platform.openai.com/api-keys |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk Dashboard → API Keys |
-| `CLERK_SECRET_KEY` | Clerk Dashboard → API Keys |
-| `ARCJET_KEY` | app.arcjet.com → Sites → API Keys |
-| `INNGEST_EVENT_KEY` | app.inngest.com → App → Keys |
-| `INNGEST_SIGNING_KEY` | app.inngest.com → App → Keys |
-| `TELEGRAM_BOT_TOKEN` | Optional — see "Telegram → PR bot" below |
-| `TELEGRAM_CHAT_ID` | Optional — your numeric chat id |
-| `TELEGRAM_WEBHOOK_SECRET` | Optional — random string (`openssl rand -hex 32`) |
-| `GITHUB_PAT` | Optional — fine-grained PAT with `Contents: Read/Write` |
+| Variable | Required | Where to get it |
+|----------|----------|----------------|
+| `DATABASE_URL` | ✅ | Neon → Connection String (include `?sslmode=require`) |
+| `OPENAI_API_KEY` | ✅ | platform.openai.com/api-keys |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | ✅ | Clerk Dashboard → API Keys (`pk_…`) |
+| `CLERK_SECRET_KEY` | ✅ | Clerk Dashboard → API Keys (`sk_…`) |
+| `ARCJET_KEY` | ✅ | app.arcjet.com → Sites → API Keys (`ajkey_…`) |
+| `NEXT_PUBLIC_APP_URL` | ✅ | App origin (used to build share links); `http://localhost:3000` in dev |
+| `COHERE_API_KEY` | optional | dashboard.cohere.com — enables Cohere reranking |
+| `INNGEST_EVENT_KEY` / `INNGEST_SIGNING_KEY` | prod | app.inngest.com → App → Keys (without them, ingestion runs inline) |
+| `AXIOM_TOKEN` / `AXIOM_DATASET` | optional | axiom.co — logs/traces (console fallback if unset) |
+| `OPEN_RAGBENCH_USER_ID` | eval | Isolation label for the Open RAG Benchmark corpus (defaults to `user_open_ragbench_eval`) |
+| `TELEGRAM_*` / `GITHUB_PAT` / `GITHUB_REPO` | optional | Dev-only Telegram → PR bot (see below) |
 
-### 4. Set up the database
+Env vars are validated by Zod at startup (`src/lib/env.ts`) — a missing or malformed required var aborts the server with a clear message.
 
-Apply all migrations against your Neon connection string:
+### 3. Set up the database
 
 ```bash
 pnpm db:migrate
 ```
 
-This runs `scripts/db-migrate.mjs`, which applies every file in `drizzle/` in order and records them in `drizzle.__drizzle_migrations`. The initial migration creates the `vector` extension, all tables, and the ivfflat index on `document_chunks.embedding` — no manual SQL is required for a fresh Neon database.
+This runs `scripts/db-migrate.mjs`, applying every file in `drizzle/` in order and recording them in `drizzle.__drizzle_migrations`. The initial migration enables the `vector` extension and creates all tables plus the pgvector `ivfflat` index — no manual SQL needed for a fresh Neon database.
 
-Do not use `pnpm db:push` (deprecated — it bypasses the migration history).
+> Do **not** use `pnpm db:push` (deprecated — it bypasses migration history). To change the schema, edit `src/lib/schema.ts`, run `pnpm db:generate`, then `pnpm db:migrate`.
 
-### 5. Run the development server
+### 4. Run
 
 ```bash
 pnpm dev
@@ -147,123 +124,97 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### 6. (Optional) Run the Inngest dev server for background jobs
+### 5. (Optional) Inngest dev server for background jobs
 
-Inngest handles long-running document ingestion. Without it, ingestion runs inline (blocking, 55 s timeout). To enable retries and background processing locally:
+Without Inngest keys, ingestion runs inline in the API request (races a 55 s timeout). To process documents in the background with retries locally:
 
 ```bash
 npx inngest-cli@latest dev
 ```
 
-This starts the Inngest dev server at `http://localhost:8288`. It auto-discovers your Next.js app at `http://localhost:3000/api/inngest`. You can watch job progress and replay failed events from the Inngest dashboard at that URL.
+This starts the Inngest dev server at `http://localhost:8288` and auto-discovers your app at `http://localhost:3000/api/inngest`. Set `INNGEST_EVENT_KEY` / `INNGEST_SIGNING_KEY` to connect to Inngest Cloud instead.
 
-Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in `.env.local` to connect to the Inngest cloud dashboard instead.
+---
 
-## Available Scripts
+## 🏛️ Architecture
+
+- **[`SYSTEM_ARCHITECTURE.md`](./SYSTEM_ARCHITECTURE.md)** — system topology + runtime Mermaid diagrams, the directory blueprint, and core-subsystem deep dives.
+- **[`PROJECT_PLAN.md`](./PROJECT_PLAN.md)** — the authoritative architecture reference: full schema, migration manifest, API table, security model, and conventions.
+
+---
+
+## 🔎 How Retrieval Works
+
+On each chat turn (`src/lib/ai.ts` → `createSearchKnowledgeTool`):
+
+1. **Query synthesis** — gpt-4o-mini rewrites the latest message into a standalone search query using recent history (falls back to the raw query on error).
+2. **Embed** — the query is embedded with text-embedding-3-small.
+3. **Hybrid search** — one SQL CTE runs pgvector cosine similarity and Postgres `tsvector` lexical ranking in parallel, then fuses them with **Reciprocal Rank Fusion** (k=60) into ~15 candidates. See `drizzle/0005_hybrid_search.sql`.
+4. **Rerank** — Cohere Rerank 3.5 (if `COHERE_API_KEY` is set) or a gpt-4o-mini scoring call trims to the top ~3.
+5. **Answer** — gpt-4o streams a grounded, cited response.
+
+Query synthesis and reranking both **degrade gracefully** — any failure falls back so the chat never breaks.
+
+---
+
+## 📊 RAG Evals
+
+The pipeline is evaluated against **Vectara's Open RAG Benchmark** (1,000 arXiv papers, 3,045 expert Q&A pairs spanning text, tables, and figures). Because the ground truth is public, results are comparable to other RAG systems. The harness in `evals/` mirrors production retrieval/answer logic and reports Recall@k, MRR, context precision, faithfulness, correctness, citation accuracy, latency, and token cost — broken down by modality and question type. Runs are committed under `evals/benchmarks/open-ragbench/runs/`. See `PROJECT_PLAN.md` → "RAG Evals" for details.
+
+---
+
+## 📈 Observability
+
+Logs, traces, and uncaught errors ship to [Axiom](https://axiom.co); without `AXIOM_TOKEN` everything falls back to `console`, so local dev needs no signup.
+
+- Every API request (method, path, status, duration, userId) via `withAxiom`.
+- Chat completions (token usage, finish reason) via `logger.info("chat.completion", …)`.
+- `streamText` calls as OpenTelemetry spans (model, latency, tokens). **Prompts and completions are never recorded** (`recordInputs/Outputs: false`).
+- Route Handler / Server Component errors via `onRequestError` in `src/instrumentation.ts`.
+
+To add logging in a new route: import `{ logger, withAxiom }` from `@/lib/axiom/server`, wrap the handler with `withAxiom`, and call `logger.info("event.name", { … })`.
+
+---
+
+## 🔐 Security Model
+
+- **Auth** — every API route checks Clerk `auth()` and returns 401 if unauthenticated.
+- **Tenant isolation** — every DB query filters on `userId`; users can never read another tenant's rows.
+- **Arcjet** — shield + bot detection on all routes; chat limited to 20 req/min/user, uploads to 50/hr + 200/day per user, and 100 req/min/IP at the middleware layer.
+- **CSRF** — mutating routes validate the `Origin` header via `isCsrfSafe()`.
+- **Content sanitization** — extracted document text is stripped of null bytes and control chars before chunking (mitigates indirect prompt injection).
+- **Audit log** — uploads, deletes, and chat messages are recorded with IP and user-agent.
+- **Env validation** — Zod aborts startup on missing/invalid secrets.
+
+---
+
+## 🤖 Telegram → PR Bot (optional, dev-only)
+
+Message a Telegram bot and a PR appears on GitHub. `POST /api/telegram/webhook` (verifies a shared secret + chat-id allowlist) classifies the message and fires a `repository_dispatch` that drives GitHub Actions workflows — plan → code → PR — persisting state in a `telegram_tasks` table. The Actions can push task branches and open PRs into `dev` but never push to `main`/`dev`. The webhook returns `503` when its env vars are unset, so the rest of the app works without it. Full flow and setup in `PROJECT_PLAN.md`.
+
+---
+
+## 🛠️ Scripts
 
 | Command | Description |
 |---------|-------------|
-| `pnpm dev` | Start dev server with Turbopack |
-| `pnpm build` | Production build |
-| `pnpm start` | Start production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm type-check` | Run TypeScript compiler check |
-| `pnpm db:generate` | Generate Drizzle migration files |
+| `pnpm dev` | Dev server (Turbopack) |
+| `pnpm build` / `pnpm start` | Production build / serve |
+| `pnpm lint` | ESLint |
+| `pnpm type-check` | `tsc --noEmit` |
+| `pnpm db:generate` | Generate a Drizzle migration from schema changes |
 | `pnpm db:migrate` | Apply pending migrations to Neon |
-| `pnpm db:studio` | Open Drizzle Studio (DB GUI) |
-| `pnpm eval:ragbench:download` | Download Vectara's Open RAG Benchmark (~743 MB) into `evals/benchmarks/open-ragbench/data/` |
-| `pnpm eval:ragbench:ingest` | Bulk-load benchmark corpus into Neon, tagging chunks with `section_id` for ground-truth recall |
-| `pnpm eval:ragbench:golden -- --sample 2000` | Convert benchmark Q&A → golden set (stratified across modalities) |
-| `pnpm eval:ragbench:run -- --label ragbench-baseline` | Run the full eval against the benchmark → `evals/benchmarks/open-ragbench/runs/` |
-| `pnpm eval:ragbench:report` | Render a shareable `REPORT.md` from the latest benchmark run |
-| `npx inngest-cli@latest dev` | Start Inngest local dev server (background jobs) |
+| `pnpm db:studio` | Drizzle Studio GUI |
+| `pnpm eval:ragbench:download` | Download Vectara Open RAG Benchmark (~743 MB) |
+| `pnpm eval:ragbench:ingest` | Bulk-load the benchmark corpus into Neon |
+| `pnpm eval:ragbench:golden -- --sample 2000` | Build a stratified golden set |
+| `pnpm eval:ragbench:run -- --label baseline` | Run the eval against the benchmark |
+| `pnpm eval:ragbench:report` | Render `REPORT.md` from the latest run |
 
-## Retrieval
+> There is **no unit test suite**. Verify changes with `pnpm type-check` + `pnpm lint`, and measure retrieval/answer quality with the eval harness.
 
-The chat uses **hybrid search** — vector similarity (pgvector cosine) and lexical search (Postgres `tsvector` BM25-style ranking) are run in parallel inside one SQL CTE, then fused via Reciprocal Rank Fusion (k=60). The fused top-15 is then re-ranked by **Cohere Rerank 3.5** (set `COHERE_API_KEY`) — or gpt-4o-mini as a graceful fallback — and the top 3 are passed to the LLM. See `src/lib/ai.ts` (`createSearchKnowledgeTool`) and migration `drizzle/0005_hybrid_search.sql`.
+---
 
-The chat system prompt is intentionally strict about grounding: the model is instructed to use only retrieved chunks and to refuse to fill in specific numbers/dates/names when the chunks don't contain them.
+## ☁️ Deployment
 
-## RAG Evals
-
-The eval harness measures retrieval and answer quality against **Vectara's Open RAG Benchmark** — 1,000 arXiv papers and 3,045 expert-written Q&A pairs spanning text, tables, and figures. Because the benchmark's ground truth is published, results are directly comparable to other RAG systems benchmarked on the same set.
-
-**Quick start:**
-```bash
-pnpm eval:ragbench:download                          # ~743 MB, idempotent
-pnpm eval:ragbench:ingest                            # ~3–5 min, ~$5 in embeddings
-pnpm eval:ragbench:golden -- --sample 2000           # stratified across modalities
-pnpm eval:ragbench:run -- --label ragbench-baseline  # ~30–45 min, ~$30
-pnpm eval:ragbench:report                            # writes REPORT.md
-```
-
-The benchmark uses `OPEN_RAGBENCH_USER_ID` from `.env.local` (default: `user_open_ragbench_eval`) as a tenant key so its 1k docs stay isolated from any other corpus you ingest. The run produces breakdowns by modality (`text` / `text-image` / `text-table` / `text-table-image`) and by question type (`extractive` / `abstractive`) so you can see exactly where the pipeline struggles.
-
-**Metrics tracked per run:**
-- Retrieval: Recall@k (section-level), MRR, context precision (LLM judge)
-- Answer: faithfulness, correctness, citation accuracy (LLM judge), latency, token cost
-
-Results are committed to `evals/benchmarks/open-ragbench/runs/` as `<timestamp>_<label>.{json,md}` so you can diff experiments in git. See `evals/benchmarks/open-ragbench/REPORT.md` for the latest headline numbers.
-
-## Deployment
-
-Deploy to Vercel with one click. Set all environment variables from `.env.local.example` in your Vercel project settings. `DATABASE_URL` must point to your Neon connection string with `?sslmode=require`.
-
-## Observability (Axiom)
-
-Production logs, errors, and AI-call traces ship to [Axiom](https://axiom.co) (free tier: 0.5 TB/mo, 30-day retention). When `AXIOM_TOKEN` is unset, everything falls back to console — so local dev works without any signup.
-
-**One-time setup:**
-
-1. Create a free account at [axiom.co](https://axiom.co) and add a dataset named `knowledge-assistant`.
-2. Settings → API tokens → create a token with ingest scope on that dataset.
-3. In Vercel: **Integrations → Browse Marketplace → Axiom → Add Integration**. Pick this project and the dataset. This forwards `console.*` output from runtime/edge functions automatically.
-4. In Vercel project env vars, add `AXIOM_TOKEN` and `AXIOM_DATASET`. The app uses these to emit structured logs and OpenTelemetry traces on top of the drain.
-
-**What gets logged:**
-
-- Every API request (method, path, status, duration, userId) via `withAxiom` in the route handlers.
-- Chat completions (token usage, finish reason, session id) via `logger.info("chat.completion", ...)`.
-- Every `streamText` call as an OTel trace span (`ai.streamText`) — model, latency, token counts. Prompts and responses are **not** recorded (privacy default).
-- Uncaught Route Handler / Server Component errors via the `onRequestError` hook in `instrumentation.ts`.
-
-Query in Axiom with their SQL-like syntax, e.g. `['knowledge-assistant'] | where ['fields.userId'] == "user_..." | sort by _time desc`.
-
-## Telegram → PR bot (optional)
-
-Send a message to your Telegram bot and a PR appears on GitHub with the requested change. Useful for quick edits when you're away from your laptop.
-
-**Flow:** Telegram message → `POST /api/telegram/webhook` (Vercel, sender whitelisted) → `repository_dispatch` event → `.github/workflows/telegram-to-pr.yml` runs Claude Code headless → branch pushed + PR opened → bot replies with the PR URL.
-
-### Setup
-
-1. **Create a bot** — DM `@BotFather` on Telegram, run `/newbot`, copy the token.
-2. **Get your chat id** — message the new bot, then visit `https://api.telegram.org/bot<TOKEN>/getUpdates` and read `chat.id` from the JSON.
-3. **Generate a webhook secret** — `openssl rand -hex 32`.
-4. **Create a fine-grained GitHub PAT** — https://github.com/settings/tokens?type=beta → access limited to this repo → permissions: `Contents: Read/Write`, `Metadata: Read-only`.
-5. **Set environment variables in Vercel** — `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`, `GITHUB_PAT` (+ optional `GITHUB_REPO`).
-6. **Set repo secrets in GitHub** — Settings → Secrets and variables → Actions → add `ANTHROPIC_API_KEY` and `TELEGRAM_BOT_TOKEN`.
-7. **Register the webhook with Telegram** (one-time):
-
-   ```bash
-   curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "url": "https://<your-domain>/api/telegram/webhook",
-       "secret_token": "<TELEGRAM_WEBHOOK_SECRET>",
-       "allowed_updates": ["message"]
-     }'
-   ```
-
-### Notes
-
-- Only messages from `TELEGRAM_CHAT_ID` are processed; everything else is silently dropped.
-- The webhook returns `503` if any Telegram/GitHub env var is missing — so the rest of the app keeps working when the bot isn't configured.
-- The Action runs Claude Code with `--dangerously-skip-permissions` inside an ephemeral runner; it can only push branches (never `main`) and open PRs.
-
-## Security Model
-
-- **Authentication**: Every API route calls `auth()` from Clerk and returns `401` if the user is not signed in.
-- **Rate limiting**: The chat endpoint enforces 20 requests/minute per user via Arcjet token bucket.
-- **Prompt injection**: Arcjet shield mode is active on all routes to detect and block injection attempts.
-- **Tenant isolation**: All database queries include a `userId` filter — users cannot access each other's documents or chunks.
+Deploy to Vercel. Set every required env var from `.env.local.example` in your project settings; `DATABASE_URL` must point to your Neon string with `?sslmode=require`. For background ingestion in production, set the Inngest keys and (if Vercel Deployment Protection is on) `VERCEL_AUTOMATION_BYPASS_SECRET`.
