@@ -1,0 +1,1001 @@
+{
+  "label": "smoke",
+  "startedAt": "2026-05-21T22:06:51.902Z",
+  "finishedAt": "2026-05-21T22:08:06.217Z",
+  "durationSec": 74,
+  "config": {
+    "userId": "user_open_ragbench_eval",
+    "chatModel": "gpt-4o",
+    "embeddingModel": "text-embedding-3-small",
+    "judgeModel": "gpt-4o-mini",
+    "topK": 5,
+    "concurrency": 2,
+    "ranAnswers": true
+  },
+  "goldenSet": {
+    "generatedAt": "2026-05-21T22:06:47.636Z",
+    "count": 20
+  },
+  "summary": {
+    "questions_total": 20,
+    "questions_evaluated": 20,
+    "recall_at_k_reranked": 0.75,
+    "recall_vector_at_5": 0.8,
+    "recall_vector_at_10": 0.95,
+    "recall_pure_vector_at_5": 0.8,
+    "recall_pure_vector_at_10": 0.95,
+    "mrr_reranked": 0.44333333333333336,
+    "mrr_vector": 0.524781746031746,
+    "mrr_pure_vector": 0.5581150793650794,
+    "context_precision": 0.62,
+    "faithfulness": 0.4,
+    "correctness": 0.525,
+    "citation": 0.6,
+    "avg_latency_ms": 2650,
+    "total_input_tokens": 36850,
+    "total_output_tokens": 3094,
+    "estimated_cost_usd": 0.123065
+  },
+  "perQuestion": [
+    {
+      "id": "q_1",
+      "question": "How does strategic uncertainty affect a regime's reputation in deterring uprisings?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "5113f2dd-8d4a-4bad-892c-d4d7961c16b4",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "How does strategic uncertainty affect a regime's reputation in deterring uprisings?",
+        "reranked_rank": 0,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "I couldn't find information about this in the knowledge base.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not reference any information from the provided context and claims a lack of information without justification.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and contradicts the reference.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 537,
+        "output_tokens": 12,
+        "latency_ms": 535,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 4780
+    },
+    {
+      "id": "q_2",
+      "question": "What is the main difference between GFlowNet and RL in synthesis-aware molecular generation?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "8c2f819a-12fd-47ba-bf63-ddd59e9c9d60",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the main difference between GFlowNet and RL in synthesis-aware molecular generation?",
+        "reranked_rank": 1,
+        "vector_rank": 2,
+        "pure_vector_rank": 2,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "The main difference between GFlowNet and reinforcement learning (RL) in synthesis-aware molecular generation is in their approach to sampling and diversity. GFlowNet aims to maximize both performance and diversity by sampling terminal states proportionally to their reward. This approach is particularly useful in molecule generation, where exploring different modes of the distribution of interest is important. In contrast, RL typically focuses on generating the single highest-return sequence of actions, which can lead to sampling a narrower distribution of high-reward molecules ([SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints](47e88881-ff60-40a6-8b8b-53b95b61e435)).",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately describes the differences between GFlowNet and RL in the context of synthesis-aware molecular generation, supported by the claims made in the provided context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains the main difference between GFlowNet and RL in terms of their sampling approaches and the importance of diversity in molecular generation.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2221,
+        "output_tokens": 165,
+        "latency_ms": 2547,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 7542
+    },
+    {
+      "id": "q_3",
+      "question": "Which molecule has a higher reward score, aripiprazole or celecoxib?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "afe36247-d8dd-402f-8bfc-90fc0b6f3e8c",
+        "paper_id": "2405.01155v3",
+        "type": "extractive",
+        "source": "text-table"
+      },
+      "retrieval": {
+        "synthesized_query": "Which molecule has a higher reward score, aripiprazole or celecoxib?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0,
+        "context_precision_note": "0/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "According to the retrieved document titled \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints,\" aripiprazole has a higher reward score compared to celecoxib. Specifically, the reward score for aripiprazole is \\(0.90 \\pm 0.00\\), while the reward score for celecoxib is \\(0.48 \\pm 0.01\\). Thus, aripiprazole has a higher reward score than celecoxib.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer invents specific reward scores for aripiprazole and celecoxib that are not present in the context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly states that aripiprazole has a higher reward score than celecoxib, consistent with the reference.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 3753,
+        "output_tokens": 156,
+        "latency_ms": 2906,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 6044
+    },
+    {
+      "id": "q_4",
+      "question": "How does SynFlowNet improve molecule synthesizability compared to traditional methods?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "35e715dc-ae75-4654-9195-cb0310b0af96",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How does SynFlowNet improve molecule synthesizability compared to traditional methods?",
+        "reranked_rank": -1,
+        "vector_rank": 6,
+        "pure_vector_rank": 6,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.14285714285714285,
+        "mrr_pure_vector": 0.14285714285714285,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "SynFlowNet improves molecule synthesizability by using a GFlowNet model with an action space based on chemical reactions and purchasable reactants. This approach allows the model to sequentially build new molecules while incorporating forward synthesis as an explicit constraint. This method bridges the gap between in silico molecular generation and real-world synthesis capabilities. SynFlowNet is evaluated using synthetic accessibility scores and an independent retrosynthesis tool, showing considerable improvement in sample diversity compared to traditional methods (Source: \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\").\n\nAdditionally, SynFlowNet achieves higher binding scores and better synthesizability by training with an action space of chemical reactions and optimizing for synthetic accessibility (SA) scores. It is noted that within the reaction environment, specific design choices, such as maximum trajectory length, can influence sample quality and synthesizability metrics (Source: \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\").",
+        "faithfulness": 1,
+        "faithfulness_note": "All claims in the answer are supported by the context provided.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains how SynFlowNet improves molecule synthesizability by generating molecules within a synthetically accessible chemical space and highlights its advantages over traditional methods.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2367,
+        "output_tokens": 220,
+        "latency_ms": 3018,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 6483
+    },
+    {
+      "id": "q_5",
+      "question": "What is the role of symmetric matrices in algebraic K-theory with involution?",
+      "expected_document_title": "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+      "benchmark": {
+        "query_uuid": "52694833-7001-4896-a030-e767eec3467b",
+        "paper_id": "2405.02054v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the role of symmetric matrices in algebraic K-theory with involution?",
+        "reranked_rank": 2,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2"
+        ]
+      },
+      "answer": {
+        "text": "The role of symmetric matrices in algebraic K-theory with involution is related to the Grothendieck-Witt group and the symmetric Witt group of symmetric forms of free modules. Specifically, the Grothendieck-Witt group \\( \\mathrm{GW}^{*}(A) \\) is a group-completion of the commutative monoid formed by symmetric forms of free \\( A \\)-modules. This is connected to the \\( \\mathbb{Z} / 2 \\)-equivariant \\( E_{\\infty} \\)-monoid structure, where the symmetric Witt group \\( W^{s}(A) \\) is derived from the group-completion of symmetric forms.\n\nThe document also mentions that for a ring \\( A \\) with involution, there is a map of \\( \\mathbb{Z} / 2 \\) spectra that relates the Grothendieck-Witt group to the topological cyclic homology, which involves symmetric forms and their traces. The trace map sends elements represented by symmetric forms on tensor products of \\( A \\) to specific expressions involving the entries and inverses of matrices of these forms.\n\nThis information is detailed in the document titled \"An analogue of the Milnor conjecture for the de Rham-Witt complex in characteristic 2.\"",
+        "faithfulness": 1,
+        "faithfulness_note": "All claims are supported by the context provided.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the role of symmetric matrices in algebraic K-theory with involution, mentioning their connection to the Grothendieck-Witt group and the symmetric Witt group, which aligns with the reference.",
+        "citation": 1,
+        "citation_note": "7/7 title tokens matched",
+        "input_tokens": 3678,
+        "output_tokens": 289,
+        "latency_ms": 4417,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 7813
+    },
+    {
+      "id": "q_6",
+      "question": "Why is an extensive collection of building blocks necessary for synthetic accessibility?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "a596fd52-73ac-4801-be78-0c22a9d15e1f",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is an extensive collection of building blocks necessary for synthetic accessibility?",
+        "reranked_rank": 3,
+        "vector_rank": 2,
+        "pure_vector_rank": 2,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.25,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "An extensive collection of building blocks is necessary for synthetic accessibility because it enables a more efficient exploration of potential binding interactions in drug discovery. The use of a diverse set of building blocks allows for the design of diverse and novel molecules while adhering to synthesis constraints. Specifically, fragment-based drug discovery (FBDD) focuses on smaller molecular fragments rather than full molecules, simplifying the search space and enhancing the efficiency of drug discovery campaigns. By curating building block sets based on experimentally validated fragments, the model can be specialized for particular targets, improving the likelihood of discovering molecules with desired properties (SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints).",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately reflects the context regarding the importance of building blocks in drug discovery, the role of fragment-based drug discovery, and the benefits of curating building block sets.",
+        "correctness": 0.5,
+        "correctness_note": "The answer partially addresses the importance of an extensive collection of building blocks for synthetic accessibility but focuses more on drug discovery and fragment-based approaches rather than the broader concept of exploring chemical space for diverse molecular design.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2281,
+        "output_tokens": 154,
+        "latency_ms": 4706,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 9663
+    },
+    {
+      "id": "q_7",
+      "question": "How does the presence of reputation affect equilibrium outcomes in repeated regime change scenarios?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "f3ed0525-d249-4eaf-b770-542293dcccad",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text-table"
+      },
+      "retrieval": {
+        "synthesized_query": "How does the presence of reputation affect equilibrium outcomes in repeated regime change scenarios?",
+        "reranked_rank": 1,
+        "vector_rank": 3,
+        "pure_vector_rank": 3,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.25,
+        "mrr_pure_vector": 0.25,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "The presence of reputation significantly affects equilibrium outcomes in repeated regime change scenarios, particularly under conditions of strategic uncertainty. Here are the key insights from the retrieved documents:\n\n1. **Reputation and Strategic Uncertainty**: The value of reputation to a regime seeking to deter uprisings depends heavily on the strategic uncertainty faced by players regarding others' actions. Without higher-order uncertainty, reputational effects are overshadowed by stage-game strategic complementarities. However, when agents face globalized uncertainty over their payoffs, the regime's value for reputation increases sharply. This allows the regime to leverage globalized strategic uncertainty to develop a reputation and secure their Stackelberg payoff in all pure equilibria of the reputation game (Source: \"Reputation and Risk in Regimes\").\n\n2. **Equilibrium Selection**: In scenarios where the long-run player (the regime) faces reputational incentives and short-run players face a globalized information structure, the regime benefits from reputation by imitating a commitment type consistently. This results in a $c$-pooling equilibrium, where the regime's actions are constant across all on-path histories. This approach helps the regime maintain its reputation and influence the equilibrium outcomes (Source: \"Reputation and Risk in Regimes\").\n\n3. **Reputation in Repeated Games**: The framework allows for the analysis of various informational environments by varying strategic uncertainty, the strength of the regime, and the regime's preferences. The regime can signal its intentions by imitating a commitment type, which influences the agents' decisions in the coordination game (Source: \"Reputation and Risk in Regimes\").\n\nOverall, reputation plays a crucial role in shaping equilibrium outcomes in repeated regime change scenarios, especially when there is significant strategic uncertainty among the players.",
+        "faithfulness": 1,
+        "faithfulness_note": "All claims are supported by the context provided.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the question by explaining how reputation influences equilibrium outcomes in repeated regime change scenarios, consistent with the reference.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2861,
+        "output_tokens": 374,
+        "latency_ms": 4857,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 10395
+    },
+    {
+      "id": "q_8",
+      "question": "What is the optimal commitment posture at a given discount rate?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "9eaa1ed1-1e2c-495a-a8e8-97d32fce49ee",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the optimal commitment posture at a given discount rate?",
+        "reranked_rank": 2,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "The optimal commitment posture at a given discount rate is defined as the commitment posture \\( c^{*}(\\delta) \\) that maximizes the discounted payoff \\( V_{H}(c, \\delta) \\) among all possible commitment postures \\( c \\in \\mathbb{R}_{+} \\). This is characterized by the set of all optimal commitment postures at a given discount rate \\( \\delta \\).\n\nThe commitment posture \\( c^{*}(\\delta) \\) is influenced by the discount rate \\( \\delta \\), and it is noted to vary flexibly with the discount rate. As the discount rate increases, the regime values the future more and is willing to sacrifice current consumption to ensure an increased probability of regime survival. This phenomenon is referred to as the \"strongman effect,\" where more patient regimes prefer to be harsher, even if it is more costly for them to do so. The correspondence \\( c^{*}(\\delta) \\) is nonempty, compact-valued, upper hemi-continuous in \\( \\delta \\), and increasing in the strong set order in \\( \\delta \\) (Source: \"Reputation and Risk in Regimes\").",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer introduces the term 'strongman effect' and claims it is a phenomenon related to the commitment posture, which is not supported by the provided context.",
+        "correctness": 0,
+        "correctness_note": "parse_error",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 3237,
+        "output_tokens": 259,
+        "latency_ms": 4730,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 10018
+    },
+    {
+      "id": "q_9",
+      "question": "How do private signals among citizens impact their decision-making regarding revolutions?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "e7bd5477-9967-4ff1-9d07-5251c8375a17",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "How do private signals among citizens impact their decision-making regarding revolutions?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "I can't provide information on this topic as it is not related to the company's internal knowledge base. My focus is on company-specific questions. If you have any questions related to company policies, procedures, or other internal topics, feel free to ask!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not address the context provided and instead focuses on company-specific questions, which are irrelevant to the topic of regime change and reputation.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and is unrelated to the reference provided.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 535,
+        "output_tokens": 50,
+        "latency_ms": 1004,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 5581
+    },
+    {
+      "id": "q_10",
+      "question": "Why do autocratic regimes often resort to harsh punishments against dissent?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "63d06087-e3d9-4e49-8e8e-e9681f94dbb7",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Why do autocratic regimes often resort to harsh punishments against dissent?",
+        "reranked_rank": 1,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "I can't provide information on this topic as it falls outside the scope of the company's internal knowledge base. My focus is on assisting with company-specific questions and information.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not address the context provided and instead states a limitation unrelated to the content.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and contradicts the reference.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 535,
+        "output_tokens": 33,
+        "latency_ms": 851,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 5604
+    },
+    {
+      "id": "q_11",
+      "question": "Why is reputation important for regimes facing potential uprisings?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "3a7066c8-dbfa-4b92-ba8d-fe042f69a4d8",
+        "paper_id": "2404.18884v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is reputation important for regimes facing potential uprisings?",
+        "reranked_rank": 1,
+        "vector_rank": 1,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "I can't provide information on this topic as it is not related to the company's internal knowledge base. My role is to assist with company-specific questions using the information available in the company's internal resources.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not address the context provided and instead focuses on company-specific limitations, which are not relevant to the content.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and contradicts the reference.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 533,
+        "output_tokens": 39,
+        "latency_ms": 763,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 6576
+    },
+    {
+      "id": "q_12",
+      "question": "What are the homotopy groups of topological cyclic homology in characteristic 2 fields?",
+      "expected_document_title": "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+      "benchmark": {
+        "query_uuid": "32be66a1-746c-4fbb-bc45-49369785d0dc",
+        "paper_id": "2405.02054v2",
+        "type": "extractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What are the homotopy groups of topological cyclic homology in characteristic 2 fields?",
+        "reranked_rank": -1,
+        "vector_rank": 7,
+        "pure_vector_rank": 7,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.125,
+        "mrr_pure_vector": 0.125,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2"
+        ]
+      },
+      "answer": {
+        "text": "I can't provide information on homotopy groups of topological cyclic homology in characteristic 2 fields from the company's knowledge base. This topic is likely outside the scope of the company's internal documents. You might want to consult academic resources or research papers on algebraic topology for detailed information on this topic.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not address the context provided and incorrectly states that the information is outside the company's knowledge base, which is not supported by the context.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and fails to provide relevant information from the reference.",
+        "citation": 0,
+        "citation_note": "1/7 title tokens matched",
+        "input_tokens": 540,
+        "output_tokens": 61,
+        "latency_ms": 954,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 6957
+    },
+    {
+      "id": "q_13",
+      "question": "How does fragment-based drug discovery work?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "43c72135-8a27-43c3-a34f-0cf01b050498",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How does fragment-based drug discovery work?",
+        "reranked_rank": 3,
+        "vector_rank": 2,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.25,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Fragment-based drug discovery (FBDD) is a method used in the field of medicinal chemistry to identify lead compounds for drug development. It involves the following key steps:\n\n1. **Fragment Library Screening**: Small chemical fragments, typically with a molecular weight of less than 300 Da, are screened against a biological target. These fragments are simpler and smaller than typical drug molecules.\n\n2. **Detection of Binding**: Techniques such as X-ray crystallography, nuclear magnetic resonance (NMR) spectroscopy, and surface plasmon resonance (SPR) are used to detect the binding of fragments to the target protein. These methods help identify which fragments bind to the target and where they bind.\n\n3. **Fragment Optimization**: Once binding fragments are identified, they are optimized to increase their binding affinity and specificity. This involves chemically modifying the fragments to improve their interactions with the target.\n\n4. **Lead Compound Development**: Optimized fragments are further developed into lead compounds. This step involves increasing the size and complexity of the fragments to enhance their drug-like properties, such as potency, selectivity, and pharmacokinetics.\n\n5. **Iterative Process**: FBDD is often an iterative process, where fragments are continuously optimized and tested until a suitable lead compound is developed.\n\nFBDD is advantageous because it allows for the exploration of a larger chemical space with fewer compounds, and the smaller size of fragments often leads to better solubility and fewer off-target effects. However, it requires sophisticated techniques and expertise to identify and optimize fragment hits effectively.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer provides detailed steps of FBDD that are not explicitly mentioned in the context, thus inventing facts not supported by the provided information.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains the process of fragment-based drug discovery, including key steps and techniques, consistent with the reference.",
+        "citation": 0,
+        "citation_note": "2/8 title tokens matched",
+        "input_tokens": 529,
+        "output_tokens": 309,
+        "latency_ms": 3052,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8147
+    },
+    {
+      "id": "q_14",
+      "question": "What is the principal's commitment problem for any $\\delta>0$?",
+      "expected_document_title": "Reputation and Risk in Regimes",
+      "benchmark": {
+        "query_uuid": "973e9e69-635d-4ab3-9a50-ff9b80d9dffc",
+        "paper_id": "2404.18884v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the principal's commitment problem for any $\\delta>0$?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes",
+          "Reputation and Risk in Regimes"
+        ]
+      },
+      "answer": {
+        "text": "I couldn't find information about this in the knowledge base.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not reference any relevant information from the provided context and states a lack of information instead.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and lacks relevant information.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 536,
+        "output_tokens": 12,
+        "latency_ms": 558,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 4697
+    },
+    {
+      "id": "q_15",
+      "question": "Does any synthesis pathway have a QED value greater than 0.4?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "3973387a-c318-4912-a5e3-f0ccc1ea4681",
+        "paper_id": "2405.01155v3",
+        "type": "extractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Does any synthesis pathway have a QED value greater than 0.4?",
+        "reranked_rank": -1,
+        "vector_rank": 8,
+        "pure_vector_rank": 8,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.1111111111111111,
+        "mrr_pure_vector": 0.1111111111111111,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Yes, there are synthesis pathways with QED values greater than 0.4. For example, the SynFlowNet method has a QED value of \\(0.73 \\pm 0.09\\), and the Soft Q-Learning method has a QED value of \\(0.80 \\pm 0.07\\) as per the retrieved document titled \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints.\"",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims about QED values and methods are supported by the context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly states that there are synthesis pathways with QED values greater than 0.4 and provides specific examples consistent with the reference.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2978,
+        "output_tokens": 117,
+        "latency_ms": 3984,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 9052
+    },
+    {
+      "id": "q_16",
+      "question": "Why is it important to consider SeH-related examples in molecular design?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "979423e7-94fe-4341-8892-1d46f97e4210",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is it important to consider SeH-related examples in molecular design?",
+        "reranked_rank": 4,
+        "vector_rank": 4,
+        "pure_vector_rank": 4,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.2,
+        "mrr_vector": 0.2,
+        "mrr_pure_vector": 0.2,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "The retrieved documents discuss the design of molecules with synthesis constraints using SynFlowNet, but they do not specifically address the importance of SeH-related examples in molecular design. I couldn't find information about this specific topic in the knowledge base.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer incorrectly claims that the documents do not address SeH-related examples, while the context explicitly mentions SynFlowNet-generated molecules and synthesis pathways for SeH.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and contradicts the reference by stating that it could not find information on the importance of SeH-related examples.",
+        "citation": 1,
+        "citation_note": "5/8 title tokens matched",
+        "input_tokens": 2115,
+        "output_tokens": 69,
+        "latency_ms": 3348,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 8089
+    },
+    {
+      "id": "q_17",
+      "question": "What role do synthesis constraints play in molecule design?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "56e8a093-a23a-482d-8136-51845ef532f1",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What role do synthesis constraints play in molecule design?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Synthesis constraints play a crucial role in molecule design by ensuring that the molecules generated can actually be synthesized in the real world. Many generative models for molecular design often produce molecules that are synthetically inaccessible, which limits their practical application in fields like drug discovery. To address this, synthesis constraints are incorporated into the generative process to enhance the synthesizability of the designed molecules.\n\nFor instance, the SynFlowNet model introduces synthesis constraints by using chemical reactions and purchasable reactants as part of its action space to sequentially build new molecules. This approach bridges the gap between in silico molecular generation and real-world synthesis capabilities by explicitly incorporating forward synthesis as a constraint in the generative mechanism. This not only improves the synthesizability of the compounds but also enhances sample diversity compared to traditional methods (Source: \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\").\n\nAdditionally, synthesis constraints can include factors such as synthesis cost, reaction yield, and selectivity, which can be integrated into the design process to further strengthen the real-world applicability of the generated molecules (Source: \"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\").",
+        "faithfulness": 1,
+        "faithfulness_note": "All claims about synthesis constraints and their role in molecular design are supported by the context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains the role of synthesis constraints in molecule design, aligning with the reference provided.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2387,
+        "output_tokens": 258,
+        "latency_ms": 3138,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 7812
+    },
+    {
+      "id": "q_18",
+      "question": "What role do trace maps play in proving versions of the Milnor conjecture?",
+      "expected_document_title": "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+      "benchmark": {
+        "query_uuid": "c8c8f25f-71c1-4124-a049-2e9ef5a4dc3a",
+        "paper_id": "2405.02054v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What role do trace maps play in proving versions of the Milnor conjecture?",
+        "reranked_rank": 1,
+        "vector_rank": 2,
+        "pure_vector_rank": 2,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2",
+          "An analogue of the Milnor conjecture for the de Rham-Witt complex in\n  characteristic 2"
+        ]
+      },
+      "answer": {
+        "text": "I couldn't find information about this in the knowledge base.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not reference any relevant information from the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question and lacks relevant information.",
+        "citation": 0,
+        "citation_note": "0/7 title tokens matched",
+        "input_tokens": 537,
+        "output_tokens": 12,
+        "latency_ms": 694,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 5331
+    },
+    {
+      "id": "q_19",
+      "question": "How does building block sampling contribute to the design of novel molecules?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "b58781cc-eee2-4a74-873e-d30de69702c1",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How does building block sampling contribute to the design of novel molecules?",
+        "reranked_rank": -1,
+        "vector_rank": 2,
+        "pure_vector_rank": 2,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Building block sampling contributes to the design of novel molecules by allowing models to explore and utilize a diverse set of molecular fragments or building blocks. This approach is used in systems like SynFlowNet, which is designed to generate diverse and novel molecules while considering synthesis constraints.\n\n1. **Clustering and Exploration**: Building blocks are clustered based on molecular similarity, such as Tanimoto similarity, which helps the model navigate the chemical space efficiently. The model can explore new building blocks within and across these clusters, focusing on those that maximize the reward (e.g., synthesis feasibility or binding affinity) (Source: SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints).\n\n2. **Model Training and Evaluation**: Models are trained using subsets of building blocks, and their performance is evaluated based on the structural diversity of the molecules they generate. This involves sampling trajectories and considering only those that result in valid final molecules. The use of molecular fingerprints helps in focusing on clusters that maximize the reward (Source: SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints).\n\n3. **Case Studies**: For specific targets like Heat Shock Protein 90 (HSP90) and SARS-CoV-2 Main Protease (Mpro), curated building block sets are used to design molecules that align with experimentally validated interactions. This involves using reference structures and fragment screens to guide the design process (Source: SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints).\n\nOverall, building block sampling enables the systematic exploration of chemical space, facilitating the design of molecules that are not only novel but also synthetically feasible and potentially effective for specific biological targets.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately reflects the context provided, discussing building block sampling, clustering, model training, and case studies without introducing any unsupported claims.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains how building block sampling contributes to the design of novel molecules by discussing the selection of molecular fragments, the exploration of chemical space, and the consideration of synthesis constraints, all of which align with the reference.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2356,
+        "output_tokens": 357,
+        "latency_ms": 4529,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 8601
+    },
+    {
+      "id": "q_20",
+      "question": "How does Enamine REAL Space contribute to experimental setups involving purchasable compounds?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "e7836af3-5e81-4e63-8f07-0271472004a5",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How does Enamine REAL Space contribute to experimental setups involving purchasable compounds?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Enamine REAL Space contributes to experimental setups involving purchasable compounds by providing a vast catalogue of 48 billion purchasable compounds. This molecular space is used to ensure that the molecules generated in experiments are readily purchasable from Enamine. Specifically, a subset of Enamine reactions, which produces 93.9% of the REAL space, is utilized to stay close to an experimental setup where the molecules are easily accessible for purchase. This approach is particularly beneficial in drug discovery campaigns where high molecule purchaseability is crucial (\"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\").",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer invents facts not present in the context, such as the specific number of purchasable compounds (48 billion) and the percentage (93.9%) related to the REAL space.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly explains how Enamine REAL Space provides a large catalogue of purchasable compounds and how it ensures that generated molecules are readily available for experimentation, consistent with the reference.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2334,
+        "output_tokens": 148,
+        "latency_ms": 2401,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 8115
+    }
+  ]
+}
