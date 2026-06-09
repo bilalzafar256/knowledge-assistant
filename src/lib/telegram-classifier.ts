@@ -2,9 +2,9 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { openai } from "./ai";
+import { anthropic } from "./ai";
 
-const CLASSIFIER_MODEL = "gpt-4o-mini";
+const CLASSIFIER_MODEL = "claude-haiku-4-5";
 
 const ClassificationSchema = z.object({
   kind: z.enum(["requirement", "discussion"]),
@@ -60,7 +60,7 @@ export async function classifyMessage(
   );
 
   const { object } = await generateObject({
-    model: openai(CLASSIFIER_MODEL),
+    model: anthropic(CLASSIFIER_MODEL),
     schema: ClassificationSchema,
     system: systemPrompt,
     prompt: message,

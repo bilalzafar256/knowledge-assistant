@@ -35,7 +35,7 @@ There is **no test suite** — verification is `pnpm type-check` + `pnpm lint`, 
 
 ## Architecture
 
-Tech stack: Next.js 16 (App Router, RSC) · Vercel AI SDK v6 · OpenAI (gpt-4o chat, text-embedding-3-small, gpt-4o-mini for query synthesis + rerank fallback) · Neon Postgres + pgvector via Drizzle ORM · Clerk auth · Arcjet security · Inngest ingestion · shadcn/ui + Tailwind v4 · pnpm.
+Tech stack: Next.js 16 (App Router, RSC) · Vercel AI SDK v6 · Anthropic Claude (claude-sonnet-4-6 chat + image OCR, claude-haiku-4-5 for query synthesis + rerank fallback + Telegram classifier) · Google gemini-embedding-001 @ 1536-d (embeddings) · Neon Postgres + pgvector via Drizzle ORM · Clerk auth · Arcjet security · Inngest ingestion · shadcn/ui + Tailwind v4 · pnpm.
 
 ### Two cross-cutting invariants (every route must honor both)
 
@@ -45,11 +45,11 @@ Tech stack: Next.js 16 (App Router, RSC) · Vercel AI SDK v6 · OpenAI (gpt-4o c
 ### RAG retrieval pipeline (`src/lib/ai.ts` → `createSearchKnowledgeTool`)
 
 The single most important file. Flow on each chat query:
-1. `synthesizeSearchQuery()` — gpt-4o-mini rewrites a follow-up into a standalone query using conversation history (falls back to the raw query on error).
+1. `synthesizeSearchQuery()` — claude-haiku-4-5 rewrites a follow-up into a standalone query using conversation history (falls back to the raw query on error).
 2. `generateEmbedding()` — embeds the synthesized query.
 3. **Hybrid search in one SQL CTE**: pgvector cosine (`vector_hits`) + Postgres `tsvector` BM25-style lexical (`bm25_hits` over the generated `content_tsv` column with GIN index), fused via Reciprocal Rank Fusion (k=60) → top ~15 candidates. See `drizzle/0005_hybrid_search.sql`.
-4. `rerankChunks()` — Cohere Rerank 3.5 if `COHERE_API_KEY` is set, else a gpt-4o-mini scoring call; trims to top-N (default 3).
-5. Chunks → gpt-4o via `streamText` with `searchKnowledge` as a tool (`stopWhen: stepCountIs(5)`).
+4. `rerankChunks()` — Cohere Rerank 3.5 if `COHERE_API_KEY` is set, else a claude-haiku-4-5 scoring call; trims to top-N (default 3).
+5. Chunks → claude-sonnet-4-6 via `streamText` with `searchKnowledge` as a tool (`stopWhen: stepCountIs(5)`).
 
 **Graceful degradation is a design rule**: query synthesis and reranking both fall back silently on error so the main chat flow never breaks. Preserve this when editing.
 
@@ -77,5 +77,5 @@ The system prompt (`SYSTEM_PROMPT` in `ai.ts`) is intentionally strict about gro
 
 - **Server Components by default**; add `"use client"` only where interactivity is required.
 - Arcjet clients are per-surface (`lib/arcjet.ts`): `chatAj` (20/min token bucket, keyed by userId), `uploadAj` (50/hr + 200/day), base `aj`. The middleware `aj` rate-limits by IP (100/min) before auth.
-- Import the AI SDK from `ai` / `@ai-sdk/openai` / `@ai-sdk/react` (v6 `UIMessage` protocol; chat uses `useChat` + `toUIMessageStreamResponse`).
+- Import the AI SDK from `ai` / `@ai-sdk/anthropic` (generation) / `@ai-sdk/openai` (embeddings) / `@ai-sdk/react` (v6 `UIMessage` protocol; chat uses `useChat` + `toUIMessageStreamResponse`).
 - The `evals/` harness mirrors production retrieval/answer logic (`evals/lib/retrieve.mjs` ↔ `lib/ai.ts`, `evals/lib/answer.mjs` ↔ `api/chat/route.ts`). If you change retrieval or the answer loop, update the eval mirror to keep benchmarks comparable.

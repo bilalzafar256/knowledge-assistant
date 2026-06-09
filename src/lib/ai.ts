@@ -1,4 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { tool, embed, generateText } from "ai";
 import { z } from "zod";
 import { env } from "./env";
@@ -7,13 +9,27 @@ import { db } from "./db";
 import { documentChunks } from "./schema";
 import { sql, eq, and } from "drizzle-orm";
 
+// Anthropic powers all generative tasks (chat, parsing, synthesis, rerank).
+export const anthropic = createAnthropic({
+  apiKey: env.ANTHROPIC_API_KEY,
+});
+
+// Google Gemini powers embeddings (Anthropic has no embedding model).
+export const google = createGoogleGenerativeAI({
+  apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
+
+// OpenAI client retained for the eval harness / as an embedding fallback option.
 export const openai = createOpenAI({
   apiKey: env.OPENAI_API_KEY,
 });
 
-// Default models
-export const CHAT_MODEL = "gpt-4o";
-export const EMBEDDING_MODEL = "text-embedding-3-small";
+// Default models — one per task. Swap any single line to retune cost/quality.
+export const CHAT_MODEL = "claude-sonnet-4-6"; // user-facing grounded answers
+export const SYNTHESIS_MODEL = "claude-haiku-4-5"; // standalone-query rewrite (hot path)
+export const RERANK_MODEL = "claude-haiku-4-5"; // LLM rerank scoring fallback
+export const EMBEDDING_MODEL = "gemini-embedding-001"; // Google — embeddings
+export const EMBEDDING_DIMENSIONS = 1536; // matches the document_chunks.embedding vector(1536) column
 
 // ── System Prompt ────────────────────────────────────────────────────────────
 
@@ -48,12 +64,26 @@ Current date: ${new Date().toLocaleDateString("en-US", { weekday: "long", year: 
 // ── Embeddings ───────────────────────────────────────────────────────────────
 
 /**
- * Generates an embedding vector for a given text using OpenAI via the AI SDK.
+ * Generates an embedding vector for a given text using Google Gemini via the AI SDK.
+ *
+ * Truncated to 1536 dimensions (Matryoshka) so the vector drops straight into the
+ * existing `document_chunks.embedding vector(1536)` column — no schema migration.
+ *
+ * `taskType` asymmetric typing improves retrieval: stored chunks should be embedded
+ * as RETRIEVAL_DOCUMENT (pass it from ingestion), search queries as RETRIEVAL_QUERY
+ * (the default). Note: vectors below 3072-d are not L2-normalized, which is fine —
+ * pgvector's cosine operator (`<=>`) is magnitude-invariant.
  */
-export async function generateEmbedding(text: string): Promise<number[]> {
+export async function generateEmbedding(
+  text: string,
+  taskType: "RETRIEVAL_QUERY" | "RETRIEVAL_DOCUMENT" = "RETRIEVAL_QUERY"
+): Promise<number[]> {
   const { embedding } = await embed({
-    model: openai.embedding(EMBEDDING_MODEL),
+    model: google.textEmbeddingModel(EMBEDDING_MODEL),
     value: text.replace(/\n/g, " "),
+    providerOptions: {
+      google: { outputDimensionality: EMBEDDING_DIMENSIONS, taskType },
+    },
   });
   return embedding;
 }
@@ -71,7 +101,7 @@ export type ConversationMessage = { role: "user" | "assistant"; content: string 
  *   Latest: "What about carry-over?"
  *   → Synthesized: "annual leave carry-over rules policy"
  *
- * Uses gpt-4o-mini for speed and cost efficiency.
+ * Uses Claude Haiku for speed and cost efficiency.
  * Falls back to the original query on any error.
  */
 async function synthesizeSearchQuery(
@@ -89,7 +119,7 @@ async function synthesizeSearchQuery(
       .join("\n");
 
     const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: anthropic(SYNTHESIS_MODEL),
       prompt:
         `You are a search query optimizer. Given a conversation and the user's latest message, ` +
         `rewrite the latest message as a complete, standalone search query that includes all ` +
@@ -123,7 +153,7 @@ const COHERE_RERANK_MODEL = "rerank-v3.5";
 
 /**
  * Re-ranks candidates with Cohere Rerank 3.5 if COHERE_API_KEY is set,
- * otherwise falls back to a gpt-4o-mini scoring call. Both paths return
+ * otherwise falls back to a Claude Haiku scoring call. Both paths return
  * the indices of the top `topK` candidates sorted by relevance.
  *
  * On any error (network, rate limit, malformed response), falls back to
@@ -197,7 +227,7 @@ async function llmRerank(
       .join("\n");
 
     const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: anthropic(RERANK_MODEL),
       prompt:
         `Score each chunk 0–10 for relevance to the query. ` +
         `Output ONLY a JSON object: {"scores":[n,n,...]} with one number per chunk.\n\n` +
@@ -347,7 +377,7 @@ export function createSearchKnowledgeTool(
           };
         }
 
-        // Re-rank candidates with a single gpt-4o-mini scoring call
+        // Re-rank candidates with a single Claude Haiku scoring call
         const topIndices = await rerankChunks(
           searchQuery,
           rows.map((r) => ({ content: r.content, documentTitle: r.document_title })),

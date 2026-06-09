@@ -60,28 +60,52 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 5. Extract text
-  try {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const text = await extractText(buffer, mimeType, file.name);
-    const wordCount = text.split(/\s+/).filter(Boolean).length;
+  // 5. Extract text — stream progress to the client as newline-delimited JSON.
+  // Each line is one event: { stage, ... }. The handler returns immediately with
+  // the stream; stages flush as extraction proceeds so the UI can show real steps.
+  const isImage = mimeType === "image/jpeg" || mimeType === "image/png";
+  const encoder = new TextEncoder();
 
-    return NextResponse.json({ text, wordCount });
-  } catch (error) {
-    logger.error("api.documents.parse_failed", {
-      userId,
-      fileName: file.name,
-      mimeType,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to extract text from file",
-      },
-      { status: 422 }
-    );
-  }
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const send = (event: Record<string, unknown>) =>
+        controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
+
+      try {
+        send({ stage: "reading" });
+        const buffer = Buffer.from(await file.arrayBuffer());
+
+        send({ stage: "extracting", vision: isImage });
+        const text = await extractText(buffer, mimeType, file.name);
+        const wordCount = text.split(/\s+/).filter(Boolean).length;
+
+        send({ stage: "done", text, wordCount });
+      } catch (error) {
+        logger.error("api.documents.parse_failed", {
+          userId,
+          fileName: file.name,
+          mimeType,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        send({
+          stage: "error",
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to extract text from file",
+        });
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "application/x-ndjson; charset=utf-8",
+      "Cache-Control": "no-store",
+      // Disable proxy/Nginx buffering so each line flushes immediately.
+      "X-Accel-Buffering": "no",
+    },
+  });
 }

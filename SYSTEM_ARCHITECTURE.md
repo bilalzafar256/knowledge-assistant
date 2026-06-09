@@ -4,7 +4,7 @@
 > This document holds the system **diagrams** (Mermaid topology + runtime flows), the **directory blueprint**, and **core-subsystem** deep dives.
 > For the narrative architecture reference (schema tables, migration list, conventions, security model, evals), see **[`PROJECT_PLAN.md`](./PROJECT_PLAN.md)**. For setup and usage, see **[`Readme.md`](./Readme.md)**.
 
-The app is a production-grade **RAG** (Retrieval-Augmented Generation) system: users upload documents, and the assistant answers questions grounded strictly in retrieved chunks, with citations. It runs on the 2026 Vercel stack — Next.js 16 (App Router / RSC), Vercel AI SDK v6, OpenAI, Neon Postgres + pgvector, Clerk, Arcjet, and Inngest.
+The app is a production-grade **RAG** (Retrieval-Augmented Generation) system: users upload documents, and the assistant answers questions grounded strictly in retrieved chunks, with citations. It runs on the 2026 Vercel stack — Next.js 16 (App Router / RSC), Vercel AI SDK v6, Anthropic (Claude) for all generation plus Google Gemini for embeddings, Neon Postgres + pgvector, Clerk, Arcjet, and Inngest.
 
 ---
 
@@ -34,7 +34,8 @@ flowchart TB
     end
 
     subgraph AI["🤖 External AI"]
-        OpenAI["OpenAI<br/>gpt-4o · text-embedding-3-small · gpt-4o-mini"]
+        Anthropic["Anthropic (Claude)<br/>sonnet-4-6 (chat + vision OCR) · haiku-4-5 (synthesis + rerank)"]
+        Gemini["Google Gemini<br/>gemini-embedding-001 @ 1536-d (embeddings)"]
         Cohere["Cohere Rerank 3.5<br/>(optional)"]
     end
 
@@ -60,7 +61,8 @@ flowchart TB
     Pages --> DBLib
     API --> AILib
     API --> DBLib
-    AILib --> OpenAI
+    AILib --> Anthropic
+    AILib --> Gemini
     AILib --> Cohere
     AILib --> DBLib
     DBLib --> Neon
@@ -70,7 +72,8 @@ flowchart TB
     API -.re-check.-> Arcjet
     API -->|document/uploaded event| Inngest
     Inngest --> Ingest
-    Ingest --> OpenAI
+    Ingest --> Anthropic
+    Ingest --> Gemini
     Ingest --> Neon
     API & AILib & Ingest -.spans/logs.-> Axiom
     TG --> API
@@ -89,11 +92,11 @@ sequenceDiagram
     participant API as /api/chat (route.ts)
     participant Sec as Security chain<br/>(Clerk · Arcjet · CSRF)
     participant AI as lib/ai.ts
-    participant Mini as gpt-4o-mini
-    participant Emb as text-embedding-3-small
+    participant Mini as claude-haiku-4-5
+    participant Emb as gemini-embedding-001 (1536-d)
     participant DB as Neon + pgvector
-    participant RR as Reranker<br/>(Cohere / gpt-4o-mini)
-    participant Chat as gpt-4o (streamText)
+    participant RR as Reranker<br/>(Cohere / claude-haiku-4-5)
+    participant Chat as claude-sonnet-4-6 (streamText)
 
     U->>API: POST message + sessionId
     API->>Sec: auth() · chatAj.protect() · isCsrfSafe()
@@ -204,17 +207,17 @@ Architectural responsibility of every major directory.
 
 The single most important file. `createSearchKnowledgeTool` drives each query (see [§2](#2-primary-runtime-workflow--a-grounded-chat-turn)):
 
-1. `synthesizeSearchQuery()` — gpt-4o-mini rewrites a follow-up into a standalone query using history (falls back to the raw query on error).
-2. `generateEmbedding()` — embeds the synthesized query with text-embedding-3-small (1536-d).
+1. `synthesizeSearchQuery()` — claude-haiku-4-5 rewrites a follow-up into a standalone query using history (falls back to the raw query on error).
+2. `generateEmbedding()` — embeds the synthesized query with Google gemini-embedding-001 (1536-d, `RETRIEVAL_QUERY` task type; chunks are embedded as `RETRIEVAL_DOCUMENT` at ingest).
 3. **Hybrid search in one SQL CTE** — pgvector cosine (`vector_hits`) + Postgres `tsvector` BM25-style lexical (`bm25_hits` over the generated `content_tsv` column with a GIN index), fused via **Reciprocal Rank Fusion (k=60)** → ~15 candidates. See `drizzle/0005_hybrid_search.sql`.
-4. `rerankChunks()` — Cohere Rerank 3.5 if `COHERE_API_KEY` is set, else a gpt-4o-mini scoring call; trims to top-N (default 3).
-5. Chunks → gpt-4o via `streamText` with `searchKnowledge` as a tool (`stopWhen: stepCountIs(5)`, temperature 0.3).
+4. `rerankChunks()` — Cohere Rerank 3.5 if `COHERE_API_KEY` is set, else a claude-haiku-4-5 scoring call; trims to top-N (default 3).
+5. Chunks → claude-sonnet-4-6 via `streamText` with `searchKnowledge` as a tool (`stopWhen: stepCountIs(5)`, temperature 0.3).
 
 The strict `SYSTEM_PROMPT` forbids the model from inventing numbers/dates/names not present in retrieved chunks — treat changes to it as behavior-affecting.
 
 ### 5.2 Ingestion subsystem — `src/inngest/ingest-document.ts` + `src/app/workflows/ingest.ts`
 
-See [§3](#3-ingestion-workflow--upload-to-retrievable-chunks). `src/lib/file-parser.ts` `extractText()` handles PDF (pdf-parse), DOC/DOCX (mammoth), XLS/XLSX (xlsx), JPG/PNG (gpt-4o vision OCR), and text/md/json, with a 50 MB cap. Re-indexing reuses the same pipeline via the document re-index button. The Inngest function records `processing → ready|failed` and re-throws on error so Inngest retries.
+See [§3](#3-ingestion-workflow--upload-to-retrievable-chunks). `src/lib/file-parser.ts` `extractText()` handles PDF (pdf-parse), DOC/DOCX (mammoth), XLS/XLSX (xlsx), JPG/PNG (claude-sonnet-4-6 vision OCR), and text/md/json, with a 50 MB cap. Re-indexing reuses the same pipeline via the document re-index button. The Inngest function records `processing → ready|failed` and re-throws on error so Inngest retries.
 
 ### 5.3 Auth + security chain — `src/proxy.ts`, `lib/arcjet.ts`, `lib/csrf.ts`, `lib/audit.ts`
 

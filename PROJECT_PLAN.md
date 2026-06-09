@@ -10,8 +10,8 @@
 |---|---|
 | Framework | Next.js 16 — App Router, React 19, TypeScript, Server Components |
 | AI | Vercel AI SDK v6 — `streamText`, tool calls, `UIMessage` protocol |
-| Models | gpt-4o (chat + image OCR) · text-embedding-3-small, 1536-d (embeddings) · gpt-4o-mini (query synthesis + rerank fallback) |
-| Reranker | Cohere Rerank 3.5 (optional `COHERE_API_KEY`); gpt-4o-mini fallback |
+| Models | claude-sonnet-4-6 (chat + image OCR) · claude-haiku-4-5 (query synthesis + rerank fallback + Telegram classifier) · Google gemini-embedding-001, 1536-d (embeddings) |
+| Reranker | Cohere Rerank 3.5 (optional `COHERE_API_KEY`); claude-haiku-4-5 fallback |
 | Database | Neon (Postgres + pgvector) via Drizzle ORM (`neon-http`) |
 | Auth | Clerk |
 | Security | Arcjet (shield, bot detection, rate limits) + Origin-based CSRF |
@@ -131,12 +131,12 @@ The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated colu
 | `env.ts` | Zod validation of all env vars; fails fast at startup |
 | `db.ts` | Lazy `neon-http` Drizzle client behind a Proxy (`db.*` works anywhere) |
 | `schema.ts` | All tables, relations, inferred types |
-| `ai.ts` | OpenAI client, models, `SYSTEM_PROMPT`, `generateEmbedding`, `synthesizeSearchQuery`, `rerankChunks`, `createSearchKnowledgeTool` (the hybrid-search SQL) |
+| `ai.ts` | Anthropic + Google + OpenAI clients, models, `SYSTEM_PROMPT`, `generateEmbedding` (Google Gemini), `synthesizeSearchQuery`, `rerankChunks`, `createSearchKnowledgeTool` (the hybrid-search SQL) |
 | `arcjet.ts` | `chatAj` (20/min, by userId), `uploadAj` (50/hr + 200/day), base `aj` |
 | `csrf.ts` | `isCsrfSafe()` — Origin header validation |
 | `audit.ts` | `logAudit()` — fire-and-forget insert into `audit_logs` |
 | `inngest.ts` | Inngest client + `document/uploaded` event type |
-| `file-parser.ts` | `extractText()` for PDF (pdf-parse), DOC/DOCX (mammoth), XLS/XLSX (xlsx), JPG/PNG (gpt-4o vision), text/md/json; accepted types + 50 MB cap |
+| `file-parser.ts` | `extractText()` for PDF (pdf-parse), DOC/DOCX (mammoth), XLS/XLSX (xlsx), JPG/PNG (claude-sonnet-4-6 vision), text/md/json; accepted types + 50 MB cap |
 | `utils.ts` | `cn`, `formatFileSize`, `timeAgo`, `truncate`, `sanitizeText`, `chunkText` (word-window, ~4 chars/token) |
 | `axiom/` | `axiom.ts` (client), `server.ts` (`logger` + `withAxiom`), `otel.ts` (tracer → OTLP) |
 
@@ -169,14 +169,14 @@ The UI polls `GET /api/documents/[id]/status` until `ready`. Re-indexing reuses 
 ### Query
 
 ```
-synthesizeSearchQuery()   gpt-4o-mini rewrites the follow-up as a standalone query (fallback: raw query)
-generateEmbedding()       embed the synthesized query
+synthesizeSearchQuery()   claude-haiku-4-5 rewrites the follow-up as a standalone query (fallback: raw query)
+generateEmbedding()       embed the synthesized query (Google gemini-embedding-001, 1536-d)
 Hybrid retrieval          one SQL CTE, tenant-scoped by userId:
    ├─ vector_hits           pgvector cosine top-N (semantic)
    ├─ bm25_hits             ts_rank_cd on content_tsv via GIN (lexical)
    └─ RRF fusion            Σ 1 / (60 + rank_i) → ~15 fused candidates
-rerankChunks()            Cohere Rerank 3.5 if COHERE_API_KEY, else gpt-4o-mini scoring → top ~3
-streamText (gpt-4o)       searchKnowledge tool, stopWhen stepCountIs(5), temperature 0.3
+rerankChunks()            Cohere Rerank 3.5 if COHERE_API_KEY, else claude-haiku-4-5 scoring → top ~3
+streamText (sonnet-4-6)   searchKnowledge tool, stopWhen stepCountIs(5), temperature 0.3
 ```
 
 `SYSTEM_PROMPT` in `ai.ts` is strict about grounding: answer only from retrieved chunks; never infer numbers/dates/names that aren't present; say so when the chunks don't contain the asked detail.
@@ -203,7 +203,12 @@ evals/
 
 **Ground-truth matching** — the chunker tags each chunk's `metadata.section_id` at ingest; a retrieval hit is scored when any retrieved chunk's `(documentId, section_id)` matches the expected pair.
 
-**Isolation** — benchmark docs live under `OPEN_RAGBENCH_USER_ID` (default `user_open_ragbench_eval`) so they don't mix with other corpora.
+**Isolation** — benchmark docs live under `OPEN_RAGBENCH_USER_ID` (default `user_open_ragbench_eval`) so they don't mix with other corpora. Note this is *logical* (tenant) isolation only: the harness writes to the same `DATABASE_URL` as the app. The full corpus is ~440 MB (37k+ chunks × `vector(1536)` embeddings) and **will exceed Neon's 512 MB free-tier limit**, causing live uploads to 500 with `could not extend file because project size limit ... exceeded`. Run evals against a throwaway Neon branch, or tear the tenant down afterward:
+
+```sql
+DELETE FROM documents WHERE user_id='user_open_ragbench_eval';  -- cascades to chunks
+VACUUM FULL document_chunks;  -- reclaim space; plain VACUUM won't shrink the files
+```
 
 Run cycle:
 ```

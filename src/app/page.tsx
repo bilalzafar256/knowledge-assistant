@@ -120,7 +120,7 @@ Verdict: 🟢 Strong (context precision) · 🟡 Acceptable (recall, citation)
 
 const observabilitySnippet = `// src/app/api/chat/route.ts
 const result = streamText({
-  model: openai(CHAT_MODEL),
+  model: anthropic(CHAT_MODEL),
   experimental_telemetry: {
     isEnabled: true,
     functionId: "chat.stream",
@@ -516,7 +516,7 @@ export default function LandingPage() {
             <div className="rounded-xl border border-border/60 bg-card p-5 font-mono text-xs space-y-2">
               <FlowStep n="1" label="Telegram message" sub="webhook secret + chat.id allowlist" />
               <FlowArrow />
-              <FlowStep n="2" label="Classifier" sub="task | continue | cancel (gpt-4o-mini)" tone="violet" />
+              <FlowStep n="2" label="Classifier" sub="task | continue | cancel (claude-haiku-4-5)" tone="violet" />
               <FlowArrow />
               <FlowStep n="3" label="Plan subagent" sub="QUESTIONS or PLAN; clarifies if unclear" tone="violet" />
               <FlowArrow approve label="Approve" />
