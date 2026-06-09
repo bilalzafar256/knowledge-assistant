@@ -1,1 +1,0 @@
-- [Project Schema State](project_schema_state.md) — full schema rebuilt 2026-05-20; pgvector must be enabled before migration 0000; all 3 migrations applied
