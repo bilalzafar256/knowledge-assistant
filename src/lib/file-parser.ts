@@ -141,9 +141,11 @@ async function extractImageText(
   mimeType: "image/jpeg" | "image/png",
   filename: string
 ): Promise<string> {
-  const base64 = buffer.toString("base64");
-  const dataUrl = `data:${mimeType};base64,${base64}`;
-
+  // Pass raw bytes + explicit mediaType rather than a `data:` URL string.
+  // The AI SDK's downloadAssets path coerces any string to `new URL(...)`,
+  // which succeeds for data URLs and then fails SSRF validation
+  // ("URL scheme must be http or https, got data:"). Uint8Array data
+  // bypasses the download path entirely.
   const { text } = await generateText({
     model: openai("gpt-4o"),
     messages: [
@@ -152,7 +154,8 @@ async function extractImageText(
         content: [
           {
             type: "image",
-            image: dataUrl,
+            image: new Uint8Array(buffer),
+            mediaType: mimeType,
           },
           {
             type: "text",
