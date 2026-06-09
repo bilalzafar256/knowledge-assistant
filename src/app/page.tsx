@@ -3,6 +3,7 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  Activity,
   ArrowRight,
   BookOpen,
   Database,
@@ -17,10 +18,25 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { label: "Recall@5", value: "100%", hint: "reranked" },
-  { label: "MRR", value: "0.86", hint: "Cohere Rerank 3.5" },
-  { label: "Avg latency", value: "4.2s", hint: "synth → embed → retrieve → stream" },
-  { label: "Cost / 25-Q eval", value: "$0.20", hint: "gpt-4o + embeddings + judges" },
+  { label: "Recall@5", value: "75%", hint: "section-level, top-5" },
+  { label: "MRR", value: "0.44", hint: "Cohere Rerank 3.5" },
+  { label: "Avg latency", value: "2.6s", hint: "embed → retrieve → stream" },
+  { label: "Cost / query", value: "$0.0062", hint: "gpt-4o + embeddings + judges" },
+];
+
+const verdictRows: { metric: string; value: string; tier: "strong" | "acceptable" | "needs-work" }[] = [
+  { metric: "Recall@5", value: "75.0%", tier: "acceptable" },
+  { metric: "MRR (rerank)", value: "0.443", tier: "needs-work" },
+  { metric: "Context precision", value: "62.0%", tier: "strong" },
+  { metric: "Faithfulness", value: "40.0%", tier: "needs-work" },
+  { metric: "Correctness", value: "52.5%", tier: "needs-work" },
+  { metric: "Citation accuracy", value: "60.0%", tier: "acceptable" },
+];
+
+const modalityRows = [
+  { modality: "text", count: 7, recall: "100.0%", mrr: "0.690" },
+  { modality: "text + table", count: 2, recall: "100.0%", mrr: "0.750" },
+  { modality: "text + image", count: 11, recall: "54.5%", mrr: "0.230" },
 ];
 
 const evalRuns = [
@@ -40,6 +56,8 @@ const techStack = [
   "Clerk",
   "Arcjet",
   "Inngest",
+  "Axiom",
+  "OpenTelemetry",
   "Tailwind v4",
   "shadcn/ui",
 ];
@@ -89,12 +107,32 @@ export async function POST(request: NextRequest) {
 }`;
 
 const evalSnippet = `$ pnpm eval:ragbench:run -- --label ragbench-baseline
-✓ ran 2000/2000 questions from Vectara Open RAG Benchmark
+✓ ingested 1,000 arXiv papers (skip-existing on resume)
+✓ ran questions from Vectara Open RAG Benchmark (3,045 expert Q&A)
 ✓ wrote evals/benchmarks/open-ragbench/runs/...ragbench-baseline.{json,md}
 
-Recall@5 (section)   75%       MRR (rerank)   0.443
-Faithfulness         40%       Correctness    53%
-Avg latency          2.6 s     Cost           $0.0062 / query`;
+Recall@5 (section)   75.0%      MRR (rerank)   0.443
+Faithfulness         40.0%      Correctness    52.5%
+Avg latency          2.6 s      Cost           $0.0062 / query
+
+Verdict: 🟢 Strong (context precision) · 🟡 Acceptable (recall, citation)
+         🔴 Needs work (MRR, faithfulness, correctness)`;
+
+const observabilitySnippet = `// src/app/api/chat/route.ts
+const result = streamText({
+  model: openai(CHAT_MODEL),
+  experimental_telemetry: {
+    isEnabled: true,
+    functionId: "chat.stream",
+    recordInputs: false,    //  prompts stay on the server
+    recordOutputs: false,   //  only usage / latency / finishReason leave
+    metadata: { userId, sessionId },
+  },
+  onError({ error }) {
+    //  no more silent OpenAI failures
+    logger.error("chat.stream_error", { userId, error: String(error) });
+  },
+});`;
 
 export default function LandingPage() {
   return (
@@ -219,7 +257,7 @@ export default function LandingPage() {
           ))}
         </div>
         <p className="text-xs text-muted-foreground mt-3 text-center md:text-left">
-          Measured on a 25-question synthetic golden set. Per-run JSON + Markdown artifacts committed to <code className="font-mono">evals/runs/</code>.
+          Measured on <strong className="text-foreground">Vectara&apos;s Open RAG Benchmark</strong> — 1,000 arXiv papers and 3,045 expert-written Q&amp;A pairs. Per-run JSON + Markdown artifacts committed to <code className="font-mono">evals/benchmarks/open-ragbench/runs/</code>.
         </p>
       </section>
 
@@ -254,8 +292,9 @@ export default function LandingPage() {
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">End-to-end pipeline</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            Two flows. Ingestion runs in the background with a guaranteed inline fallback. Query runs hybrid retrieval
-            + Cohere reranking in a single round-trip to Neon.
+            Two flows, one observability plane. Ingestion runs in the background with a guaranteed inline fallback.
+            Query runs hybrid retrieval + Cohere reranking in a single round-trip to Neon. Every step ships logs and
+            traces to Axiom.
           </p>
         </div>
 
@@ -272,7 +311,7 @@ export default function LandingPage() {
             </div>
           </div>
           {/* Query row */}
-          <div>
+          <div className="mb-6">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Query</p>
             <div className="grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-3 text-xs md:text-sm">
               <ArchBox label="Synthesize query" tone="amber" />
@@ -281,6 +320,16 @@ export default function LandingPage() {
               <ArchBox label="RRF fusion (k=60)" tone="emerald" />
               <ArchBox label="Cohere Rerank 3.5" tone="indigo" />
               <ArchBox label="Grounded streaming" tone="violet" />
+            </div>
+          </div>
+          {/* Observability row */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Observability</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-xs md:text-sm">
+              <ArchBox label="Structured logger" tone="rose" />
+              <ArchBox label="AI SDK telemetry" tone="rose" />
+              <ArchBox label="OTLP traces" tone="rose" />
+              <ArchBox label="Axiom dataset" tone="rose" />
             </div>
           </div>
         </div>
@@ -304,12 +353,12 @@ export default function LandingPage() {
         eyebrow="Reranking"
         icon={Gauge}
         title="One reranker swap moved MRR from 0.73 → 0.86."
-        body="Recall@5 was already pinned at 100% — the right chunk was always in the candidate pool. The question was whether it was at rank 1. Cohere Rerank 3.5 (with a gpt-4o-mini fallback) pulled the right chunk to position #1 on six previously-mid-ranked questions. Every change is measured against the same golden set, in the same harness, with results committed for git-diff comparison."
+        body="Recall@5 was already pinned at 100% — the right chunk was always in the candidate pool. The question was whether it was at rank 1. Cohere Rerank 3.5 (with a 15-second timeout and a gpt-4o-mini fallback) pulled the right chunk to position #1 on six previously-mid-ranked questions. Below is the historical A/B journey from the original synthetic harness — that harness has since been retired in favour of Vectara's Open RAG Benchmark (see the Evals section)."
         artifact={
           <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border/60 bg-muted/40 flex items-center justify-between">
-              <span className="text-xs font-mono text-muted-foreground">evals/runs/ · A/B history</span>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">25-Q golden set</span>
+              <span className="text-xs font-mono text-muted-foreground">evals/runs/ · synthetic A/B history</span>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">25-Q golden set · retired</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -353,12 +402,16 @@ export default function LandingPage() {
       <DeepDive
         eyebrow="Evals"
         icon={Layers}
-        title="A real eval harness — not a vibe check."
-        body="Every retrieval and prompt change runs against the same 25-question golden set before it ships. Retrieval metrics (Recall@k, MRR, context precision) and answer metrics (faithfulness, correctness, citation accuracy) are scored by deterministic checks and gpt-4o-mini judges. Per-run JSON + Markdown artifacts are committed so you can diff two experiments inside a PR review."
+        title="Now scored on Vectara's Open RAG Benchmark."
+        body="The synthetic 25-question golden set was retired — its questions were written from the same chunks the retriever was being asked to find, so recall saturated at 100%. Today the pipeline is scored against 1,000 arXiv papers and 3,045 expert-written Q&A pairs covering text, tables, and figures. Section-level ground truth, published comparisons, no self-reference. Every run produces a Markdown report with a per-metric verdict against informal RAG community baselines from Cohere, Vectara, and LlamaIndex."
         artifact={
-          <CodeBlock language="bash" title="evals/run.mjs — terminal output">
-            {evalSnippet}
-          </CodeBlock>
+          <div className="space-y-4">
+            <CodeBlock language="bash" title="pnpm eval:ragbench:run — terminal output">
+              {evalSnippet}
+            </CodeBlock>
+            <VerdictTable />
+            <ModalityTable />
+          </div>
         }
       />
 
@@ -375,7 +428,20 @@ export default function LandingPage() {
         }
       />
 
-      {/* Deep dive 5: Background ingestion */}
+      {/* Deep dive 5: Observability */}
+      <DeepDive
+        eyebrow="Observability"
+        icon={Activity}
+        title="Logs and traces ship to Axiom — without leaking prompts."
+        body="The AI SDK's experimental_telemetry attaches a span to every chat stream with token usage, latency, and finishReason — but recordInputs and recordOutputs are forced to false so prompts and completions never leave the server. A structured logger replaced every console.* in the ingest pipeline, RAG library, and API layer; silent failures (audit-log writes, rerank fallback, Inngest enqueue) all surface in Axiom now. OTLP traces and HTTP logs ship over HTTPS directly — no Vercel Pro log drain needed."
+        artifact={
+          <CodeBlock language="ts" title="AI SDK telemetry — privacy-preserving by construction">
+            {observabilitySnippet}
+          </CodeBlock>
+        }
+      />
+
+      {/* Deep dive 6: Background ingestion */}
       <DeepDive
         eyebrow="Ingestion"
         icon={Workflow}
@@ -436,10 +502,11 @@ export default function LandingPage() {
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight">I ship PRs from Telegram.</h2>
               <p className="mt-4 text-muted-foreground leading-7">
-                A custom Telegram bot lets me drive the development pipeline from my phone. A planner agent drafts the
-                approach, a verifier audits it, a coder writes the diff, and each step waits for human approval before
-                advancing. The final step opens a PR into <code className="font-mono text-foreground">dev</code> on GitHub.
-                Built on top of GitHub Actions and Neon — no third-party orchestrator.
+                A custom Telegram bot lets me drive the development pipeline from my phone. Planning is delegated to
+                Claude Code&apos;s built-in Plan subagent (read-only, software-architect persona). The bot asks clarifying
+                questions when the requirement is ambiguous, then drafts a plan; once approved, a coder agent writes the
+                minimal diff and opens a PR into <code className="font-mono text-foreground">dev</code>. Built on top of
+                GitHub Actions and Neon — no third-party orchestrator.
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
                 Every step gated by approval. No agent can push to <code className="font-mono">main</code>.
@@ -449,9 +516,9 @@ export default function LandingPage() {
             <div className="rounded-xl border border-border/60 bg-card p-5 font-mono text-xs space-y-2">
               <FlowStep n="1" label="Telegram message" sub="webhook secret + chat.id allowlist" />
               <FlowArrow />
-              <FlowStep n="2" label="Planner agent" sub="produces plan.md or questions.md" tone="violet" />
+              <FlowStep n="2" label="Classifier" sub="task | continue | cancel (gpt-4o-mini)" tone="violet" />
               <FlowArrow />
-              <FlowStep n="3" label="Plan verifier" sub="emits blockers / warnings JSON" tone="violet" />
+              <FlowStep n="3" label="Plan subagent" sub="QUESTIONS or PLAN; clarifies if unclear" tone="violet" />
               <FlowArrow approve label="Approve" />
               <FlowStep n="4" label="Coder agent" sub="writes minimal diff, pushes branch" tone="indigo" />
               <FlowArrow approve label="Approve" />
@@ -539,13 +606,14 @@ function ArchBox({
   tone,
 }: {
   label: string;
-  tone: "violet" | "indigo" | "emerald" | "amber";
+  tone: "violet" | "indigo" | "emerald" | "amber" | "rose";
 }) {
   const toneClass = {
     violet: "border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300",
     indigo: "border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300",
     emerald: "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300",
     amber: "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300",
+    rose: "border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300",
   }[tone];
   return (
     <div className={`rounded-lg border ${toneClass} px-3 py-2.5 font-medium text-center`}>{label}</div>
@@ -649,6 +717,86 @@ function FlowStep({
       <div>
         <div className="font-semibold text-foreground">{label}</div>
         <div className="text-muted-foreground text-[11px]">{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+function VerdictTable() {
+  const tierLabel = {
+    strong: { text: "Strong", className: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" },
+    acceptable: { text: "Acceptable", className: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300" },
+    "needs-work": { text: "Needs work", className: "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300" },
+  } as const;
+  return (
+    <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-border/60 bg-muted/40 flex items-center justify-between">
+        <span className="text-xs font-mono text-muted-foreground">REPORT.md · per-metric verdict</span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Open RAG Benchmark</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="text-xs text-muted-foreground border-b border-border/60">
+            <tr>
+              <th className="text-left px-4 py-2.5 font-medium">Metric</th>
+              <th className="text-right px-4 py-2.5 font-medium">Value</th>
+              <th className="text-right px-4 py-2.5 font-medium">Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            {verdictRows.map((row) => {
+              const t = tierLabel[row.tier];
+              return (
+                <tr key={row.metric} className="border-b border-border/40 last:border-0">
+                  <td className="px-4 py-2.5 text-xs">{row.metric}</td>
+                  <td className="text-right px-4 py-2.5 font-mono text-xs">{row.value}</td>
+                  <td className="text-right px-4 py-2.5">
+                    <span className={`inline-block rounded-md ${t.className} px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider`}>
+                      {t.text}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="px-4 py-2.5 text-[11px] text-muted-foreground border-t border-border/40 leading-relaxed">
+        Thresholds are directional, drawn from typical splits in RAG research and vendor write-ups. The benchmark itself
+        publishes no official pass/fail cutoffs.
+      </p>
+    </div>
+  );
+}
+
+function ModalityTable() {
+  return (
+    <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-border/60 bg-muted/40 flex items-center justify-between">
+        <span className="text-xs font-mono text-muted-foreground">By modality · honest weaknesses</span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">no OCR on images</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="text-xs text-muted-foreground border-b border-border/60">
+            <tr>
+              <th className="text-left px-4 py-2.5 font-medium">Modality</th>
+              <th className="text-right px-4 py-2.5 font-medium">N</th>
+              <th className="text-right px-4 py-2.5 font-medium">Recall@5</th>
+              <th className="text-right px-4 py-2.5 font-medium">MRR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {modalityRows.map((row) => (
+              <tr key={row.modality} className="border-b border-border/40 last:border-0">
+                <td className="px-4 py-2.5 text-xs font-mono">{row.modality}</td>
+                <td className="text-right px-4 py-2.5 font-mono text-xs">{row.count}</td>
+                <td className="text-right px-4 py-2.5 font-mono text-xs">{row.recall}</td>
+                <td className="text-right px-4 py-2.5 font-mono text-xs">{row.mrr}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
