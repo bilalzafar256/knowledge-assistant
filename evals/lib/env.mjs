@@ -13,6 +13,12 @@ function require(name) {
   return process.env[name];
 }
 
+// ⚠️  The eval harness ingests the benchmark corpus (~440 MB for Open RAG Bench)
+//     into whatever DATABASE_URL points at, under tenant OPEN_RAGBENCH_USER_ID.
+//     This is the SAME var the app uses — running evals against a shared/free-tier
+//     Neon project will fill its storage and 500 real uploads. Point DATABASE_URL
+//     at a throwaway Neon branch for eval runs, and clean up the eval tenant after:
+//       DELETE FROM documents WHERE user_id='user_open_ragbench_eval'; VACUUM FULL document_chunks;
 export const DATABASE_URL = require("DATABASE_URL");
 export const OPENAI_API_KEY = require("OPENAI_API_KEY");
 export const COHERE_API_KEY = process.env.COHERE_API_KEY || null;

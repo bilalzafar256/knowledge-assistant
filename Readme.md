@@ -12,7 +12,8 @@ A production-grade **RAG** application built on the 2026 Vercel stack. It retrie
 ![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
 ![Vercel AI SDK v6](https://img.shields.io/badge/Vercel%20AI%20SDK-v6-000000?logo=vercel&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-gpt--4o-412991?logo=openai&logoColor=white)
+![Anthropic Claude](https://img.shields.io/badge/Claude-sonnet--4--6%20%C2%B7%20haiku--4--5-D97757?logo=anthropic&logoColor=white)
+![OpenAI Embeddings](https://img.shields.io/badge/OpenAI-embeddings-412991?logo=openai&logoColor=white)
 ![Neon Postgres](https://img.shields.io/badge/Neon-Postgres-00E599?logo=postgresql&logoColor=white)
 ![pgvector](https://img.shields.io/badge/pgvector-1536d-4169E1)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?logo=drizzle&logoColor=black)
@@ -35,7 +36,7 @@ The Knowledge Assistant lets a team upload its internal documents and query them
 - **Grounded RAG chat** — streams cited answers; the system prompt forbids inventing numbers, dates, or names not present in retrieved chunks.
 - **Hybrid retrieval** — pgvector cosine + Postgres full-text (BM25-style) fused with Reciprocal Rank Fusion, then reranked.
 - **Conversation-aware search** — follow-up questions are rewritten into standalone queries using chat history.
-- **Multi-format ingestion** — PDF, DOC/DOCX, XLS/XLSX, JPG/PNG (OCR via gpt-4o vision), TXT, MD, JSON (up to 50 MB).
+- **Multi-format ingestion** — PDF, DOC/DOCX, XLS/XLSX, JPG/PNG (OCR via Claude Sonnet vision), TXT, MD, JSON (up to 50 MB).
 - **Chat sessions** — multiple threads with full history, auto-titling, pin, inline rename, and public read-only share links.
 - **Collections** — group documents into folders.
 - **Background ingestion** — large docs index in an Inngest job with a `pending → processing → ready/failed` status the UI polls.
@@ -54,8 +55,8 @@ The badges above are the quick glance; the table is the detail.
 |-------|-----------|
 | Framework | Next.js 16 (App Router, React 19, TypeScript) |
 | AI | Vercel AI SDK v6 (streaming, tool calls, `UIMessage` protocol) |
-| Models | OpenAI — gpt-4o (chat + image OCR), text-embedding-3-small (1536-d), gpt-4o-mini (query synthesis + rerank fallback) |
-| Reranker | Cohere Rerank 3.5 (optional; falls back to gpt-4o-mini) |
+| Models | Anthropic Claude — sonnet-4-6 (chat + image OCR), haiku-4-5 (query synthesis + rerank fallback) · Google gemini-embedding-001 (1536-d, embeddings) |
+| Reranker | Cohere Rerank 3.5 (optional; falls back to claude-haiku-4-5) |
 | Database | Neon (Postgres + pgvector) via Drizzle ORM |
 | Auth | Clerk |
 | Security | Arcjet (shield, bot detection, rate limiting) + Origin-based CSRF checks |
@@ -74,7 +75,9 @@ The badges above are the quick glance; the table is the detail.
 - A [Neon](https://neon.tech) Postgres database
 - A [Clerk](https://clerk.com) application
 - An [Arcjet](https://arcjet.com) site
-- An [OpenAI](https://platform.openai.com) API key
+- An [Anthropic](https://console.anthropic.com) API key (chat, parsing, synthesis, rerank)
+- A [Google AI Studio](https://aistudio.google.com/apikey) API key (embeddings — free tier)
+- An [OpenAI](https://platform.openai.com) API key (eval harness only)
 
 ### 1. Install
 
@@ -93,7 +96,9 @@ Fill in the required values:
 | Variable | Required | Where to get it |
 |----------|----------|----------------|
 | `DATABASE_URL` | ✅ | Neon → Connection String (include `?sslmode=require`) |
-| `OPENAI_API_KEY` | ✅ | platform.openai.com/api-keys |
+| `ANTHROPIC_API_KEY` | ✅ | console.anthropic.com/settings/keys (`sk-ant-…`) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | aistudio.google.com/apikey (`AIza…`, embeddings) |
+| `OPENAI_API_KEY` | ✅ | platform.openai.com/api-keys (eval harness only) |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | ✅ | Clerk Dashboard → API Keys (`pk_…`) |
 | `CLERK_SECRET_KEY` | ✅ | Clerk Dashboard → API Keys (`sk_…`) |
 | `ARCJET_KEY` | ✅ | app.arcjet.com → Sites → API Keys (`ajkey_…`) |
@@ -147,11 +152,11 @@ This starts the Inngest dev server at `http://localhost:8288` and auto-discovers
 
 On each chat turn (`src/lib/ai.ts` → `createSearchKnowledgeTool`):
 
-1. **Query synthesis** — gpt-4o-mini rewrites the latest message into a standalone search query using recent history (falls back to the raw query on error).
-2. **Embed** — the query is embedded with text-embedding-3-small.
+1. **Query synthesis** — claude-haiku-4-5 rewrites the latest message into a standalone search query using recent history (falls back to the raw query on error).
+2. **Embed** — the query is embedded with Google gemini-embedding-001 (1536-d, `RETRIEVAL_QUERY` task type).
 3. **Hybrid search** — one SQL CTE runs pgvector cosine similarity and Postgres `tsvector` lexical ranking in parallel, then fuses them with **Reciprocal Rank Fusion** (k=60) into ~15 candidates. See `drizzle/0005_hybrid_search.sql`.
-4. **Rerank** — Cohere Rerank 3.5 (if `COHERE_API_KEY` is set) or a gpt-4o-mini scoring call trims to the top ~3.
-5. **Answer** — gpt-4o streams a grounded, cited response.
+4. **Rerank** — Cohere Rerank 3.5 (if `COHERE_API_KEY` is set) or a claude-haiku-4-5 scoring call trims to the top ~3.
+5. **Answer** — claude-sonnet-4-6 streams a grounded, cited response.
 
 Query synthesis and reranking both **degrade gracefully** — any failure falls back so the chat never breaks.
 

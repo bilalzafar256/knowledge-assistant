@@ -113,7 +113,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     // Generate embeddings in parallel within the batch
     const batchEmbeddings = await Promise.all(
       batch.map(async (chunk, idx) => {
-        const embedding = await generateEmbedding(chunk);
+        const embedding = await generateEmbedding(chunk, "RETRIEVAL_DOCUMENT");
         return { index: batchStart + idx, embedding };
       })
     );

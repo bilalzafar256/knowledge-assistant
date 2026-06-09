@@ -18,12 +18,22 @@ const envSchema = z.object({
     .string({ required_error: "DATABASE_URL is required" })
     .url("DATABASE_URL must be a valid PostgreSQL connection URL (e.g. postgresql://user:pass@host/db)"),
 
-  // ── OpenAI ─────────────────────────────────────────────────────────────────
+  // ── Anthropic (chat, document parsing, query synthesis, rerank fallback) ────
+  ANTHROPIC_API_KEY: z
+    .string({ required_error: "ANTHROPIC_API_KEY is required" })
+    .startsWith("sk-ant-", "ANTHROPIC_API_KEY must start with 'sk-ant-'"),
+
+  // ── Google Gemini (embeddings — gemini-embedding-001 @ 1536-d) ──────────────
+  GOOGLE_GENERATIVE_AI_API_KEY: z
+    .string({ required_error: "GOOGLE_GENERATIVE_AI_API_KEY is required" })
+    .min(1, "GOOGLE_GENERATIVE_AI_API_KEY must not be empty"),
+
+  // ── OpenAI (eval harness only — app no longer uses it at runtime) ───────────
   OPENAI_API_KEY: z
     .string({ required_error: "OPENAI_API_KEY is required" })
     .min(1, "OPENAI_API_KEY must not be empty"),
 
-  // ── Cohere (optional — reranker; falls back to gpt-4o-mini if absent) ──────
+  // ── Cohere (optional — reranker; falls back to Claude Haiku if absent) ──────
   COHERE_API_KEY: z.string().optional(),
 
   // ── Clerk ──────────────────────────────────────────────────────────────────

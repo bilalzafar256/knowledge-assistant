@@ -31,6 +31,8 @@ interface FileItem {
   title: string;
   content: string;
   status: FileStatus;
+  /** Live sub-step shown while status is "parsing" (e.g. "Reading file…"). */
+  progressLabel?: string;
   error?: string;
 }
 
@@ -173,12 +175,55 @@ export function DocumentUpload() {
         const form = new FormData();
         form.append("file", file);
         const res = await fetch("/api/documents/parse", { method: "POST", body: form });
-        const data = (await res.json()) as { text?: string; error?: string };
-        if (!res.ok || !data.text) throw new Error(data.error ?? "Failed to extract text");
-        updateItem(id, { content: data.text, status: "ready" });
+        if (!res.ok || !res.body) {
+          // Non-stream error response (auth/arcjet/validation) is plain JSON.
+          const data = (await res.json().catch(() => ({}))) as { error?: string };
+          throw new Error(data.error ?? "Failed to extract text");
+        }
+
+        // Read the NDJSON stream: one JSON event per line.
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        let text: string | undefined;
+        let streamError: string | undefined;
+
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop() ?? ""; // keep any partial trailing line
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            const ev = JSON.parse(line) as {
+              stage: string;
+              text?: string;
+              vision?: boolean;
+              error?: string;
+            };
+            if (ev.stage === "reading") {
+              updateItem(id, { progressLabel: "Reading file…" });
+            } else if (ev.stage === "extracting") {
+              updateItem(id, {
+                progressLabel: ev.vision
+                  ? "Running OCR on image…"
+                  : "Extracting text…",
+              });
+            } else if (ev.stage === "done") {
+              text = ev.text;
+            } else if (ev.stage === "error") {
+              streamError = ev.error;
+            }
+          }
+        }
+
+        if (streamError || !text) throw new Error(streamError ?? "Failed to extract text");
+        updateItem(id, { content: text, status: "ready", progressLabel: undefined });
       } catch (err) {
         updateItem(id, {
           status: "error",
+          progressLabel: undefined,
           error: err instanceof Error ? err.message : "Parse failed.",
         });
       }
@@ -506,7 +551,7 @@ export function DocumentUpload() {
                       <span className="text-xs text-muted-foreground">
                         {formatFileSize(item.file.size)}
                       </span>
-                      <StatusChip status={item.status} />
+                      <StatusChip status={item.status} label={item.progressLabel} />
                       {item.error && (
                         <span className="text-xs text-rose-600 truncate">{item.error}</span>
                       )}
@@ -668,7 +713,7 @@ export function DocumentUpload() {
 
 // ── Status chip ───────────────────────────────────────────────────────────────
 
-function StatusChip({ status }: { status: FileStatus }) {
+function StatusChip({ status, label }: { status: FileStatus; label?: string }) {
   const styles: Record<FileStatus, string> = {
     queued: "bg-muted text-muted-foreground",
     parsing: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
@@ -680,7 +725,7 @@ function StatusChip({ status }: { status: FileStatus }) {
   };
   return (
     <span className={cn("inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold", styles[status])}>
-      {STATUS_LABEL[status]}
+      {label ?? STATUS_LABEL[status]}
     </span>
   );
 }

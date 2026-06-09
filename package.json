@@ -21,6 +21,8 @@
     "eval:ragbench:report": "node evals/benchmarks/open-ragbench/report.mjs"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.82",
+    "@ai-sdk/google": "^3.0.80",
     "@ai-sdk/openai": "^3.0.48",
     "@ai-sdk/react": "^3.0.143",
     "@arcjet/next": "^1.0.0-alpha.43",

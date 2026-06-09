@@ -4,7 +4,7 @@
  */
 
 import { generateText } from "ai";
-import { openai } from "./ai";
+import { anthropic, CHAT_MODEL } from "./ai";
 
 export type SupportedMimeType =
   | "application/pdf"
@@ -134,7 +134,7 @@ async function extractExcel(buffer: Buffer): Promise<string> {
   return text;
 }
 
-// ── Images (JPG / PNG) via OpenAI Vision ────────────────────────────────────
+// ── Images (JPG / PNG) via Claude Vision ─────────────────────────────────────
 
 async function extractImageText(
   buffer: Buffer,
@@ -147,7 +147,7 @@ async function extractImageText(
   // ("URL scheme must be http or https, got data:"). Uint8Array data
   // bypasses the download path entirely.
   const { text } = await generateText({
-    model: openai("gpt-4o"),
+    model: anthropic(CHAT_MODEL),
     messages: [
       {
         role: "user",

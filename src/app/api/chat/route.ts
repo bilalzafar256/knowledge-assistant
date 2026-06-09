@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { chatAj } from "@/lib/arcjet";
 import { isCsrfSafe } from "@/lib/csrf";
-import { openai, CHAT_MODEL, SYSTEM_PROMPT, createSearchKnowledgeTool, type ConversationMessage } from "@/lib/ai";
+import { anthropic, CHAT_MODEL, SYSTEM_PROMPT, createSearchKnowledgeTool, type ConversationMessage } from "@/lib/ai";
 import { logAudit } from "@/lib/audit";
 import { logger, withAxiom } from "@/lib/axiom/server";
 import { db } from "@/lib/db";
@@ -137,7 +137,7 @@ export const POST = withAxiom(async (request: NextRequest) => {
     });
 
   const result = streamText({
-    model: openai(CHAT_MODEL),
+    model: anthropic(CHAT_MODEL),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: {

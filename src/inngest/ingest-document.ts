@@ -8,7 +8,7 @@ export const ingestDocumentFn = inngest.createFunction(
   {
     id: "ingest-document",
     name: "Ingest Document",
-    retries: 3,
+    retries: 1,
     triggers: [{ event: "document/uploaded" as const }],
   },
   async ({ event, step }: { event: { data: { documentId: string; userId: string } }; step: { run: <T>(name: string, fn: () => Promise<T>) => Promise<T> } }) => {
