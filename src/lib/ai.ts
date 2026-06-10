@@ -79,8 +79,12 @@ export async function generateEmbedding(
   taskType: "RETRIEVAL_QUERY" | "RETRIEVAL_DOCUMENT" = "RETRIEVAL_QUERY"
 ): Promise<number[]> {
   const { embedding } = await embed({
-    model: google.textEmbeddingModel(EMBEDDING_MODEL),
+    model: google.embeddingModel(EMBEDDING_MODEL),
     value: text.replace(/\n/g, " "),
+    // Attempt once — the AI SDK default is 2 retries (3 attempts). Embedding
+    // failures here (expired/invalid key, quota) are not transient, so retrying
+    // just multiplies the same error in the ingest dashboard.
+    maxRetries: 0,
     providerOptions: {
       google: { outputDimensionality: EMBEDDING_DIMENSIONS, taskType },
     },
