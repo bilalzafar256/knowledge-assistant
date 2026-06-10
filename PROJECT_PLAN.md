@@ -189,7 +189,7 @@ Evaluated against **Vectara's Open RAG Benchmark** (`vectara/open_ragbench`) —
 
 ```
 evals/
-├── lib/  env · db · openai (429-aware retry) · retrieve (mirrors lib/ai.ts) · answer (mirrors api/chat) · judges (LLM-as-judge)
+├── lib/  env · db · ai (AI SDK client: Gemini embeddings + Claude generation) · retrieve (mirrors lib/ai.ts) · answer (mirrors api/chat) · judges (cross-family LLM-as-judge on gemini-2.5-flash)
 ├── run.mjs                         runs over a golden set, writes timestamped JSON + MD
 └── benchmarks/open-ragbench/
     ├── download.mjs  ingest.mjs  import-golden.mjs  run.mjs  report.mjs
@@ -198,6 +198,8 @@ evals/
     ├── runs/<timestamp>_<label>.{json,md}
     └── REPORT.md                   committed headline numbers
 ```
+
+**Stack under test** — `claude-sonnet-4-6` answers, `gemini-embedding-001` embeddings, Cohere rerank (Claude Haiku fallback) — i.e. the production pipeline. Grading uses a **cross-family judge** (`gemini-2.5-flash`, different family than the generator → no self-preference bias; thinking disabled so the JSON output isn't starved). Launch thresholds + current go-live status live in **`docs/GO_LIVE_READINESS.md`** (the canonical threshold source; `report.mjs` mirrors it).
 
 **Metrics** — retrieval: Recall@k (reranked + candidate pool + pure-vector diagnostic), MRR, context precision. Answer: faithfulness, correctness, citation accuracy, latency, token cost. Auto-broken-down by modality (`text`/`text-image`/`text-table`/`text-table-image`) and type (`extractive`/`abstractive`).
 

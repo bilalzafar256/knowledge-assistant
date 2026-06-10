@@ -1,15 +1,26 @@
 /**
- * LLM-as-judge primitives. All use claude-haiku-4-5 for cost.
- * Each returns a number in [0, 1] plus a short rationale.
+ * LLM-as-judge primitives. Run on gemini-2.5-flash — a different model family
+ * than the Claude generator under test, so the judge can't show same-family
+ * self-preference bias. Each returns a number in [0, 1] plus a short rationale.
  */
-import { anthropic, generateText, parseJsonLoose } from "./ai.mjs";
+import { google, generateText, parseJsonLoose } from "./ai.mjs";
 import { JUDGE_MODEL } from "./env.mjs";
+
+// gemini-2.5-flash is a *thinking* model: by default it spends output tokens on
+// internal reasoning before emitting text, which starves a low maxOutputTokens
+// budget and returns empty/truncated JSON (→ silent parse_error, score 0). A
+// judge needs a score + one-line rationale, not chain-of-thought, so disable
+// thinking. Without this, ~98% of judge calls return 0. See thinkingBudget docs.
+const JUDGE_PROVIDER_OPTIONS = {
+  google: { thinkingConfig: { thinkingBudget: 0 } },
+};
 
 async function judge({ system, user }) {
   const { text } = await generateText({
-    model: anthropic(JUDGE_MODEL),
+    model: google(JUDGE_MODEL),
     temperature: 0,
-    maxOutputTokens: 200,
+    maxOutputTokens: 256,
+    providerOptions: JUDGE_PROVIDER_OPTIONS,
     system,
     prompt: user,
   });
@@ -30,13 +41,14 @@ export async function contextPrecision({ question, retrievedChunks }) {
   const list = retrievedChunks
     .map(
       (c, i) =>
-        `[${i + 1}] (${c.documentTitle}) ${c.content.slice(0, 400).replace(/\n+/g, " ")}`
+        `[${i + 1}] (${c.documentTitle}) ${c.content.slice(0, 2000).replace(/\n+/g, " ")}`
     )
     .join("\n");
   const { text } = await generateText({
-    model: anthropic(JUDGE_MODEL),
+    model: google(JUDGE_MODEL),
     temperature: 0,
-    maxOutputTokens: 120,
+    maxOutputTokens: 256,
+    providerOptions: JUDGE_PROVIDER_OPTIONS,
     prompt:
       `Question: ${question}\n\nFor each chunk, mark 1 if it contains information that helps answer the question, 0 otherwise.\n\nChunks:\n${list}\n\nOutput JSON only: {"verdicts":[0|1,0|1,...]}`,
   });
@@ -59,7 +71,7 @@ export async function answerFaithfulness({ answer, retrievedChunks }) {
   const ctx = retrievedChunks
     .map(
       (c, i) =>
-        `[${i + 1}] (${c.documentTitle}) ${c.content.slice(0, 500).replace(/\n+/g, " ")}`
+        `[${i + 1}] (${c.documentTitle}) ${c.content.slice(0, 4000).replace(/\n+/g, " ")}`
     )
     .join("\n");
   return judge({

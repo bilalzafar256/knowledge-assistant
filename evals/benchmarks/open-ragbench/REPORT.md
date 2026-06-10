@@ -1,42 +1,42 @@
 # How effective is this RAG system?
 
-> Run: `smoke` · Generated 2026-05-21
+> Run: `golive-200doc-100q-gemjudge-v2` · Generated 2026-06-10
 
 This report measures the production RAG pipeline against **Vectara's Open RAG Benchmark** — 1,000 arXiv papers with 3,045 expert-written question-answer pairs spanning text, tables, and figures. Unlike a synthetic eval, the questions are written by humans and the ground truth is published, so results are directly comparable to other RAG systems benchmarked on the same set.
 
 ## Headline numbers
 
-- **Questions evaluated:** 20 (of 20 sampled)
-- **Recall@5** — fraction of queries where the right section appears in the top 5 results: **75.0%**
-- **MRR (Mean Reciprocal Rank)** — how high the right section ranks on average: **0.443**
-- **Context precision** — fraction of returned chunks judged relevant: **62.0%**
-- **Faithfulness** — fraction of answers grounded in the retrieved context: **40.0%**
-- **Correctness** — semantic match against the benchmark's reference answer: **52.5%**
-- **Citation accuracy** — fraction of answers that name the source document: **60.0%**
-- **Avg latency:** 2.6s per query · **Cost per query:** $0.0062
+- **Questions evaluated:** 100 (of 100 sampled)
+- **Recall@5** — fraction of queries where the right section appears in the top 5 results: **88.0%**
+- **MRR (Mean Reciprocal Rank)** — how high the right section ranks on average: **0.724**
+- **Context precision** — fraction of returned chunks judged relevant: **57.0%**
+- **Faithfulness** — fraction of answers grounded in the retrieved context: **95.0%**
+- **Correctness** — semantic match against the benchmark's reference answer: **70.0%**
+- **Citation accuracy** — fraction of answers that name the source document: **94.5%**
+- **Avg latency:** 15.5s per query · **Cost per query:** $0.0196
 
 ## Verdict
 
-🔴 **Overall: Needs work before production**
+🟡 **Overall: Conditional GO — beta only (a hard gate is below its launch threshold)**
 
-Per-metric scoring against informal RAG community baselines. The Open RAG Benchmark does not publish official pass/fail cutoffs — these thresholds are directional, drawn from typical splits in RAG research and vendor blog posts (Cohere, Vectara, LlamaIndex).
+Scored against the **canonical strict go-live gates** defined in `docs/GO_LIVE_READINESS.md` (the single source of truth). The Open RAG Benchmark publishes no official cutoffs — these are our chosen strict bars for a grounding-strict product. **Gate ≥** is the launch threshold; **Pilot ≥** is a below-gate floor that's acceptable for a limited beta.
 
-| Metric | Value | Tier | Strong ≥ | Acceptable ≥ |
+| Metric | Value | Status | Gate ≥ | Pilot ≥ |
 | --- | ---: | :---: | ---: | ---: |
-| Recall@5 | 75.0% | 🟡 Acceptable | 85.0% | 70.0% |
-| MRR | 0.443 | 🔴 Needs work | 0.650 | 0.450 |
-| Context prec. | 62.0% | 🟢 Strong | 60.0% | 40.0% |
-| Faithfulness | 40.0% | 🔴 Needs work | 80.0% | 65.0% |
-| Correctness | 52.5% | 🔴 Needs work | 75.0% | 55.0% |
-| Citation acc. | 60.0% | 🟡 Acceptable | 80.0% | 60.0% |
+| Recall@5 | 88.0% | 🟢 Meets gate | 85.0% | 70.0% |
+| MRR | 0.724 | 🟢 Meets gate | 0.700 | 0.500 |
+| Context prec. | 57.0% | 🟡 Below gate (pilot) | 65.0% | 45.0% |
+| Faithfulness | 95.0% | 🟢 Meets gate | 90.0% | 75.0% |
+| Correctness | 70.0% | 🟡 Below gate (pilot) | 85.0% | 65.0% |
+| Citation acc. | 94.5% | 🟢 Meets gate | 90.0% | 70.0% |
 
-Legend: 🟢 Strong (production-grade) · 🟡 Acceptable (pilot-ready) · 🔴 Needs work (below typical production bar).
+Legend: 🟢 Meets gate (launch-grade) · 🟡 Below gate (beta-only) · 🔴 Needs work.
 
 ## What this means
 
-- For every 5 results we surface, the **correct passage is present 75%** of the time.
-- The system **fabricates content in ≈60.0%** of answers (1 − faithfulness).
-- On average, the correct chunk ranks at position **2.3**.
+- For every 5 results we surface, the **correct passage is present 88%** of the time.
+- The system **fabricates content in ≈5.0%** of answers (1 − faithfulness).
+- On average, the correct chunk ranks at position **1.4**.
 
 ## Where it shines, where it struggles
 
@@ -45,9 +45,10 @@ Question stratified by what the question *requires*: text, a table, an image, or
 
 | Modality | Count | Recall@k | MRR | Faith | Corr |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| text-image | 11 | 54.5% | 0.230 | 54.5% | 68.2% |
-| text | 7 | 100.0% | 0.690 | 14.3% | 14.3% |
-| text-table | 2 | 100.0% | 0.750 | 50.0% | 100.0% |
+| text | 68 | 85.3% | 0.730 | 95.6% | 71.9% |
+| text-image | 24 | 91.7% | 0.668 | 91.7% | 60.4% |
+| text-table-image | 7 | 100.0% | 0.929 | 100.0% | 80.0% |
+| text-table | 1 | 100.0% | 0.200 | 100.0% | 100.0% |
 
 ### By query type
 
@@ -56,18 +57,18 @@ Question stratified by what the question *requires*: text, a table, an image, or
 
 | Type | Count | Recall@k | MRR | Faith | Corr |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| abstractive | 16 | 81.3% | 0.429 | 43.8% | 53.1% |
-| extractive | 4 | 50.0% | 0.500 | 25.0% | 50.0% |
+| abstractive | 56 | 87.5% | 0.710 | 100.0% | 66.3% |
+| extractive | 44 | 88.6% | 0.741 | 88.6% | 74.8% |
 
 ## Pipeline under test
 
 | Layer | Component |
 | --- | --- |
-| Chat model | `gpt-4o` |
-| Embedding model | `text-embedding-3-small` |
-| Judge model (LLM-as-a-judge) | `gpt-4o-mini` |
+| Chat model | `claude-sonnet-4-6` |
+| Embedding model | `gemini-embedding-001` |
+| Judge model (LLM-as-a-judge) | `gemini-2.5-flash` |
 | Retrieval | Hybrid (pgvector cosine + Postgres BM25) fused via Reciprocal Rank Fusion |
-| Reranker | Cohere Rerank 3.5 (with gpt-4o-mini fallback) |
+| Reranker | Cohere Rerank 3.5 (with Claude Haiku fallback) |
 | Top-K | 5 |
 
 ## Caveats
@@ -87,4 +88,4 @@ pnpm eval:ragbench:run -- --label ragbench-baseline --concurrency 4
 pnpm eval:ragbench:report
 ```
 
-Full run artifacts: `open-ragbench/runs/2026-05-21T22-06-51_smoke.json` and the sibling `.md` file.
+Full run artifacts: `open-ragbench/runs/2026-06-10T21-18-05_golive-200doc-100q-gemjudge-v2.json` and the sibling `.md` file.

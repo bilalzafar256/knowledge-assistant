@@ -77,5 +77,5 @@ The system prompt (`SYSTEM_PROMPT` in `ai.ts`) is intentionally strict about gro
 
 - **Server Components by default**; add `"use client"` only where interactivity is required.
 - Arcjet clients are per-surface (`lib/arcjet.ts`): `chatAj` (20/min token bucket, keyed by userId), `uploadAj` (50/hr + 200/day), base `aj`. The middleware `aj` rate-limits by IP (100/min) before auth.
-- Import the AI SDK from `ai` / `@ai-sdk/anthropic` (generation) / `@ai-sdk/openai` (embeddings) / `@ai-sdk/react` (v6 `UIMessage` protocol; chat uses `useChat` + `toUIMessageStreamResponse`).
+- Import the AI SDK from `ai` / `@ai-sdk/anthropic` (generation) / `@ai-sdk/google` (embeddings) / `@ai-sdk/react` (v6 `UIMessage` protocol; chat uses `useChat` + `toUIMessageStreamResponse`). `@ai-sdk/openai` is retained only as an optional embedding fallback.
 - The `evals/` harness mirrors production retrieval/answer logic (`evals/lib/retrieve.mjs` ↔ `lib/ai.ts`, `evals/lib/answer.mjs` ↔ `api/chat/route.ts`). If you change retrieval or the answer loop, update the eval mirror to keep benchmarks comparable.
