@@ -13,7 +13,7 @@ A production-grade **RAG** application built on the 2026 Vercel stack. It retrie
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
 ![Vercel AI SDK v6](https://img.shields.io/badge/Vercel%20AI%20SDK-v6-000000?logo=vercel&logoColor=white)
 ![Anthropic Claude](https://img.shields.io/badge/Claude-sonnet--4--6%20%C2%B7%20haiku--4--5-D97757?logo=anthropic&logoColor=white)
-![OpenAI Embeddings](https://img.shields.io/badge/OpenAI-embeddings-412991?logo=openai&logoColor=white)
+![Google Gemini Embeddings](https://img.shields.io/badge/Gemini-embeddings%201536d-4285F4?logo=google&logoColor=white)
 ![Neon Postgres](https://img.shields.io/badge/Neon-Postgres-00E599?logo=postgresql&logoColor=white)
 ![pgvector](https://img.shields.io/badge/pgvector-1536d-4169E1)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?logo=drizzle&logoColor=black)
@@ -76,8 +76,7 @@ The badges above are the quick glance; the table is the detail.
 - A [Clerk](https://clerk.com) application
 - An [Arcjet](https://arcjet.com) site
 - An [Anthropic](https://console.anthropic.com) API key (chat, parsing, synthesis, rerank)
-- A [Google AI Studio](https://aistudio.google.com/apikey) API key (embeddings — free tier)
-- An [OpenAI](https://platform.openai.com) API key (eval harness only)
+- A [Google AI Studio](https://aistudio.google.com/apikey) API key (embeddings — free tier; also powers the eval judge)
 
 ### 1. Install
 
@@ -98,7 +97,7 @@ Fill in the required values:
 | `DATABASE_URL` | ✅ | Neon → Connection String (include `?sslmode=require`) |
 | `ANTHROPIC_API_KEY` | ✅ | console.anthropic.com/settings/keys (`sk-ant-…`) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | aistudio.google.com/apikey (`AIza…`, embeddings) |
-| `OPENAI_API_KEY` | ✅ | platform.openai.com/api-keys (eval harness only) |
+| `OPENAI_API_KEY` | optional | platform.openai.com/api-keys — retained only as an embedding fallback; **not required** (generation runs on Claude, embeddings + eval judge on Gemini) |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | ✅ | Clerk Dashboard → API Keys (`pk_…`) |
 | `CLERK_SECRET_KEY` | ✅ | Clerk Dashboard → API Keys (`sk_…`) |
 | `ARCJET_KEY` | ✅ | app.arcjet.com → Sites → API Keys (`ajkey_…`) |
@@ -164,7 +163,7 @@ Query synthesis and reranking both **degrade gracefully** — any failure falls 
 
 ## 📊 RAG Evals
 
-The pipeline is evaluated against **Vectara's Open RAG Benchmark** (1,000 arXiv papers, 3,045 expert Q&A pairs spanning text, tables, and figures). Because the ground truth is public, results are comparable to other RAG systems. The harness in `evals/` mirrors production retrieval/answer logic and reports Recall@k, MRR, context precision, faithfulness, correctness, citation accuracy, latency, and token cost — broken down by modality and question type. Runs are committed under `evals/benchmarks/open-ragbench/runs/`. See `PROJECT_PLAN.md` → "RAG Evals" for details.
+The pipeline is evaluated against **Vectara's Open RAG Benchmark** (1,000 arXiv papers, 3,045 expert Q&A pairs spanning text, tables, and figures). Because the ground truth is public, results are comparable to other RAG systems. The harness in `evals/` mirrors production retrieval/answer logic (Claude Sonnet answers, Gemini embeddings) and grades with a **cross-family judge** (`gemini-2.5-flash`, a different model family than the generator, to avoid self-preference bias). It reports Recall@k, MRR, context precision, faithfulness, correctness, citation accuracy, latency, and token cost — broken down by modality and question type. Runs are committed under `evals/benchmarks/open-ragbench/runs/`. Launch thresholds and current status: **`docs/GO_LIVE_READINESS.md`**. See `PROJECT_PLAN.md` → "RAG Evals" for details.
 
 ---
 

@@ -36,8 +36,9 @@ export const SYNTHESIS_MODEL = "claude-haiku-4-5"; // standalone-query rewrite
 export const RERANK_MODEL = "claude-haiku-4-5"; // LLM rerank scoring fallback
 export const EMBEDDING_MODEL = "gemini-embedding-001"; // Google — embeddings
 export const EMBEDDING_DIMENSIONS = 1536; // matches document_chunks.embedding vector(1536)
-// Judge model is eval-only (not production). Claude Haiku keeps it on the same
-// key + cheap. NOTE: judging Claude answers with Claude introduces mild
-// same-family self-preference bias — flagged in the run report.
-export const JUDGE_MODEL = "claude-haiku-4-5";
+// Judge model is eval-only (not production). Cross-family on purpose: Gemini
+// judges Claude's answers, which removes the same-family self-preference bias
+// you get when Claude grades Claude. Also bills to the Gemini credit, not the
+// Anthropic account. gemini-2.5-flash is cheap and well within Tier 1 limits.
+export const JUDGE_MODEL = "gemini-2.5-flash";
 export const COHERE_RERANK_MODEL = "rerank-v3.5";
