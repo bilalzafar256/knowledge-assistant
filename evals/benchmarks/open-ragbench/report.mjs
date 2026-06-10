@@ -209,7 +209,7 @@ lines.push(`| Chat model | \`${run.config.chatModel}\` |`);
 lines.push(`| Embedding model | \`${run.config.embeddingModel}\` |`);
 lines.push(`| Judge model (LLM-as-a-judge) | \`${run.config.judgeModel}\` |`);
 lines.push(`| Retrieval | Hybrid (pgvector cosine + Postgres BM25) fused via Reciprocal Rank Fusion |`);
-lines.push(`| Reranker | Cohere Rerank 3.5 (with gpt-4o-mini fallback) |`);
+lines.push(`| Reranker | Cohere Rerank 3.5 (with Claude Haiku fallback) |`);
 lines.push(`| Top-K | ${run.config.topK} |`);
 lines.push("");
 

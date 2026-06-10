@@ -20,13 +20,24 @@ function require(name) {
 //     at a throwaway Neon branch for eval runs, and clean up the eval tenant after:
 //       DELETE FROM documents WHERE user_id='user_open_ragbench_eval'; VACUUM FULL document_chunks;
 export const DATABASE_URL = require("DATABASE_URL");
-export const OPENAI_API_KEY = require("OPENAI_API_KEY");
+// Generation runs on Anthropic Claude; embeddings on Google Gemini — mirrors
+// the production stack in src/lib/ai.ts (commit 6989407). OPENAI_API_KEY is no
+// longer required; it's only kept as an optional embedding fallback.
+export const ANTHROPIC_API_KEY = require("ANTHROPIC_API_KEY");
+export const GOOGLE_GENERATIVE_AI_API_KEY = require("GOOGLE_GENERATIVE_AI_API_KEY");
+export const OPENAI_API_KEY = process.env.OPENAI_API_KEY || null;
 export const COHERE_API_KEY = process.env.COHERE_API_KEY || null;
 export const OPEN_RAGBENCH_USER_ID =
   process.env.OPEN_RAGBENCH_USER_ID || "user_open_ragbench_eval";
 
-// Mirror src/lib/ai.ts
-export const CHAT_MODEL = "gpt-4o";
-export const EMBEDDING_MODEL = "text-embedding-3-small";
-export const JUDGE_MODEL = "gpt-4o-mini";
+// Mirror src/lib/ai.ts — keep these in lockstep with production model choices.
+export const CHAT_MODEL = "claude-sonnet-4-6"; // user-facing grounded answers
+export const SYNTHESIS_MODEL = "claude-haiku-4-5"; // standalone-query rewrite
+export const RERANK_MODEL = "claude-haiku-4-5"; // LLM rerank scoring fallback
+export const EMBEDDING_MODEL = "gemini-embedding-001"; // Google — embeddings
+export const EMBEDDING_DIMENSIONS = 1536; // matches document_chunks.embedding vector(1536)
+// Judge model is eval-only (not production). Claude Haiku keeps it on the same
+// key + cheap. NOTE: judging Claude answers with Claude introduces mild
+// same-family self-preference bias — flagged in the run report.
+export const JUDGE_MODEL = "claude-haiku-4-5";
 export const COHERE_RERANK_MODEL = "rerank-v3.5";

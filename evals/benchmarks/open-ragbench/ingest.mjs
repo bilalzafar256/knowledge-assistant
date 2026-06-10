@@ -20,7 +20,7 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { sql } from "../../lib/db.mjs";
-import { openai } from "../../lib/openai.mjs";
+import { embedBatch } from "../../lib/ai.mjs";
 import { OPEN_RAGBENCH_USER_ID, EMBEDDING_MODEL } from "../../lib/env.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
@@ -98,13 +98,9 @@ function flattenSection(section, paperId, sectionIndex) {
     .join("");
 }
 
-async function embedBatch(texts) {
-  const r = await openai.embeddings.create({
-    model: EMBEDDING_MODEL,
-    input: texts.map((t) => t.replace(/\n/g, " ")),
-  });
-  return r.data.map((d) => d.embedding);
-}
+// Stored chunks are embedded as RETRIEVAL_DOCUMENT (asymmetric typing) to match
+// production ingestion; search queries use RETRIEVAL_QUERY. embedBatch is the
+// shared Gemini helper from evals/lib/ai.mjs.
 
 // ── Discover papers ───────────────────────────────────────────────────────────
 let files = readdirSync(CORPUS_DIR).filter((f) => f.endsWith(".json"));
@@ -259,5 +255,5 @@ console.log();
 const elapsedMin = ((Date.now() - startTime) / 60000).toFixed(1);
 console.log(`✓ Ingested ${totalDocs} documents, ${totalChunks} chunks in ${elapsedMin} min`);
 console.log(`  Approx embedding tokens: ${totalEmbedTokens.toLocaleString()}`);
-console.log(`  Approx embedding cost: $${((totalEmbedTokens / 1e6) * 0.02).toFixed(2)} ` +
-  `(text-embedding-3-small @ $0.02/MTok)`);
+console.log(`  Approx embedding cost: $${((totalEmbedTokens / 1e6) * 0.15).toFixed(2)} ` +
+  `(${EMBEDDING_MODEL} @ ~$0.15/MTok)`);

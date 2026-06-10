@@ -1,23 +1,20 @@
 /**
- * LLM-as-judge primitives. All use gpt-4o-mini for cost.
+ * LLM-as-judge primitives. All use claude-haiku-4-5 for cost.
  * Each returns a number in [0, 1] plus a short rationale.
  */
-import { openai, parseJsonLoose } from "./openai.mjs";
+import { anthropic, generateText, parseJsonLoose } from "./ai.mjs";
 import { JUDGE_MODEL } from "./env.mjs";
 
 async function judge({ system, user }) {
-  const r = await openai.chat.completions.create({
-    model: JUDGE_MODEL,
+  const { text } = await generateText({
+    model: anthropic(JUDGE_MODEL),
     temperature: 0,
-    max_tokens: 200,
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: user },
-    ],
+    maxOutputTokens: 200,
+    system,
+    prompt: user,
   });
-  const text = r.choices[0].message.content ?? "{}";
   try {
-    const parsed = parseJsonLoose(text);
+    const parsed = parseJsonLoose(text ?? "{}");
     return {
       score: typeof parsed.score === "number" ? parsed.score : 0,
       rationale: parsed.rationale ?? "",
@@ -36,20 +33,15 @@ export async function contextPrecision({ question, retrievedChunks }) {
         `[${i + 1}] (${c.documentTitle}) ${c.content.slice(0, 400).replace(/\n+/g, " ")}`
     )
     .join("\n");
-  const r = await openai.chat.completions.create({
-    model: JUDGE_MODEL,
+  const { text } = await generateText({
+    model: anthropic(JUDGE_MODEL),
     temperature: 0,
-    max_tokens: 120,
-    messages: [
-      {
-        role: "user",
-        content:
-          `Question: ${question}\n\nFor each chunk, mark 1 if it contains information that helps answer the question, 0 otherwise.\n\nChunks:\n${list}\n\nOutput JSON only: {"verdicts":[0|1,0|1,...]}`,
-      },
-    ],
+    maxOutputTokens: 120,
+    prompt:
+      `Question: ${question}\n\nFor each chunk, mark 1 if it contains information that helps answer the question, 0 otherwise.\n\nChunks:\n${list}\n\nOutput JSON only: {"verdicts":[0|1,0|1,...]}`,
   });
   try {
-    const parsed = parseJsonLoose(r.choices[0].message.content ?? "{}");
+    const parsed = parseJsonLoose(text ?? "{}");
     const v = parsed.verdicts;
     if (!Array.isArray(v) || v.length !== retrievedChunks.length) {
       return { score: 0, rationale: "bad_format" };

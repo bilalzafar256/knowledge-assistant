@@ -253,9 +253,9 @@ if (RUN_ANSWERS) {
   agg.avg_latency_ms = Math.round(avg(ok.map((r) => r.answer?.latency_ms)));
   agg.total_input_tokens = ok.reduce((s, r) => s + (r.answer?.input_tokens ?? 0), 0);
   agg.total_output_tokens = ok.reduce((s, r) => s + (r.answer?.output_tokens ?? 0), 0);
-  // gpt-4o ≈ $2.50/MTok in, $10/MTok out (2026 list). Adjust if pricing changed.
+  // claude-sonnet-4-6 ≈ $3/MTok in, $15/MTok out (2026 list). Adjust if pricing changed.
   agg.estimated_cost_usd =
-    (agg.total_input_tokens / 1e6) * 2.5 + (agg.total_output_tokens / 1e6) * 10;
+    (agg.total_input_tokens / 1e6) * 3 + (agg.total_output_tokens / 1e6) * 15;
 }
 
 const finishedAt = new Date();
