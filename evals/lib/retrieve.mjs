@@ -3,8 +3,13 @@
  * If src/lib/ai.ts changes, update this file too (or refactor to share).
  */
 import { sql } from "./db.mjs";
-import { openai, embed, parseJsonLoose } from "./openai.mjs";
-import { JUDGE_MODEL, COHERE_API_KEY, COHERE_RERANK_MODEL } from "./env.mjs";
+import { anthropic, generateText, embed, parseJsonLoose } from "./ai.mjs";
+import {
+  SYNTHESIS_MODEL,
+  RERANK_MODEL,
+  COHERE_API_KEY,
+  COHERE_RERANK_MODEL,
+} from "./env.mjs";
 
 async function synthesizeSearchQuery(latestQuery, priorMessages) {
   if (!priorMessages || priorMessages.length === 0) return latestQuery;
@@ -16,24 +21,19 @@ async function synthesizeSearchQuery(latestQuery, priorMessages) {
           `${m.role === "user" ? "User" : "Assistant"}: ${m.content.slice(0, 400)}`
       )
       .join("\n");
-    const r = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      max_tokens: 60,
+    const { text } = await generateText({
+      model: anthropic(SYNTHESIS_MODEL),
+      maxOutputTokens: 60,
       temperature: 0,
-      messages: [
-        {
-          role: "user",
-          content:
-            `You are a search query optimizer. Given a conversation and the user's latest message, ` +
-            `rewrite the latest message as a complete, standalone search query that includes all ` +
-            `necessary context from the conversation. Output ONLY the query — no explanation, no quotes.\n\n` +
-            `Conversation so far:\n${history}\n\n` +
-            `Latest message: ${latestQuery}\n\n` +
-            `Standalone search query:`,
-        },
-      ],
+      prompt:
+        `You are a search query optimizer. Given a conversation and the user's latest message, ` +
+        `rewrite the latest message as a complete, standalone search query that includes all ` +
+        `necessary context from the conversation. Output ONLY the query — no explanation, no quotes.\n\n` +
+        `Conversation so far:\n${history}\n\n` +
+        `Latest message: ${latestQuery}\n\n` +
+        `Standalone search query:`,
     });
-    const t = r.choices[0].message.content?.trim() ?? "";
+    const t = text?.trim() ?? "";
     return t.length > 0 ? t : latestQuery;
   } catch {
     return latestQuery;
@@ -83,23 +83,17 @@ async function llmRerank(query, candidates, topK) {
             .replace(/\n+/g, " ")}`
       )
       .join("\n");
-    const r = await openai.chat.completions.create({
-      model: JUDGE_MODEL,
-      max_tokens: 120,
+    const { text } = await generateText({
+      model: anthropic(RERANK_MODEL),
+      maxOutputTokens: 120,
       temperature: 0,
-      messages: [
-        {
-          role: "user",
-          content:
-            `Score each chunk 0–10 for relevance to the query. ` +
-            `Output ONLY a JSON object: {"scores":[n,n,...]} with one number per chunk.\n\n` +
-            `Query: ${query}\n\n` +
-            `Chunks:\n${chunkList}`,
-        },
-      ],
+      prompt:
+        `Score each chunk 0–10 for relevance to the query. ` +
+        `Output ONLY a JSON object: {"scores":[n,n,...]} with one number per chunk.\n\n` +
+        `Query: ${query}\n\n` +
+        `Chunks:\n${chunkList}`,
     });
-    const text = r.choices[0].message.content ?? "";
-    const parsed = parseJsonLoose(text);
+    const parsed = parseJsonLoose(text ?? "");
     const scores = parsed.scores;
     if (!Array.isArray(scores) || scores.length !== candidates.length) {
       throw new Error("bad scores");
@@ -120,7 +114,7 @@ async function rerankChunks(query, candidates, topK) {
     try {
       return await cohereRerank(query, candidates, topK);
     } catch (e) {
-      console.warn("  ⚠ Cohere rerank failed, falling back to gpt-4o-mini:", e.message);
+      console.warn("  ⚠ Cohere rerank failed, falling back to Claude Haiku:", e.message);
     }
   }
   return llmRerank(query, candidates, topK);
@@ -137,7 +131,7 @@ export async function searchKnowledge({
   limit = 5,
 }) {
   const searchQuery = await synthesizeSearchQuery(query, priorMessages);
-  const queryEmbedding = await embed(searchQuery);
+  const queryEmbedding = await embed(searchQuery, "RETRIEVAL_QUERY");
   const vectorString = `[${queryEmbedding.join(",")}]`;
 
   const candidateLimit = Math.min(limit * 3, 15);

@@ -1,9 +1,11 @@
 /**
- * Mirrors src/app/api/chat/route.ts and src/lib/ai.ts SYSTEM_PROMPT.
- * Calls gpt-4o with the searchKnowledge tool — exactly one search loop minimum,
- * up to stepCountIs(5) like production.
+ * Mirrors src/app/api/chat/route.ts + src/lib/ai.ts.
+ * Runs claude-sonnet-4-6 with the searchKnowledge tool via the AI SDK,
+ * looping up to stepCountIs(5) exactly like production's streamText call.
  */
-import { openai } from "./openai.mjs";
+import { generateText, stepCountIs, tool } from "ai";
+import { z } from "zod";
+import { anthropic } from "./ai.mjs";
 import { CHAT_MODEL } from "./env.mjs";
 import { searchKnowledge } from "./retrieve.mjs";
 
@@ -35,129 +37,81 @@ const SYSTEM_PROMPT = `You are a Company Knowledge Assistant. Your job is to ans
 
 Current date: ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`;
 
-const tools = [
-  {
-    type: "function",
-    function: {
-      name: "searchKnowledge",
-      description:
-        "Search the company knowledge base for information relevant to the user's question. Use this tool whenever the user asks about company policies, procedures, products, team information, or any other company-specific topic.",
-      parameters: {
-        type: "object",
-        properties: {
-          query: {
-            type: "string",
-            description:
-              "The user's question or topic to search for. Include all relevant context from the conversation.",
-          },
-          limit: {
-            type: "number",
-            minimum: 1,
-            maximum: 10,
-            default: 3,
-          },
-        },
-        required: ["query"],
-      },
-    },
-  },
-];
-
 const MAX_STEPS = 5;
 
 /**
- * Run the full chat: model decides when to call searchKnowledge,
- * we execute it, feed results back, loop up to MAX_STEPS times.
- * Returns the final assistant text, accumulated retrieved chunks, token usage, latency.
+ * Run the full chat: Claude decides when to call searchKnowledge, the AI SDK
+ * executes the tool and feeds results back, looping up to MAX_STEPS.
+ * Returns the final assistant text, accumulated retrieved chunks, token usage,
+ * latency. `allRetrieved` is populated by the tool's execute closure so the
+ * caller can compute recall over everything the model actually saw.
  */
 export async function runChat({ userId, userQuery }) {
   const t0 = Date.now();
-  let inputTokens = 0;
-  let outputTokens = 0;
   const allRetrieved = [];
-  const messages = [
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: userQuery },
-  ];
 
-  for (let step = 0; step < MAX_STEPS; step++) {
-    const r = await openai.chat.completions.create({
-      model: CHAT_MODEL,
-      temperature: 0.3,
-      messages,
-      tools,
-      tool_choice: "auto",
-    });
-    inputTokens += r.usage?.prompt_tokens ?? 0;
-    outputTokens += r.usage?.completion_tokens ?? 0;
-
-    const msg = r.choices[0].message;
-    messages.push(msg);
-
-    if (msg.tool_calls && msg.tool_calls.length > 0) {
-      for (const tc of msg.tool_calls) {
-        if (tc.function.name !== "searchKnowledge") continue;
-        let args;
-        try {
-          args = JSON.parse(tc.function.arguments);
-        } catch {
-          args = { query: userQuery, limit: 5 };
-        }
-        const limit = args.limit ?? 3;
-        const result = await searchKnowledge({
-          query: args.query,
-          userId,
-          priorMessages: [],
-          limit,
-        });
-        allRetrieved.push({ step, ...result });
-        const toolPayload =
-          result.rerankedTopK.length === 0
-            ? {
-                results: [],
-                message:
-                  "No relevant documents found in the knowledge base for this query.",
-              }
-            : {
-                results: result.rerankedTopK.map((row) => ({
-                  documentId: row.documentId,
-                  documentTitle: row.documentTitle,
-                  content: row.content,
-                  chunkIndex: row.chunkIndex,
-                  similarity: row.similarity,
-                })),
-                message: `Found ${result.rerankedTopK.length} relevant sections from the knowledge base.`,
-              };
-        messages.push({
-          role: "tool",
-          tool_call_id: tc.id,
-          content: JSON.stringify(toolPayload),
-        });
+  const searchKnowledgeTool = tool({
+    description:
+      "Search the company knowledge base for information relevant to the user's question. " +
+      "Use this tool whenever the user asks about company policies, procedures, products, " +
+      "team information, or any other company-specific topic.",
+    inputSchema: z.object({
+      query: z
+        .string()
+        .describe(
+          "The user's question or topic to search for. Include all relevant context from the conversation."
+        ),
+      limit: z.number().min(1).max(10).default(3),
+    }),
+    execute: async ({ query, limit }) => {
+      const result = await searchKnowledge({
+        query,
+        userId,
+        priorMessages: [],
+        limit: limit ?? 3,
+      });
+      allRetrieved.push({ step: allRetrieved.length, ...result });
+      if (result.rerankedTopK.length === 0) {
+        return {
+          results: [],
+          message:
+            "No relevant documents found in the knowledge base for this query.",
+        };
       }
-      continue;
-    }
+      return {
+        results: result.rerankedTopK.map((row) => ({
+          documentId: row.documentId,
+          documentTitle: row.documentTitle,
+          content: row.content,
+          chunkIndex: row.chunkIndex,
+          similarity: row.similarity,
+        })),
+        message: `Found ${result.rerankedTopK.length} relevant sections from the knowledge base.`,
+      };
+    },
+  });
 
-    // No tool calls — final answer
-    return {
-      answer: msg.content ?? "",
-      retrieved: allRetrieved,
-      inputTokens,
-      outputTokens,
-      latencyMs: Date.now() - t0,
-      stepsUsed: step + 1,
-      finishReason: "stop",
-    };
-  }
+  const result = await generateText({
+    model: anthropic(CHAT_MODEL),
+    system: SYSTEM_PROMPT,
+    prompt: userQuery,
+    tools: { searchKnowledge: searchKnowledgeTool },
+    stopWhen: stepCountIs(MAX_STEPS),
+    temperature: 0.3,
+  });
 
-  // Hit step limit
-  const last = messages[messages.length - 1];
+  // AI SDK v6 usage: { inputTokens, outputTokens, totalTokens }. result.usage
+  // is the aggregate across all steps.
+  const usage = result.usage ?? {};
+  const stepsUsed = Array.isArray(result.steps) ? result.steps.length : 1;
+
   return {
-    answer: typeof last.content === "string" ? last.content : "",
+    answer: result.text ?? "",
     retrieved: allRetrieved,
-    inputTokens,
-    outputTokens,
+    inputTokens: usage.inputTokens ?? 0,
+    outputTokens: usage.outputTokens ?? 0,
     latencyMs: Date.now() - t0,
-    stepsUsed: MAX_STEPS,
-    finishReason: "step_limit",
+    stepsUsed,
+    finishReason: result.finishReason ?? "stop",
   };
 }

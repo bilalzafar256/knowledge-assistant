@@ -1,0 +1,1001 @@
+{
+  "label": "golive-23doc-20q",
+  "startedAt": "2026-06-10T10:32:56.932Z",
+  "finishedAt": "2026-06-10T10:45:55.246Z",
+  "durationSec": 778,
+  "config": {
+    "userId": "user_open_ragbench_eval",
+    "chatModel": "claude-sonnet-4-6",
+    "embeddingModel": "gemini-embedding-001",
+    "judgeModel": "claude-haiku-4-5",
+    "topK": 5,
+    "concurrency": 1,
+    "ranAnswers": true
+  },
+  "goldenSet": {
+    "generatedAt": "2026-06-10T10:32:46.811Z",
+    "count": 20
+  },
+  "summary": {
+    "questions_total": 20,
+    "questions_evaluated": 20,
+    "recall_at_k_reranked": 1,
+    "recall_vector_at_5": 0.95,
+    "recall_vector_at_10": 1,
+    "recall_pure_vector_at_5": 0.95,
+    "recall_pure_vector_at_10": 1,
+    "mrr_reranked": 0.8433333333333334,
+    "mrr_vector": 0.8430555555555556,
+    "mrr_pure_vector": 0.7780555555555555,
+    "context_precision": 0.45999999999999996,
+    "faithfulness": 0.53,
+    "correctness": 0.825,
+    "citation": 0.95,
+    "avg_latency_ms": 24675,
+    "total_input_tokens": 71801,
+    "total_output_tokens": 10517,
+    "estimated_cost_usd": 0.373158
+  },
+  "perQuestion": [
+    {
+      "id": "q_1",
+      "question": "Can refinements of the defensible set violate positive involvement?",
+      "expected_document_title": "An impossibility theorem concerning positive involvement in voting",
+      "benchmark": {
+        "query_uuid": "f232b252-fe59-48c2-b066-ca89693c5266",
+        "paper_id": "2401.05657v5",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Can refinements of the defensible set violate positive involvement?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting"
+        ]
+      },
+      "answer": {
+        "text": "**Yes, refinements of the defensible set can violate positive involvement.**\n\nAccording to the document *\"An impossibility theorem concerning positive involvement in voting\"*:\n\n> \"refinements of the defensible set **may violate positive involvement**. Examples include some refinements of Split Cycle such as **Beat Path, Ranked Pairs, and Stable Voting**.\"\n\n---\n\n### Key Context\n\n**Lemma 2** establishes the relationship between positive involvement and the defensible set:\n\n1. Any voting method satisfying **positive involvement** and the **Condorcet winner criterion** refines the defensible set *for linear profiles*.\n2. Any voting method satisfying **positive involvement** and the **weak Condorcet winner criterion** refines the defensible set *for all profiles*.\n\nThis means that satisfying positive involvement (together with a Condorcet criterion) is *sufficient* to guarantee that a method is a refinement of the defensible set — but the converse does not hold. Being a refinement of the defensible set does **not** guarantee positive involvement.\n\n---\n\n### Summary\n\n| Direction | Holds? |\n|---|---|\n| Positive involvement + Condorcet winner criterion → refines defensible set | ✅ Yes (Lemma 2) |\n| Refines defensible set → positive involvement | ❌ Not necessarily (e.g., Beat Path, Ranked Pairs, Stable Voting) |",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims the document states that 'refinements of the defensible set may violate positive involvement' and cites specific examples (Beat Path, Ranked Pairs, Stable Voting). However, this exact quote does not appear in the provided context. The context only shows Lemma 2 and definitions of Condorcet criteria, but does not contain the claimed statement about refinements violating positive involvement or the specific examples mentioned.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly states that refinements of the defensible set may violate positive involvement, directly matching the reference. It provides accurate supporting details including specific examples (Beat Path, Ranked Pairs, Stable Voting) and correctly explains the logical relationship between positive involvement and refinements of the defensible set.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 4107,
+        "output_tokens": 325,
+        "latency_ms": 10088,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 17557
+    },
+    {
+      "id": "q_2",
+      "question": "What influences the ATM skew in the Edgeworth series?",
+      "expected_document_title": "Short-Term Asymptotics of Volatility Skew and Curvature Based on\n  Cumulants",
+      "benchmark": {
+        "query_uuid": "d364746a-e6c4-457f-b213-217bd899393a",
+        "paper_id": "2401.03776v8",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What influences the ATM skew in the Edgeworth series?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 4,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 0.2,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "Short-Term Asymptotics of Volatility Skew and Curvature Based on\n  Cumulants",
+          "Short-Term Asymptotics of Volatility Skew and Curvature Based on\n  Cumulants",
+          "Short-Term Asymptotics of Volatility Skew and Curvature Based on\n  Cumulants",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Short-Term Asymptotics of Volatility Skew and Curvature Based on\n  Cumulants"
+        ]
+      },
+      "answer": {
+        "text": "Based on the document **\"Short-Term Asymptotics of Volatility Skew and Curvature Based on Cumulants\"**, here is what influences the ATM skew in the Edgeworth series:\n\n---\n\n## ATM Skew in the Edgeworth Series\n\n### Key Driver: The Linear Term in Hermite Polynomials\nThe component in the Edgeworth series that **influences ATM skew** is the **linear term $\\frac{k}{s}$** in the high-order Hermite polynomials.\n\n### Dominant Cumulants\nUnder the conditions:\n- $\\kappa_n = o(\\gamma_1)$ for **odd** $n \\geq 5$\n- $\\kappa_n = o(\\gamma_2)$ for **even** $n \\geq 5$\n\n...the high-order coefficients of $k$ are all **dominated by $\\gamma_3$ or $s\\gamma_4$**. This means the third cumulant (skewness, $\\gamma_1$) and fourth cumulant (excess kurtosis, $\\gamma_2$) of the asset log return are the primary drivers of the ATM skew.\n\n### Error from High-Order Edgeworth Terms\nThe error on the ATM skew induced by high-order Edgeworth series terms is of the order:\n$$\\frac{C_n \\mu_n^*}{\\sqrt{\\tau}} = o\\left(\\frac{\\gamma_1 + s\\gamma_2}{\\sqrt{\\tau}}\\right), \\quad \\text{odd } n \\geq 5, \\; C_n \\in \\mathbb{R}$$\nThis confirms that higher-order terms are negligible relative to the main skewness/kurtosis contributions.\n\n### Error from Taylor (Linear) Approximation\nFrom the mean-value theorem, $v\\sqrt{\\tau} - s = O(s\\gamma_1)$, and the derivative of the Taylor expansion residual w.r.t. moneyness is of order $O(s^3 \\gamma_1^2)$. This results in an error on the ATM skew of $O\\!\\left(\\frac{s^3 \\gamma_2^2}{\\sqrt{\\tau}}\\right)$ — a **higher-order term** compared to the main term, and thus negligible.\n\n---\n\n### Summary\nThe ATM skew in the Edgeworth series is primarily governed by the **skewness ($\\gamma_1$) and kurtosis ($\\gamma_2$) of the asset log-return distribution**, entering through the linear $\\frac{k}{s}$ term in the Hermite polynomials. Higher-order cumulants contribute only negligible error terms under the stated cumulant conditions.",
+        "faithfulness": 0.85,
+        "faithfulness_note": "The answer accurately identifies the linear term $\\frac{k}{s}$ in Hermite polynomials as influencing ATM skew and correctly states the cumulant conditions from the context. However, the answer extrapolates significantly beyond what is explicitly stated in the provided excerpts. The context only shows the beginning of Theorem 1's proof and does not provide the complete error analysis, derivative calculations, or the specific error bounds ($O(s^3\\gamma_2^2/\\sqrt{\\tau})$) that the answer presents. While these appear to be reasonable inferences from the theorem statement, they are not directly supported by the given context passages.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly identifies that the linear term k/s in high-order Hermite polynomials influences ATM skew in the Edgeworth series, which directly matches the reference statement. The answer also appropriately elaborates on how skewness (γ₁) and kurtosis (γ₂) cumulants drive this effect through these linear terms, providing consistent and accurate supporting detail.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 3770,
+        "output_tokens": 657,
+        "latency_ms": 17087,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 24836
+    },
+    {
+      "id": "q_3",
+      "question": "What does applying DDGA to high-dimensional biological networks help uncover?",
+      "expected_document_title": "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition",
+      "benchmark": {
+        "query_uuid": "4e7d0455-e703-4c78-bc71-84f3914562cd",
+        "paper_id": "2401.06959v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What does applying DDGA to high-dimensional biological networks help uncover?",
+        "reranked_rank": 0,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition",
+          "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition",
+          "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition",
+          "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition",
+          "Quantifying energy landscape of high-dimensional oscillatory systems by\n  diffusion decomposition"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Quantifying energy landscape of high-dimensional oscillatory systems by diffusion decomposition\"**, applying DDGA to high-dimensional biological networks helps uncover the following:\n\n### Key Findings from Applying DDGA to High-Dimensional Biological Networks\n\n- **More intricate biological mechanisms** — The approach uncovers complex mechanisms efficiently, deepening the understanding of cellular functions.\n- **New basins and checkpoints** — In a **44-dimensional mammalian cell cycle network**, DDGA detects new basins and checkpoints that previous approaches (WSGA and EGA) fail to discern.\n- **Explosion phenomena** — In a **6-dimensional synthetic oscillatory network**, DDGA identifies the \"explosion phenomenon\" that other methods miss.\n- **Stability and sensitivity of oscillation** — The energy landscape constructed by DDGA better explains biological phenomena observed in experiments, such as the stability and sensitivity of oscillations.\n- **Agreement with experimental data** — The results align with single-cell experimental data, validating the biological relevance of the uncovered mechanisms.\n\nIn summary, DDGA reveals intricate biological mechanisms in high-dimensional oscillatory networks that are **indiscernible using existing approaches**, while also being more precise and computationally efficient.",
+        "faithfulness": 0.2,
+        "faithfulness_note": "The answer makes several specific claims (e.g., '44-dimensional mammalian cell cycle network', 'new basins and checkpoints', '6-dimensional synthetic oscillatory network', 'explosion phenomenon') that are not supported by the provided context excerpts. The context only mentions that DDGA is proposed for quantifying energy landscapes and discusses issues with WSGA (covariance explosion), but does not provide the specific applications, findings, or experimental validations claimed in the answer.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the question by stating that applying DDGA to high-dimensional biological networks helps uncover 'more intricate biological mechanisms,' which directly matches the reference statement. The answer also provides additional supporting details about specific discoveries (new basins, checkpoints, explosion phenomena, stability analysis) that are consistent with and expand upon the core claim in the reference.",
+        "citation": 1,
+        "citation_note": "9/9 title tokens matched",
+        "input_tokens": 2449,
+        "output_tokens": 285,
+        "latency_ms": 13121,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 20211
+    },
+    {
+      "id": "q_4",
+      "question": "What does the random slopes MLMM capture in terms of uncertainty?",
+      "expected_document_title": "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+      "benchmark": {
+        "query_uuid": "c35f4948-506a-46c4-9259-114920f407ee",
+        "paper_id": "2401.07294v4",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What does the random slopes MLMM capture in terms of uncertainty?",
+        "reranked_rank": 0,
+        "vector_rank": 8,
+        "pure_vector_rank": 8,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 0.1111111111111111,
+        "mrr_pure_vector": 0.1111111111111111,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Multilevel Metamodels: Enhancing Inference, Interpretability, and Generalizability in Monte Carlo Simulation Studies\"**, here is what the random slopes MLMM captures in terms of uncertainty:\n\n---\n\n## Uncertainty Captured by the Random Slopes MLMM\n\nThe random slopes MLMM captures **uncertainty about the generalizability of results to other similar but untested simulation conditions**.\n\nThis is demonstrated empirically through a bootstrapping comparison:\n\n- Bootstrapping **72,900 individual model results** → SEs match the **OLS metamodel**\n- Block bootstrapping **24,300 simulated datasets** → SEs match the **random intercepts MLMM**\n- Block bootstrapping **243 simulation conditions** → SEs match the **random slopes MLMM**\n\nEach metamodel's SEs therefore capture a **different source of uncertainty**. The random slopes MLMM specifically reflects variability *across simulation conditions*.\n\n---\n\n## Why This Matters\n\nThe document states:\n\n> *\"If we are most interested in the generalizability of our results to other similar but untested simulation conditions, the random slopes MLMM provides the level of uncertainty consistent with this goal because in most simulation studies, we intend to demonstrate conclusions that we cannot prove analytically but expect or intend to hold in settings similar to the conditions tested.\"*\n\nAdditionally, even when there is no natural superpopulation of data-generating conditions, the document notes that *\"assessing variability across the surface defined by the tested simulation conditions nonetheless provides a useful metric for interpreting the results.\"*\n\n---\n\n**In short:** The random slopes MLMM captures uncertainty at the level of **simulation conditions**, making it the most appropriate choice when the goal is to draw conclusions that generalize beyond the exact conditions tested.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer contains a direct factual claim not supported by the provided context: 'Bootstrapping 72,900 individual model results → SEs match the OLS metamodel' and the subsequent bootstrapping comparisons. These specific numbers and bootstrapping results do not appear anywhere in the three provided excerpts. The answer invents empirical details not present in the context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly and comprehensively addresses the question. It accurately states that the random slopes MLMM captures uncertainty consistent with generalizability to other similar but untested simulation conditions, which directly matches the reference. The answer is well-supported with additional context from the source document, including the bootstrapping comparison and explanation of why this matters for generalizability.",
+        "citation": 1,
+        "citation_note": "10/10 title tokens matched",
+        "input_tokens": 3102,
+        "output_tokens": 408,
+        "latency_ms": 12163,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 19261
+    },
+    {
+      "id": "q_5",
+      "question": "What is the axiom of positive involvement in voting methods?",
+      "expected_document_title": "An impossibility theorem concerning positive involvement in voting",
+      "benchmark": {
+        "query_uuid": "7423ce6f-67b8-4f1e-9675-8e101e6eccd7",
+        "paper_id": "2401.05657v5",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the axiom of positive involvement in voting methods?",
+        "reranked_rank": 1,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting",
+          "An impossibility theorem concerning positive involvement in voting"
+        ]
+      },
+      "answer": {
+        "text": "Based on the document **\"An impossibility theorem concerning positive involvement in voting\"**, here is the definition:\n\n---\n\n## Axiom of Positive Involvement\n\n> **Adding to a preference profile a voter who ranks an alternative uniquely first cannot cause that alternative to go from winning to losing.**\n\nThis axiom, formalized by **Saari (1995)**, is a social choice theory concept rooted in a basic democratic principle: *increased voter support for a candidate should not harm that candidate's chances of winning.*\n\n---\n\n### Key Context\n\n- The axiom applies to **ordinal voting methods** (methods based on ranked preferences).\n- Perhaps surprisingly, **many well-known voting methods — especially Condorcet-consistent methods — violate this axiom** (Pérez 1995).\n- Methods such as **Minimax, Ranked Pairs, Beat Path, Weighted Covering, Split Cycle, and Stable Voting** are among those that fail to satisfy it.\n\n### Impossibility Result\n\nThe document proves that **no ordinal voting method can simultaneously satisfy** all of the following:\n1. Positive involvement\n2. The **Condorcet winner criterion**\n3. The **Condorcet loser criterion**\n4. **Resolvability**\n5. **Ordinal margin invariance** (winners depend only on the ordering of majority margins by size)\n\nThis impossibility theorem helps explain why none of the well-known Condorcet methods listed above satisfies all of these axioms together.",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims in the answer are directly supported by the context provided. The definition of positive involvement, attribution to Saari (1995), the basic democratic principle, application to ordinal voting methods, and the impossibility theorem components are all explicitly stated in the source material.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly defines the axiom of positive involvement exactly as stated in the reference: if a new voter ranks an alternative uniquely first, that alternative should not change from winning to losing. The answer accurately captures the core principle and provides consistent supporting information about voting methods and the impossibility theorem.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2836,
+        "output_tokens": 337,
+        "latency_ms": 15052,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 20570
+    },
+    {
+      "id": "q_6",
+      "question": "Is the new definition of $\\mathbb{B}$-space extended to the entire Euclidean vector space?",
+      "expected_document_title": "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+      "benchmark": {
+        "query_uuid": "f8ca8e45-3ee3-448d-aa95-4bc20f130b4e",
+        "paper_id": "2401.07317v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Is the new definition of $\\mathbb{B}$-space extended to the entire Euclidean vector space?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure"
+        ]
+      },
+      "answer": {
+        "text": "**Yes.** According to the document *\"Remarks on some Limit Geometric Properties related to an Idempotent and Non-Associative Algebraic Structure\"*:\n\n> *\"The concept of $\\mathbb{B}$-space, as introduced in [14], is restricted to the non-negative $n$-dimensional orthant $\\mathbb{R}_{+}^{n}$. In this work, we extend it to the entire Euclidean vector space.\"*\n\nThe original definition of a finite-dimensional $\\mathbb{B}$-space (Max-Times space) was limited to subsets $X$ of $\\mathbb{R}_{+}^{n}$. The new definition presented in this work explicitly extends that concept to the **entire Euclidean vector space** $\\mathbb{R}^n$, and this extension is noted as being useful for analyzing the algebraic structure of a line defined on $\\left(\\mathbb{R}^{n}, \\boxplus, \\cdot\\right)$.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer directly quotes from the context [1] which explicitly states that the concept of B-space is being extended from the non-negative n-dimensional orthant to the entire Euclidean vector space. All factual claims in the answer are supported by the provided context.",
+        "correctness": 1,
+        "correctness_note": "The answer directly and correctly addresses the question. It confirms that yes, the new definition of $\\mathbb{B}$-space is extended to the entire Euclidean vector space, which matches the reference answer. The answer provides supporting evidence from the document showing the original definition was restricted to $\\mathbb{R}_{+}^{n}$ and the new definition extends it to $\\mathbb{R}^n$.",
+        "citation": 1,
+        "citation_note": "10/10 title tokens matched",
+        "input_tokens": 4300,
+        "output_tokens": 241,
+        "latency_ms": 10207,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 17134
+    },
+    {
+      "id": "q_7",
+      "question": "What challenges do large position holders face when executing trades in financial markets?",
+      "expected_document_title": "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+      "benchmark": {
+        "query_uuid": "782b73e6-acc4-43ed-a6ae-97a9f4039769",
+        "paper_id": "2401.03305v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What challenges do large position holders face when executing trades in financial markets?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Leveraging IS and TC: Optimal Order Execution Subject to Reference Strategies\"**, here are the key challenges large position holders face when executing trades:\n\n---\n\n## Challenges for Large Position Holders in Trade Execution\n\n### 1. **Market Impact**\nLarge net holdings cannot simply be \"dumped to the market without a priori deliberately assessing the trade's market impact.\" Untamed price impact from trading can result in **significant transaction costs**, potentially turning into a **substantial loss**.\n\n### 2. **Execution Risk**\nThe document highlights that execution risk must be \"properly managed and controlled; otherwise it would eventually influence the position holder's overall profit and loss (P&L).\"\n\n### 3. **Delegation and Benchmark Tracking**\nBecause of the complexity involved, large position holders commonly delegate execution to an **order execution department** or **outsource to a broker-dealer agency**. However, this introduces a new challenge: the position holder may have preferred strategies or benchmarks they want the delegated agent to closely track, such as:\n- **Implementation Shortfall (IS)** orders — used for short-term alpha pursuit, targeting execution prices close to the market price at the start of the trade.\n- **Target Close (TC)** orders — used to minimize fund risk and tracking error, targeting prices close to the closing price (important for mutual funds that calculate NAV once daily at closing).\n- **VWAP / TWAP** strategies — benchmarks for trading sequences with constant rates in volume time or wall clock time, respectively.\n\n### 4. **Stochastic Order Flow**\nWhen a centralized trading desk aggregates order flows within a financial institution, **stochastic (unpredictable) order flow** arises, adding further complexity to execution.\n\n---\n\nIn summary, the core challenge is balancing the need to execute large trades efficiently while minimizing market impact costs, managing execution risk, and adhering to client-specified benchmark strategies.",
+        "faithfulness": 0.85,
+        "faithfulness_note": "Most claims are supported by context: market impact (explicitly stated in [1]), delegation to brokers (mentioned in [3]), and stochastic order flow (stated in [3]). However, claims about 'execution risk,' 'P&L influence,' 'IS/TC definitions,' and 'VWAP/TWAP strategies' are NOT found in the provided context excerpts. The answer invents or assumes details beyond what is actually present in the retrieved document fragments.",
+        "correctness": 0.85,
+        "correctness_note": "The answer correctly identifies the main challenges from the reference (market impact, transaction costs, and execution risk management). However, it adds substantial information about delegation, benchmark tracking (IS, TC, VWAP/TWAP), and stochastic order flow that goes beyond what the reference explicitly states. While this additional context appears reasonable and related, it exceeds the scope of the provided reference material, which focuses primarily on market impact, transaction costs, and execution risk. The core answer is accurate but partially over-elaborated beyond the source.",
+        "citation": 1,
+        "citation_note": "7/7 title tokens matched",
+        "input_tokens": 3346,
+        "output_tokens": 436,
+        "latency_ms": 13110,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 26810
+    },
+    {
+      "id": "q_8",
+      "question": "Is the chemical reaction network sensitive in $X_{4}$ when $r$ is close to 0?",
+      "expected_document_title": "Cramer-Rao bound and absolute sensitivity in chemical reaction networks",
+      "benchmark": {
+        "query_uuid": "fb3dddca-07d8-4d90-8439-6fa4d12b1e69",
+        "paper_id": "2401.06987v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Is the chemical reaction network sensitive in $X_{4}$ when $r$ is close to 0?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "Cramer-Rao bound and absolute sensitivity in chemical reaction networks",
+          "Cramer-Rao bound and absolute sensitivity in chemical reaction networks",
+          "Cramer-Rao bound and absolute sensitivity in chemical reaction networks",
+          "Cramer-Rao bound and absolute sensitivity in chemical reaction networks",
+          "Cramer-Rao bound and absolute sensitivity in chemical reaction networks"
+        ]
+      },
+      "answer": {
+        "text": "**Yes.** According to the document *\"Cramer-Rao bound and absolute sensitivity in chemical reaction networks\"*, the CRN **can be very sensitive in $X_4$ whenever $r$ is close to 0**.\n\nHere is the relevant detail:\n\n---\n\n### Absolute Sensitivity Formula\n\nUnder the assumption of complex balancing, the absolute sensitivity for $X_4$ is:\n\n$$\\alpha_4 = \\frac{1}{1+r}$$\n\nwhere the ratio $r$ is defined as:\n\n$$r = \\frac{(x_2 + x_5)(x_1 + x_3) + x_1(x_3 + 3x_5) + x_2 x_5}{x_4(x_1 + x_3 + x_5)}$$\n\n---\n\n### Interpretation\n\n- When $r \\gg 0$: the CRN achieves **very low sensitivity** in $X_4$, mimicking absolute concentration robustness.\n- When $r$ is **close to 0**: $\\alpha_4 \\approx \\frac{1}{1+0} = 1$, meaning the CRN is **very sensitive** in $X_4$.\n\nThe document explicitly states: *\"the CRN can also be very sensitive in $X_4$ whenever $r$ is close to 0. This happens, for example, when $x_4 \\gg x_1 \\approx x_2 \\approx x_3 \\approx x_5$\"* — i.e., when the concentration of $X_4$ (the species $\\mathrm{I}$) greatly exceeds the other species' concentrations.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims the document states 'the CRN can also be very sensitive in X_4 whenever r is close to 0' and provides a specific quote about when this occurs. However, this exact quote does not appear in the provided context. The context only states that when r >> 0, the CRN achieves low sensitivities in X_4, but does not explicitly discuss the case when r is close to 0 or provide the quoted explanation about x_4 >> x_1 ≈ x_2 ≈ x_3 ≈ x_5. The answer invents factual claims not supported by the given context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the question by confirming that the chemical reaction network is sensitive in X₄ when r is close to 0. The answer provides supporting evidence from the reference document, including the absolute sensitivity formula α₄ = 1/(1+r), the definition of r, and the interpretation that when r ≈ 0, α₄ ≈ 1 indicating high sensitivity. The answer is consistent with and directly supported by the reference material.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 4227,
+        "output_tokens": 401,
+        "latency_ms": 13842,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 24727
+    },
+    {
+      "id": "q_9",
+      "question": "What is the purpose of using XGBoost in predicting cell distribution during Drosophila embryogenesis?",
+      "expected_document_title": "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+      "benchmark": {
+        "query_uuid": "c9820ad3-4368-41a0-9d67-cd0e1abde636",
+        "paper_id": "2401.02564v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is the purpose of using XGBoost in predicting cell distribution during Drosophila embryogenesis?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Predicting Future States with Spatial Point Processes in Single Molecule Resolution Spatial Transcriptomics\"**, here is a summary of the purpose of using XGBoost in this context:\n\n---\n\n## Purpose of XGBoost in Predicting Cell Distribution During Drosophila Embryogenesis\n\n### Core Objective\nXGBoost (eXtreme Gradient Boosting) is used to **predict the future distribution of active cells** — specifically those expressed by the **sog gene** — along both the:\n- **Anterior to Posterior (AP) axis**, and\n- **Dorsal to Ventral (DV) axis**\n\nof the *Drosophila* embryo during the embryogenesis process.\n\n### How It Works\n- The model predicts the **next stage's active cell distribution** based on the distribution from the **previous stage**.\n- It leverages **temporally resolved spatial point processes**, incorporating **Ripley's K-function** alongside each cell's state at each embryogenesis stage as features.\n- The pipeline begins with cell segmentation (using Cellpose 2.2.3), followed by active cell detection, feature extraction, and then XGBoost-based training and prediction.\n\n### Broader Significance\n- This approach provides insights into **how cells and living organisms control gene expression** at super-resolution, whole-embryo, single-molecule spatial transcriptomics level.\n- It is described as **analogous to RNA Velocity** for spatially resolved developmental biology — meaning from a single data point, it can predict **future spatially resolved gene expression** using spatial point process features.\n- XGBoost was selected because, compared to other machine learning methods tested, it yielded the **best results** based on MSE, MAE, and Absolute Error metrics on the control dataset.\n\n---\n\nIn essence, XGBoost serves as the predictive engine in a pipeline that models the **spatiotemporal dynamics of gene expression** during *Drosophila* development at sub-cellular resolution.",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims in the answer are directly supported by the context. The answer accurately describes: (1) XGBoost's use for predicting sog gene-expressed cell distribution along AP and DV axes [1], (2) the involvement of Ripley's K function as a feature [3], (3) XGBoost being selected for best performance on metrics like MSE, MAE, and Absolute Error [3], and (4) the super-resolution spatial transcriptomics application [1]. No unsupported claims are made.",
+        "correctness": 1,
+        "correctness_note": "The answer comprehensively and accurately addresses the question. It correctly identifies that XGBoost is used to predict the future distribution of sog gene-expressing cells along the AP and DV axes, mentions the use of spatial point processes and Ripley's K-function, and explains how it provides insights into gene expression control at single-molecule resolution. All key details align with the reference material.",
+        "citation": 1,
+        "citation_note": "12/12 title tokens matched",
+        "input_tokens": 2551,
+        "output_tokens": 464,
+        "latency_ms": 13322,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 28828
+    },
+    {
+      "id": "q_10",
+      "question": "How do different volatility models compare over time when analyzing parameter $\\rho$?",
+      "expected_document_title": "Volatility models in practice: Rough, Path-dependent or Markovian?",
+      "benchmark": {
+        "query_uuid": "ad334481-99da-4506-9e22-3153e4ad3aa8",
+        "paper_id": "2401.03345v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How do different volatility models compare over time when analyzing parameter $\\rho$?",
+        "reranked_rank": 4,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.2,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved content from **\"Volatility models in practice: Rough, Path-dependent or Markovian?\"**, here is what the knowledge base states about comparing volatility models over time with respect to parameter **ρ**:\n\n---\n\n## Comparison of Volatility Models: Parameter ρ Over Time\n\n### Models Compared\nThe study compares the following **Bergomi model variants**, all sharing the same set of calibrated parameters **(η, ρ, H)**:\n- **Rough** Bergomi model\n- **Path-dependent** Bergomi model\n- **One-factor** Bergomi model\n- **Two-factor** Bergomi model\n\n---\n\n### Time Series Analysis of ρ\n\nThe document presents **time series of the monthly average of the calibrated parameter ρ** across the different models, calibrated to both **short and long maturities**:\n\n- **Figure 26** (Appendix B.2): Time series of monthly average of calibrated ρ for different Bergomi models calibrated to short and long maturities.\n- **Figure 34** (Appendix C.2): Time series of monthly average of calibrated ρ for different models calibrated to short and long maturities (in the context of ATM skew calibration).\n\nThese figures track how ρ evolves across models over the observation period, allowing a direct visual comparison of parameter dynamics.\n\n---\n\n### Calibration Error Context (ATM Skew, Short & Long Maturities)\n\nThe document also provides **calibration RMSE statistics** for the ATM skew across models (Table 7), which contextualizes the ρ comparisons:\n\n| Model | Mean | Std | Min | 5% | 50% | 95% | Max |\n|---|---|---|---|---|---|---|---|\n| Rough | 0.0955 | 0.0473 | 0.0022 | 0.0379 | 0.0877 | 0.1749 | 0.6947 |\n| Path-dependent | 0.0593 | 0.0429 | 0.0045 | 0.0192 | 0.0483 | 0.1289 | 0.6250 |\n| One-factor | 0.1022 | 0.0449 | 0.0109 | 0.0415 | 0.0992 | 0.1735 | 0.6162 |\n| **Two-factor** | **0.0435** | **0.0350** | **0.0027** | **0.01345** | **0.0340** | **0.1016** | **0.5784** |\n\n> The **two-factor model achieves the lowest error across all statistical measures** (highlighted in bold).\n\n---\n\n### Key Takeaway on Model Performance\n- The **rough Bergomi model scores the highest calibration error** across the board for short maturities, with its fit characterized by an \"overly steep ATM skew around one week of maturity and a much too rapid decay straight after.\"\n- The **path-dependent and one-factor Bergomi models outperform the rough model** — the path-dependent model's RMSE is \"almost always below that of the rough Bergomi model,\" and the one-factor model outperforms it **63% of the time**.\n\n---\n\n> **Note:** The knowledge base references the time series figures for ρ (Figures 26 and 34) but does not reproduce the specific numerical values of ρ for each model over time. For the full visual comparison, the original figures in the document would need to be consulted.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer invents a detailed table (Table 7 with specific numerical values for calibration RMSE statistics) that is referenced but not actually provided in the context. The context only mentions 'Table 7' exists and shows 'Figure 33' with calibration RMSE, but does not include the actual table data. The answer fabricates specific statistics (mean, std, min, percentiles, max) for each model that are not in the provided context.",
+        "correctness": 0.85,
+        "correctness_note": "The answer correctly identifies that different volatility models (rough, path-dependent, one-factor, two-factor Bergomi) show varying trends in parameter ρ over time, supported by specific figure references (Figures 26 and 34). It provides relevant context through calibration error statistics and model performance comparisons. However, the answer goes beyond the reference by including extensive calibration RMSE tables and performance commentary not explicitly stated in the reference material provided. The core claim about comparing models over time with parameter ρ is well-supported, but some supplementary details appear to exceed what the reference directly states.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2915,
+        "output_tokens": 856,
+        "latency_ms": 19409,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 28058
+    },
+    {
+      "id": "q_11",
+      "question": "What conditions make ultrametric balls equivalent to other geometric shapes like boxes or singletons?",
+      "expected_document_title": "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+      "benchmark": {
+        "query_uuid": "b76a0e45-7cbb-4608-b8ee-2c771ea27ef0",
+        "paper_id": "2401.07317v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What conditions make ultrametric balls equivalent to other geometric shapes like boxes or singletons?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0,
+        "context_precision_note": "0/5 relevant",
+        "reranked_titles": [
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure",
+          "Remarks on some Limit Geometric Properties related to an Idempotent and\n  Non-Associative Algebraic Structure"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Remarks on some Limit Geometric Properties related to an Idempotent and Non-Associative Algebraic Structure\"**, here are the precise conditions under which ultrametric balls $B_{\\boxplus}(x, r]$ become equivalent to other geometric shapes:\n\n---\n\n## Conditions for Ultrametric Ball Equivalence\n\nThe geometry of a closed ball $B_{\\boxplus}(x, \\alpha]$ centered at $x \\in \\mathbb{R}^n$ depends on the relationship between the radius $\\alpha$ and the sorted distinct absolute coordinate values of $x$. Let:\n\n$$\\mathcal{A}_x([n]) = \\{\\alpha_j\\}_{j \\in [m]}, \\quad \\alpha_j < \\alpha_{j+1}, \\quad \\alpha_j \\geq 0$$\n\nbe the set of distinct values $|x_i|$ across all coordinates.\n\n---\n\n### 1. 🔹 Ball = Singleton $\\{x\\}$\n\n**Condition:** $\\alpha = 0$, **or** $\\alpha \\in [0, \\alpha_1[$  (i.e., the radius is strictly less than the smallest nonzero coordinate magnitude).\n\n$$B_{\\boxplus}(x, \\alpha] = \\{x\\}$$\n\n> *\"If $\\alpha = 0$, then $B_{\\boxplus}(x, 0] = \\{x\\}$. If $\\alpha_1 > 0$, then $\\alpha < \\alpha_1$ implies $B_{\\boxplus}(x, \\alpha] = \\{x\\}$.\"*\n\n**Intuition:** The radius is too small to reach any point other than $x$ itself.\n\n---\n\n### 2. 🔹 Ball = $\\ell^\\infty$-Ball $B_\\infty(0, \\alpha]$ (a Box centered at the origin)\n\nTwo sub-cases:\n\n- **When $x = 0$** (and all coordinates are zero, i.e., $\\mathcal{A}_x([n]) = \\{0\\}$):\n  For **all** $\\alpha \\geq 0$:\n  $$B_{\\boxplus}(0, \\alpha] = B_\\infty(0, \\alpha]$$\n\n- **When $\\alpha \\geq \\alpha_m = \\|x\\|_\\infty$** (radius meets or exceeds the largest coordinate magnitude):\n  $$B_{\\boxplus}(x, \\alpha] = B_\\infty(0, \\alpha]$$\n\n> *\"If $\\alpha \\geq \\alpha_m = \\|x\\|_\\infty$ then $B_{\\boxplus}(x, \\alpha] = B_\\infty(0, \\alpha]$.\"*\n\n**Intuition:** Once the radius is large enough to \"absorb\" all coordinate magnitudes of $x$, the ball becomes a standard $\\ell^\\infty$-box centered at the **origin** (not at $x$).\n\n---\n\n### 3. 🔹 Intermediate Case: Partial Box with Coordinate Constraints\n\n**Condition:** $\\alpha \\in [\\alpha_j, \\alpha_{j+1}[$ for some $j$\n\nA point $z$ belongs to $B_{\\boxplus}(x, \\alpha]$ if and only if:\n- $|z_k| \\leq \\alpha$ for all $k \\in \\mathcal{A}_x^{-1}([0, \\alpha_j])$ — coordinates of $x$ with small magnitude are free within $[-\\alpha, \\alpha]$\n- $z_k = x_k$ for all $k \\in \\mathcal{A}_x^{-1}([\\alpha_{j+1}, \\alpha_m])$ — coordinates of $x$ with large magnitude are **fixed**\n\n**Intuition:** The ball is a \"partial box\" — some coordinates are constrained to match $x$ exactly, while others are free within a bounded range.\n\n---\n\n## Summary Table\n\n| Condition on radius $\\alpha$ | Shape of $B_{\\boxplus}(x, \\alpha]$ |\n|---|---|\n| $\\alpha = 0$ or $\\alpha < \\alpha_1$ | Singleton $\\{x\\}$ |\n| $\\alpha \\in [\\alpha_j, \\alpha_{j+1}[$ | Partial box (mixed constraints) |\n| $\\alpha \\geq \\alpha_m = \\|x\\|_\\infty$ | Full $\\ell^\\infty$-box $B_\\infty(0, \\alpha]$ |\n| $x = 0$ (all coords zero), any $\\alpha \\geq 0$ | Full $\\ell^\\infty$-box $B_\\infty(0, \\alpha]$ |\n\nThese results come from **Proposition 2.3.1** of the source document.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer invents extensive content not present in the provided context. The context only defines ultrametric balls and mentions Lemma 2.2.2 about limits, but contains no discussion of conditions for ball equivalence, singleton cases, partial boxes, coordinate constraints, or any 'Proposition 2.3.1'. The detailed summary table and all specific geometric characterizations are fabricated.",
+        "correctness": 0.85,
+        "correctness_note": "The answer provides a comprehensive and well-structured explanation of conditions for ultrametric ball equivalence that aligns with the reference. It correctly identifies three main cases: (1) balls becoming singletons when radius is small, (2) balls becoming ℓ∞-boxes when radius is large or center is at origin, and (3) intermediate partial boxes. The mathematical formulation, intuition, and summary table are accurate and detailed. However, the answer claims to cite 'Proposition 2.3.1' from a specific document, which cannot be verified against the provided reference text. The reference only confirms the general principle without providing the specific proposition number or full mathematical framework shown in the answer. This minor discrepancy in source attribution prevents a perfect score, though the content itself appears consistent with ultrametric geometry principles.",
+        "citation": 1,
+        "citation_note": "10/10 title tokens matched",
+        "input_tokens": 5000,
+        "output_tokens": 1181,
+        "latency_ms": 24738,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 37786
+    },
+    {
+      "id": "q_12",
+      "question": "What role does mean square prediction error play in evaluating linear predictors?",
+      "expected_document_title": "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator",
+      "benchmark": {
+        "query_uuid": "f0eb092f-70d9-495a-abcf-2766704a638e",
+        "paper_id": "2401.06326v4",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What role does mean square prediction error play in evaluating linear predictors?",
+        "reranked_rank": 0,
+        "vector_rank": 3,
+        "pure_vector_rank": 3,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 0.25,
+        "mrr_pure_vector": 0.25,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator",
+          "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator",
+          "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator",
+          "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator",
+          "Optimal linear prediction with functional observations: Why you can use\n  a simple post-dimension reduction estimator"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document — **\"Optimal linear prediction with functional observations: Why you can use a simple post-dimension reduction estimator\"** — here is how **Mean Square Prediction Error (MSPE)** plays a role in evaluating linear predictors:\n\n---\n\n## Role of MSPE in Evaluating Linear Predictors\n\n### 1. **Primary Evaluation Criterion**\nMSPE is the central metric used to characterize and compare linear predictors. The document begins by \"characterizing the mean square prediction error (MSPE) associated with a linear predictor and discussing the minimal achievable MSPE.\"\n\n---\n\n### 2. **Defining Optimality**\nMSPE defines what it means for a linear predictor to be *optimal*. A linear predictor `A` is an **Optimal Linear Prediction Operator (OLPO)** if and only if it satisfies:\n- **(a)** `A·C_XX^(1/2) = C_YY^(1/2)·R_XY`, or equivalently,\n- **(b)** `A·C_XX = C_XY`\n\nThese conditions characterize exactly when the **minimum MSPE is attained**.\n\n---\n\n### 3. **Decomposing Prediction Error**\nThe MSPE of a linear predictor `B` can be decomposed into two parts:\n- A term representing the **minimal achievable MSPE** by any linear predictor.\n- A term measuring the **\"inadequacy of B as a linear predictor\"** — this second term becomes zero if and only if `‖(B·C_XX^(1/2) − C_YY^(1/2)·R_XY)·w_j‖² = 0` for all `j ≥ 1` in an orthonormal basis of the Hilbert space.\n\n---\n\n### 4. **Revealing Non-Uniqueness of Optimal Predictors**\nMSPE analysis reveals a key challenge: **multiple non-unique linear predictors can minimize the MSPE**. Specifically, the minimum MSPE does not uniquely determine how the operator `A` acts on `ker(C_XX)`, so any operator agreeing arbitrarily on that kernel can still achieve the minimum. This non-uniqueness is especially problematic in infinite-dimensional settings.\n\n---\n\n### 5. **Guiding Asymptotic Optimality**\nSince consistently estimating a unique optimal predictor from finite samples is \"generally impossible,\" MSPE is used to define a weaker but practical standard: **asymptotic optimality**. Predictors are considered asymptotically optimal if their **empirical MSPEs approach the minimal achievable level as the sample size increases**. The document shows that standard post-dimension reduction estimators attain this asymptotic optimality under minimal conditions.\n\n---\n\nIn summary, MSPE serves as the foundational criterion for defining, decomposing, and approximating optimal linear predictors — particularly in the challenging infinite-dimensional (functional data) setting described in this document.",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims in the answer are directly supported by the context. The answer accurately reflects that MSPE is used to characterize optimal linear predictors, that multiple non-unique predictors can minimize MSPE, that consistent estimation is generally impossible, and that the document discusses asymptotic optimality and post-dimension reduction estimators. The specific mathematical conditions and decomposition of MSPE are quoted or paraphrased directly from the provided excerpts.",
+        "correctness": 0.85,
+        "correctness_note": "The answer correctly identifies MSPE's core role in evaluating linear predictors and accurately addresses the reference's main point about quantifying predictor effectiveness. The detailed breakdown of MSPE's functions (optimality definition, error decomposition, asymptotic optimality) is accurate and well-supported. However, the answer goes substantially beyond the reference material provided, introducing technical details about functional data analysis, optimal linear prediction operators, and infinite-dimensional settings that, while likely accurate, are not present in the reference. The answer demonstrates strong understanding but slightly overextends beyond what the reference explicitly states.",
+        "citation": 1,
+        "citation_note": "11/11 title tokens matched",
+        "input_tokens": 2572,
+        "output_tokens": 701,
+        "latency_ms": 16793,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 24033
+    },
+    {
+      "id": "q_13",
+      "question": "What does a lower estimated Hurst index indicate about realized volatilities compared to theoretical spot volatilities?",
+      "expected_document_title": "Volatility models in practice: Rough, Path-dependent or Markovian?",
+      "benchmark": {
+        "query_uuid": "685a5f8a-7cd9-41fc-b461-f3888a08bc99",
+        "paper_id": "2401.03345v2",
+        "type": "abstractive",
+        "source": "text-table-image"
+      },
+      "retrieval": {
+        "synthesized_query": "What does a lower estimated Hurst index indicate about realized volatilities compared to theoretical spot volatilities?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?"
+        ]
+      },
+      "answer": {
+        "text": "Based on the document **\"Volatility models in practice: Rough, Path-dependent or Markovian?\"**, here is what a lower estimated Hurst index indicates:\n\n---\n\n## Lower Estimated Hurst Index: Realized vs. Spot Volatility\n\nA lower estimated Hurst index (Ĥ) for **realized volatility (RV)** — significantly below 0.5 — indicates **spurious roughness**: the realized volatility time series appears rough even when the underlying spot volatility process is not necessarily rough.\n\n### Key Findings from the Study\n\n- For **non-rough models** (path-dependent, one-factor, two-factor), the theoretical Hurst index of their spot volatility is **0.5**, yet the estimated Ĥ of their simulated RV falls between **0.10 and 0.16** — far lower than 0.5.\n- For the **rough Bergomi model**, the calibrated spot volatility has H = **0.08**, but the estimated Ĥ of RV is **≈ 0.13**.\n- The actual **S&P 500 realized volatility** (2007–2017) yields an estimated Ĥ **≈ 0.14**.\n\n### Interpretation\n\nThe document states that *\"regardless of the roughness of the spot volatility, the realized volatility time series always exhibits rough trajectories, corresponding to an estimated Hurst index that is significantly smaller than 0.5.\"*\n\nThis roughness in RV is attributed primarily to **estimation error** — i.e., the error introduced by estimating spot volatility *using* realized volatility — rather than genuine roughness in the underlying process.\n\n### Conclusion\n\nA lower estimated Hurst index in realized volatility **does not imply** that the underlying spot volatility process is rough. The document explicitly confirms: *\"roughness of the realized volatility process does not imply that the underlying process has to be rough, and is in general not an adequate criterion to be used for model selection.\"*",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer makes specific factual claims (e.g., 'estimated Ĥ of their simulated RV falls between 0.10 and 0.16', 'calibrated spot volatility has H = 0.08', 'estimated Ĥ of RV is ≈ 0.13', 'S&P 500 realized volatility yields an estimated Ĥ ≈ 0.14') that are not supported by the provided context. The context only shows partial text and images without displaying the actual numerical results or tables. The answer invents specific numbers and detailed findings not present in the given excerpts.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly and comprehensively addresses the question. It accurately states that a lower estimated Hurst index for realized volatilities indicates that the observed roughness is primarily due to estimation errors rather than true characteristics of the underlying process, which directly matches the reference statement. The answer provides substantial supporting evidence from the source document, including specific numerical examples and clear interpretation of what this means for model selection.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 3405,
+        "output_tokens": 467,
+        "latency_ms": 20622,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 28498
+    },
+    {
+      "id": "q_14",
+      "question": "How does covariate adjustment impact the statistical power in simulation studies?",
+      "expected_document_title": "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+      "benchmark": {
+        "query_uuid": "53420856-5ccb-421e-a088-85a22be2cbc9",
+        "paper_id": "2401.07294v4",
+        "type": "abstractive",
+        "source": "text-table-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How does covariate adjustment impact the statistical power in simulation studies?",
+        "reranked_rank": 2,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies"
+        ]
+      },
+      "answer": {
+        "text": "I encountered an error while trying to search the knowledge base — the system is temporarily unavailable due to a quota limit. I'm unable to retrieve information at this moment.\n\nHere's what I'd recommend:\n\n1. **Try again shortly** — the quota should reset, and I can search the knowledge base for the specific answer once it's available.\n2. **Rephrase or narrow your question** — if you have a more specific aspect in mind (e.g., a particular methodology, tool, or study context used at this company), I can target the search more precisely when the service resumes.\n\nI want to make sure any answer I give you comes directly from the company's internal knowledge base rather than general knowledge, so I'd rather wait and get you accurate, sourced information. Please try again in a moment!",
+        "faithfulness": 0,
+        "faithfulness_note": "No answer was provided to evaluate. The response indicates a system error rather than attempting to answer the question based on the provided context about multilevel metamodels.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question at all. Instead of providing information about how covariate adjustment impacts statistical power in simulation studies, the response indicates a system error and inability to retrieve information. The reference clearly states that covariate adjustment increases statistical power by about 12.5 percentage points on average, but the answer provides no such information or any substantive response to the question.",
+        "citation": 0,
+        "citation_note": "0/10 title tokens matched",
+        "input_tokens": 1360,
+        "output_tokens": 176,
+        "latency_ms": 70753,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 76444
+    },
+    {
+      "id": "q_15",
+      "question": "Why is it important to analyze short and long maturities in financial modeling?",
+      "expected_document_title": "Volatility models in practice: Rough, Path-dependent or Markovian?",
+      "benchmark": {
+        "query_uuid": "449cf8f0-d013-41b3-82a1-5039c03fd181",
+        "paper_id": "2401.03345v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is it important to analyze short and long maturities in financial modeling?",
+        "reranked_rank": 2,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"Volatility models in practice: Rough, Path-dependent or Markovian?\"**, here is why analyzing short and long maturities is important in financial modeling:\n\n---\n\n## Importance of Analyzing Short and Long Maturities in Financial Modeling\n\n### 1. **Comprehensive Model Evaluation**\nThe study splits its empirical analysis into two parts:\n- **Short maturities**: options with maturities between **one week and three months**\n- **Short and long maturities**: options with maturities between **one week and three years**\n\nThis range allows researchers to assess how well a model performs across the **full term structure** of the implied volatility surface, not just at a single point.\n\n---\n\n### 2. **Revealing Model Weaknesses**\nAnalyzing across maturities exposes where models break down. For example, the document notes that the **rough Bergomi model**:\n- Increases **too fast in the short end** of the SPX ATM skew\n- Does **not decay as fast in the long end** when compared to actual SPX data\n\nThis directly challenges the assumption that the SPX ATM skew follows a **single power-law**, a key premise of rough volatility advocates.\n\n---\n\n### 3. **Differentiating Model Performance**\nThe analysis across maturities reveals clear performance rankings among models:\n- The **two-factor Bergomi model** outperforms all others for the global fit of the implied volatility surface across short and long maturities\n- The **path-dependent Bergomi model** comes in second\n- The **rough Bergomi** and **one-factor Bergomi** models produce \"equally bad fits\" and are \"inconsistent with the general shape of SPX ATM skew\"\n\nWithout testing across both short and long maturities, these distinctions might not be apparent.\n\n---\n\n### 4. **Capturing the Full ATM Skew Term Structure**\nThe document highlights that only models flexible enough — like the **two-factor** and **path-dependent Bergomi models** — can \"capture the overall shape of the ATM skew term structure\" across both ends of the maturity spectrum. This flexibility is critical for accurate pricing and risk management.\n\n---\n\n### Summary\nAnalyzing both short and long maturities is essential because it provides a **rigorous, holistic test** of a model's ability to fit real market data. Models that look adequate at one maturity range may fail significantly at another, making the full-spectrum analysis a key benchmark for model selection.",
+        "faithfulness": 0.85,
+        "faithfulness_note": "Most claims are supported by context: the document does compare models across short and long maturities (one week to three years), notes two-factor Bergomi outperforms others, and mentions rough Bergomi's poor performance. However, the claim about rough Bergomi 'increasing too fast in the short end' and 'not decaying as fast in the long end' is not explicitly stated in the provided excerpts - this appears to be inferred or from sections not included in the context. The answer also adds interpretive framing not directly stated in the source material.",
+        "correctness": 0.85,
+        "correctness_note": "The answer correctly addresses the core reason stated in the reference: analyzing short and long maturities helps understand how model parameters perform under various conditions and time frames. The answer provides substantial supporting detail from the source document about model evaluation, revealing weaknesses, and differentiating performance. However, the answer goes significantly beyond the reference's concise explanation, adding extensive context about specific models (Bergomi, rough volatility) that, while consistent with the source, weren't necessary to answer the basic question. The core concept is accurately captured, but the response is more comprehensive than what the reference directly states.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2941,
+        "output_tokens": 574,
+        "latency_ms": 15056,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 28812
+    },
+    {
+      "id": "q_16",
+      "question": "What is a reference strategy in order execution brokerage?",
+      "expected_document_title": "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+      "benchmark": {
+        "query_uuid": "5de01203-79c7-46b6-8e72-f449b1d5f842",
+        "paper_id": "2401.03305v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What is a reference strategy in order execution brokerage?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies",
+          "Leveraging IS and TC: Optimal order execution subject to reference\n  strategies"
+        ]
+      },
+      "answer": {
+        "text": "Based on the document **\"Leveraging IS and TC: Optimal order execution subject to reference strategies\"**, here is what a **reference strategy** is in the context of order execution brokerage:\n\n---\n\n## Reference Strategy in Order Execution Brokerage\n\n### Definition\nA **reference strategy** is a pre-specified benchmark strategy that a client provides to a broker to govern how their order should be executed. As stated in the document:\n\n> *\"Clients may come forward to brokers with their own preferred strategies for benchmarking. These benchmark strategies can be either strategies suggested by elite investors or commonly used ones such as TWAP strategies. We shall refer to these pre-specified benchmark strategies as reference strategies.\"*\n\n### Mathematical Representation\nReference strategies are represented by a **deterministic function** $(R_t)_{t \\in [0,T]}$ where:\n- $R_0 \\equiv x_0$ (initial holdings)\n- $R_T \\equiv A$ (target holdings at the execution horizon)\n- $R_t$ is assumed to be differentiable almost everywhere\n\n### Role in Brokerage\n- The broker is **regulated by the client** to track the reference strategy to the client's preference.\n- The broker's incentive is to **maximize their own expected P&L in excess** of what the reference strategy would have yielded, evaluated on a **marked-to-market** basis.\n- This excess P&L problem is recast as a **utility maximization problem** to account for the broker's risk aversion.\n\n### Examples of Reference Strategies\nThe framework encompasses commonly deployed execution strategies used as benchmarks, including:\n- **IS** (Implementation Shortfall) orders\n- **TC** (Target Close) orders\n- **TWAP** (Time-Weighted Average Price) orders\n- **VWAP** (Volume-Weighted Average Price) orders\n\n---\n\nIn essence, a reference strategy sets the \"bar\" against which a broker's execution performance is measured, aligning the broker's incentives with the client's preferred trading benchmark.",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims in the answer are directly supported by the provided context. The definition of reference strategy, its mathematical representation, role in brokerage, and examples (TWAP explicitly mentioned, others implied by document title) are all accurately drawn from the source material without invention of unsupported facts.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly defines a reference strategy as a pre-specified benchmark strategy represented by a deterministic function (R_t) with R_0 ≡ x_0 and R_T ≡ A, which directly matches the reference definition. The answer provides accurate context about its role in order execution brokerage and includes relevant examples, all consistent with the source material.",
+        "citation": 1,
+        "citation_note": "7/7 title tokens matched",
+        "input_tokens": 3237,
+        "output_tokens": 458,
+        "latency_ms": 26664,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 32993
+    },
+    {
+      "id": "q_17",
+      "question": "How do SPX smiles vary with different maturities in financial modeling?",
+      "expected_document_title": "Volatility models in practice: Rough, Path-dependent or Markovian?",
+      "benchmark": {
+        "query_uuid": "1268987a-01f4-40a3-95ed-1a7f8e554cff",
+        "paper_id": "2401.03345v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "How do SPX smiles vary with different maturities in financial modeling?",
+        "reranked_rank": 1,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?",
+          "Volatility models in practice: Rough, Path-dependent or Markovian?"
+        ]
+      },
+      "answer": {
+        "text": "Based on the knowledge base document **\"Volatility models in practice: Rough, Path-dependent or Markovian?\"**, here is a detailed breakdown of how SPX smiles vary with different maturities:\n\n---\n\n## SPX Smiles Across Maturities\n\n### 1. Log-Moneyness Range Widens with Maturity\nThe calibration uses different log-moneyness ranges depending on maturity, reflecting how the smile \"spreads out\" over time:\n\n| Maturity | Log-Moneyness Range |\n|---|---|\n| < 2 weeks | [−0.15, 0.03] |\n| < 1 month | [−0.25, 0.03] |\n| < 2 months | [−0.30, 0.04] |\n| < 3 months | [−0.40, 0.15] |\n| < 6 months | [−0.60, 0.15] |\n| < 1 year | [−0.80, 0.20] |\n| ≥ 1 year | [−1.50, 0.30] |\n\nThis shows that the relevant strike range (especially on the downside) expands significantly as maturity increases.\n\n---\n\n### 2. ATM Skew Term Structure\nThe **at-the-money (ATM) skew** — a key feature of the SPX smile — behaves distinctly across maturities:\n\n- **Short maturities (1 week – 3 months):** The ATM skew is steep and decays rapidly. No single model perfectly captures the entire short-maturity term structure.\n- **Long maturities (extending to 3 years):** The skew decays more slowly. The document notes that the SPX ATM skew **cannot be adequately explained by a single power-law**.\n\n---\n\n### 3. Model Performance Varies by Maturity Regime\n\n#### Short Maturities (1 week to 3 months):\n- **Rough Bergomi** produces an **overly steep ATM skew around one week** and a **much too rapid decay** immediately after — inconsistent with SPX data.\n- The **path-dependent Bergomi** model's RMSE is almost always below that of the rough Bergomi model.\n- The **one-factor Bergomi** outperforms the rough Bergomi model **63% of the time**.\n\n#### Short + Long Maturities (1 week to 3 years):\n- The **two-factor Bergomi** model outperforms all others for the global fit of the implied volatility surface.\n- The **path-dependent Bergomi** model is the second-best performer.\n- The **rough Bergomi** model's performance is described as \"noticeably unsatisfactory,\" and it consistently underperformed the one-factor Bergomi model between 2017 and 2019.\n- The rough and one-factor Bergomi models \"produce equally bad fits and are inconsistent with the general shape of SPX ATM skew\" across the full term structure.\n\n---\n\n### 4. Key Structural Finding\n> *\"Rough volatility models with H ∈ (0, 1/2) are inconsistent with the global shape of SPX smiles. The at-the-money SPX skew is incompatible with the power-law shape generated by these models, which **increases too fast for short maturities** and **decays too slowly for longer maturities**.\"*\n\nThis is the central empirical finding: the power-law skew structure of rough volatility models is a poor fit at **both ends** of the maturity spectrum.\n\n---\n\n### Summary\nThe SPX smile evolves significantly with maturity — widening in strike range, flattening in skew, and exhibiting a term structure that is **not well described by a single power-law**. Models with additional flexibility (path-dependent or two-factor Markovian) are better equipped to capture this variation than rough volatility models.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer invents a detailed table of log-moneyness ranges by maturity that does not appear anywhere in the provided context. While the context discusses SPX smiles, ATM skew, and model performance across maturities, it never provides specific numerical ranges like [-0.15, 0.03] for <2 weeks or [-1.50, 0.30] for ≥1 year. The answer fabricates factual claims not supported by the source material.",
+        "correctness": 0,
+        "correctness_note": "parse_error",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 5801,
+        "output_tokens": 932,
+        "latency_ms": 58324,
+        "steps_used": 3
+      },
+      "eval_latency_ms": 97785
+    },
+    {
+      "id": "q_18",
+      "question": "Does the feature extraction process precede dataset preparation for training?",
+      "expected_document_title": "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+      "benchmark": {
+        "query_uuid": "ad960937-03d6-422c-ac73-1b2401c022aa",
+        "paper_id": "2401.02564v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Does the feature extraction process precede dataset preparation for training?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Foundation Models in Federated Learning: Assessing Backdoor\n  Vulnerabilities",
+          "Foundation Models in Federated Learning: Assessing Backdoor\n  Vulnerabilities"
+        ]
+      },
+      "answer": {
+        "text": "Yes. According to the document **\"Predicting Future States with Spatial Point Processes in Single Molecule Resolution Spatial Transcriptomics\"**, feature extraction **precedes** dataset preparation for training.\n\nSpecifically, Section 2.4 states:\n\n> *\"Following the completion of the feature extraction process, the dataset undergoes preparation for training an XGBoost model.\"*\n\nThis is also consistent with the overall pipeline described in Section 2.3, which outlines the sequential steps as:\n\n1. **Pre-processing** – Cell segmentation (using Cellpose) and active cell identification\n2. **Feature extraction** – Gridding, transformation to tabular format, and computation of spatial metrics (m1, m2, Ripley's k-function, and n)\n3. **Dataset preparation / Training** – The extracted tabular data is averaged per stage and time-corrected before being used to train the XGBoost model\n4. **Testing** – Model evaluation using replicated pre-processing and feature extraction steps\n\nSo the order is clear: feature extraction must be completed before the dataset is prepared for training.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately reflects the context. Section 2.4 explicitly states 'Following the completion of the feature extraction process, the dataset undergoes preparation for training an XGBoost model,' which directly supports the claim that feature extraction precedes dataset preparation for training. All factual claims are supported by the provided context.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the question by confirming that feature extraction precedes dataset preparation for training. The answer is well-supported with specific references to the document sections and provides a clear sequential pipeline that demonstrates the correct ordering of steps.",
+        "citation": 1,
+        "citation_note": "12/12 title tokens matched",
+        "input_tokens": 2431,
+        "output_tokens": 249,
+        "latency_ms": 39992,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 47156
+    },
+    {
+      "id": "q_19",
+      "question": "How does the new pipeline improve cell type identification in spatial transcriptomics?",
+      "expected_document_title": "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+      "benchmark": {
+        "query_uuid": "7a7c05a5-1c72-4ac3-8db0-d8d874236c99",
+        "paper_id": "2401.02564v2",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "How does the new pipeline improve cell type identification in spatial transcriptomics?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics",
+          "Predicting Future States with Spatial Point Processes in Single Molecule\n  Resolution Spatial Transcriptomics"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document — **\"Predicting Future States with Spatial Point Processes in Single Molecule Resolution Spatial Transcriptomics\"** — here is how the pipeline improves cell type identification in spatial transcriptomics:\n\n## Key Improvements\n\n### 1. **Automated Cell Type Discrimination**\nThe pipeline introduces an **automated process that effectively discriminates cell types with high accuracy**, removing the need for manual classification.\n\n### 2. **XGBoost-Based Classification**\nThe pipeline is built on **XGBoost (eXtreme Gradient Boosting)**, a supervised learning algorithm. It uses features extracted from spatial point processes to determine cell states (active vs. inactive) across developmental stages.\n\n### 3. **Single-Molecule, Sub-Cellular Resolution**\nThe approach operates at **sub-cellular, single molecule level** in super-resolution whole-embryo spatial transcriptomics imaging, providing highly granular insights into how cells control gene expression.\n\n### 4. **Novel Imaging Technology**\nA **new optimized imaging technology** delivers spatial information throughout the **entire Dorsal-Ventral (DV) axis** of the embryo, enabling more complete spatial coverage than previously possible.\n\n### 5. **Predictive Capability (RNA Velocity Analogy)**\nBeyond identification, the pipeline can **predict the future distribution of active cells** based on data from the preceding developmental stage — described as analogous to RNA Velocity but for spatially resolved developmental biology. It leverages **Ripley's K-function** in conjunction with cell state data across embryogenesis stages.\n\n---\n\n> **Note:** This document focuses specifically on *Drosophila* embryogenesis and the *sog* gene. If you're asking about a different pipeline or a broader spatial transcriptomics context, please clarify and I can search further.",
+        "faithfulness": 0.85,
+        "faithfulness_note": "Most claims are supported by context: automated cell type discrimination (✓), XGBoost-based approach (✓), single-molecule resolution (✓), novel imaging technology (✓), and predictive capability (✓). However, the claim about 'Ripley's K-function' is not mentioned in the provided context, and the 'RNA Velocity analogy' is inferred rather than explicitly stated. These unsupported additions lower the score slightly.",
+        "correctness": 0.3,
+        "correctness_note": "The answer provides extensive technical details about XGBoost, single-molecule resolution, and predictive capabilities, but the reference only states the pipeline achieves 'high accuracy' for 'more precise identification of different cell types.' The answer goes far beyond what the reference supports, introducing specific methods (XGBoost, Ripley's K-function, RNA velocity analogy, Drosophila embryogenesis) not mentioned in the reference. While the core claim about automated discrimination and high accuracy aligns, most of the detailed explanation contradicts or fabricates information not in the source material.",
+        "citation": 1,
+        "citation_note": "12/12 title tokens matched",
+        "input_tokens": 1877,
+        "output_tokens": 414,
+        "latency_ms": 14864,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 85657
+    },
+    {
+      "id": "q_20",
+      "question": "What theoretical rationale supports using multilevel metamodels in simulation studies?",
+      "expected_document_title": "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+      "benchmark": {
+        "query_uuid": "ca35d598-a95d-4618-a2f0-21a8bd24545b",
+        "paper_id": "2401.07294v4",
+        "type": "abstractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "What theoretical rationale supports using multilevel metamodels in simulation studies?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies",
+          "Multilevel Metamodels: Enhancing Inference, Interpretability, and\n  Generalizability in Monte Carlo Simulation Studies"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved chunks from **\"Multilevel Metamodels: Enhancing Inference, Interpretability, and Generalizability in Monte Carlo Simulation Studies\"**, here is a comprehensive summary of the theoretical rationale for using MLMMs in simulation studies:\n\n---\n\n## Theoretical Rationale for Multilevel Metamodels (MLMMs) in Simulation Studies\n\n### 1. Accounting for Dependent Data Structure\nThe foundational justification is that standard OLS metamodels violate the independence assumption. As the document states, the MLMM \"accounts for the dependent data structure that arises from fitting multiple models to the same simulated data set.\" When multiple estimators are evaluated on the same simulated dataset, their results are inherently correlated — a dependency that OLS ignores but the MLMM explicitly models.\n\n---\n\n### 2. Better Match to the Data-Generating Process\nThe MLMM is theoretically preferred because it \"better matches the data-generating process of a simulation by accounting for the dependence of results arising from models fit to the same data set or drawn from the same simulation conditions.\" This alignment between the analytical model and the actual structure of the simulation is a core theoretical argument.\n\n---\n\n### 3. Handling Multi-Level Hierarchy\nSimulation studies naturally produce a **three-level nested structure**: results nested within data sets, nested within simulation conditions. The document argues that alternative approaches (fixed effects, cluster-robust SEs) \"are not well equipped to handle more than two levels of hierarchy,\" making the MLMM the appropriate choice for the typical simulation design.\n\n---\n\n### 4. Causal Interpretability of Coefficients\nBecause \"the simulation design and data-generating process is known and fully controlled by the researcher, metamodel regression coefficients have a straightforward causal interpretation, reflecting the average change in the outcome caused by a unit change in the predictor.\" This makes the MLMM not just statistically valid but also substantively interpretable.\n\n---\n\n### 5. Estimating Generalizability via Random Slopes\nA key theoretical contribution is that **random slope MLMMs** allow researchers to assess whether findings hold beyond the specific conditions tested. The variance parameter ψ₁² \"provides the variance of ν₁ₖ across simulation conditions and can be used to assess how much variation in improvement there is for 'adjusted' across simulation conditions.\" This supports the generation of **prediction intervals** — \"a substantively important quantity for the generalizability of simulation results that has no parametric analog in the metamodels of aggregated results.\"\n\nThe document emphasizes: \"Demonstrating that simulation results are consistent across a wide range of settings is essential for simulation research that strives to influence statistical practice and data analysis more broadly, because empirical applications are likely to differ in important ways from any particular set of simulation conditions.\"\n\n---\n\n### 6. Superiority Over Alternative Approaches to Dependence\nThe document explicitly argues why the MLMM is preferable to three common alternatives:\n\n| Alternative | Limitation |\n|---|---|\n| **Fixed effects** | Cannot handle >2 levels of hierarchy; provides no analog for random slope variance or prediction intervals |\n| **Cluster-robust SEs** | Also limited to two levels of hierarchy |\n| **Aggregation** | Cannot include random slope terms because models are unidentified (they perfectly fit the data) |\n\nAdditionally, the typical rationale for fixed effects (addressing cluster-level confounding) \"does not apply here\" because simulation data \"are (or can be designed to be) perfectly balanced.\"\n\n---\n\n### 7. Unexplained Systematic Variation as a Diagnostic\nThe random intercept variance ψ₀² in the two-level MLMM captures \"systematic variation unexplained by the simulation parameters and estimation method,\" which \"can give us important clues as to what interactions we should include between our covariates\" — providing a theoretically grounded model-building tool.\n\n---\n\nIn summary, the MLMM is theoretically justified on grounds of **statistical validity** (correct dependency modeling), **structural alignment** (matching the simulation's data-generating process), **inferential richness** (generalizability via random slopes), and **practical superiority** over alternatives that cannot accommodate the multi-level nature of simulation data.",
+        "faithfulness": 1,
+        "faithfulness_note": "All factual claims in the answer are directly supported by the provided context. The answer accurately represents the document's arguments about dependent data structures, multi-level hierarchy, causal interpretability, random slopes for generalizability, and comparisons to alternative approaches. Specific quotes and paraphrases align with the source material.",
+        "correctness": 0.95,
+        "correctness_note": "The answer comprehensively addresses the question and is highly consistent with the reference. It correctly identifies the core theoretical rationale: handling complex data hierarchies and providing more accurate estimates. The answer goes beyond the reference by providing extensive elaboration with 7 detailed points, all of which are logically derived from and consistent with the reference's core claim. The only minor limitation is that the answer provides substantially more detail than strictly necessary to answer the question, though this additional detail remains accurate and relevant. The answer accurately reflects that MLMMs handle dependent data structures, match the data-generating process, and provide better inference than alternatives.",
+        "citation": 1,
+        "citation_note": "10/10 title tokens matched",
+        "input_tokens": 9574,
+        "output_tokens": 955,
+        "latency_ms": 68289,
+        "steps_used": 4
+      },
+      "eval_latency_ms": 91157
+    }
+  ]
+}
