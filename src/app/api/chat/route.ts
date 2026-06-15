@@ -6,11 +6,12 @@ import type { NextRequest } from "next/server";
 import { chatAj } from "@/lib/arcjet";
 import { isCsrfSafe } from "@/lib/csrf";
 import { anthropic, CHAT_MODEL, SYSTEM_PROMPT, createSearchKnowledgeTool, type ConversationMessage } from "@/lib/ai";
+import { createCostAccumulator, sumCost, type UsageEntry } from "@/lib/pricing";
 import { logAudit } from "@/lib/audit";
 import { logger, withAxiom } from "@/lib/axiom/server";
 import { db } from "@/lib/db";
 import { chatSessions, chatMessages } from "@/lib/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -72,6 +73,8 @@ export const POST = withAxiom(async (request: NextRequest) => {
 
   // ── 4. Persist user message + auto-title session ──────────────────────────
   let userContent = "";
+  // Prior session spend (USD) — used to surface a live running total to the client.
+  let priorSessionCost = 0;
   if (sessionId) {
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === "user") {
@@ -100,9 +103,12 @@ export const POST = withAxiom(async (request: NextRequest) => {
 
       // Auto-title session on first message
       const [session] = await db
-        .select({ title: chatSessions.title })
+        .select({ title: chatSessions.title, totalCostUsd: chatSessions.totalCostUsd })
         .from(chatSessions)
         .where(and(eq(chatSessions.id, sessionId), eq(chatSessions.userId, userId)));
+
+      const parsedPrior = Number(session?.totalCostUsd ?? 0);
+      priorSessionCost = Number.isFinite(parsedPrior) ? parsedPrior : 0;
 
       if (session?.title === "New Chat" && userContent.trim()) {
         const title =
@@ -136,12 +142,23 @@ export const POST = withAxiom(async (request: NextRequest) => {
       return text ? [{ role: m.role as "user" | "assistant", content: text }] : [];
     });
 
+  // Accumulates token usage from every model call in the RAG pipeline
+  // (synthesis + embedding + rerank). The Sonnet answer usage is added at finish.
+  const cost = createCostAccumulator();
+
+  // Prices the full pipeline for one query: pipeline entries + the Sonnet answer.
+  const messageCostFor = (input?: number, output?: number) =>
+    sumCost([
+      ...cost.entries,
+      { model: CHAT_MODEL, inputTokens: input ?? 0, outputTokens: output ?? 0 } as UsageEntry,
+    ]);
+
   const result = streamText({
     model: anthropic(CHAT_MODEL),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: {
-      searchKnowledge: createSearchKnowledgeTool(userId, priorMessages),
+      searchKnowledge: createSearchKnowledgeTool(userId, priorMessages, cost.sink),
     },
     stopWhen: stepCountIs(5),
     temperature: 0.3,
@@ -156,22 +173,35 @@ export const POST = withAxiom(async (request: NextRequest) => {
       },
     },
     async onFinish({ text, usage, finishReason }) {
+      const messageCostUsd = messageCostFor(usage.inputTokens, usage.outputTokens);
+
       logger.info("chat.completion", {
         userId,
         sessionId,
         finishReason,
         inputTokens: usage.inputTokens,
         outputTokens: usage.outputTokens,
+        costUsd: messageCostUsd,
       });
 
-      // Persist assistant response
+      // Persist assistant response + usage/cost, and bump the session total.
       if (sessionId && text) {
         await db.insert(chatMessages).values({
           sessionId,
           userId,
           role: "assistant",
           content: text,
+          inputTokens: usage.inputTokens ?? null,
+          outputTokens: usage.outputTokens ?? null,
+          costUsd: messageCostUsd.toFixed(8),
         });
+
+        await db
+          .update(chatSessions)
+          .set({
+            totalCostUsd: sql`${chatSessions.totalCostUsd} + ${messageCostUsd.toFixed(8)}`,
+          })
+          .where(eq(chatSessions.id, sessionId));
       }
     },
     onError({ error }) {
@@ -183,5 +213,23 @@ export const POST = withAxiom(async (request: NextRequest) => {
     },
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse({
+    // Attach the per-query cost + new running session total to the streamed
+    // message so the client can show a live "Session cost" indicator. The cost
+    // accumulator is fully populated by the time the stream finishes (the RAG
+    // tool has already run), so this is display-only and independent of the DB
+    // writes in onFinish.
+    messageMetadata: ({ part }) => {
+      if (part.type === "finish") {
+        const messageCostUsd = messageCostFor(
+          part.totalUsage.inputTokens,
+          part.totalUsage.outputTokens
+        );
+        return {
+          messageCostUsd,
+          sessionCostUsd: priorSessionCost + messageCostUsd,
+        };
+      }
+    },
+  });
 });

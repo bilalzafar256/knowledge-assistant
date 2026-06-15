@@ -38,6 +38,7 @@ The Knowledge Assistant lets a team upload its internal documents and query them
 - **Conversation-aware search** — follow-up questions are rewritten into standalone queries using chat history.
 - **Multi-format ingestion** — PDF, DOC/DOCX, XLS/XLSX, JPG/PNG (OCR via Claude Sonnet vision), TXT, MD, JSON (up to 50 MB).
 - **Chat sessions** — multiple threads with full history, auto-titling, pin, inline rename, and public read-only share links.
+- **Cost tracking** — every query's full-pipeline LLM spend (synthesis + embedding + rerank + answer) is priced, persisted per message, and shown as a live per-session total in chat plus total/top-spender breakdowns on the dashboard.
 - **Collections** — group documents into folders.
 - **Background ingestion** — large docs index in an Inngest job with a `pending → processing → ready/failed` status the UI polls.
 - **Per-user RAG settings** — tunable chunk size and overlap.

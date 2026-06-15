@@ -89,7 +89,7 @@ export default async function ChatSessionPage({
 
       {/* Chat */}
       <div className="flex-1 min-h-0">
-        <ChatInterface sessionId={sessionId} initialMessages={initialMessages} hasDocuments={hasDocuments} />
+        <ChatInterface sessionId={sessionId} initialMessages={initialMessages} hasDocuments={hasDocuments} initialCostUsd={Number(session.totalCostUsd)} />
       </div>
     </div>
   );

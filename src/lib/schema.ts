@@ -5,6 +5,7 @@ import {
   uuid,
   jsonb,
   integer,
+  numeric,
   boolean,
   index,
   customType,
@@ -122,6 +123,10 @@ export const chatSessions = pgTable(
     pinned: boolean("pinned").notNull().default(false),
     isShared: boolean("is_shared").notNull().default(false),
     shareId: text("share_id").unique(),
+    /** Denormalized running sum of LLM spend (USD) across this session's queries. */
+    totalCostUsd: numeric("total_cost_usd", { precision: 12, scale: 8 })
+      .notNull()
+      .default("0"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -148,6 +153,10 @@ export const chatMessages = pgTable(
     userId: text("user_id").notNull(),
     role: text("role").$type<"user" | "assistant">().notNull(),
     content: text("content").notNull(),
+    /** LLM usage + cost for this turn (assistant messages only; null for user turns). */
+    inputTokens: integer("input_tokens"),
+    outputTokens: integer("output_tokens"),
+    costUsd: numeric("cost_usd", { precision: 12, scale: 8 }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
