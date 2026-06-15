@@ -164,3 +164,65 @@
   animation: blink 1s step-start infinite;
   color: hsl(var(--primary));
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Luxe landing tokens (scoped to .lux — never leaks into the app shell).
+   Refined-luxury editorial system: warm near-black ink, bone ivory text,
+   one restrained patinated-gold accent. All-sharp radius. Didone display.
+   ─────────────────────────────────────────────────────────────────────────── */
+.lux {
+  /* surfaces */
+  --lux-ink: #0c0b0a;        /* warm near-black page bg (never pure #000) */
+  --lux-ink-2: #131210;      /* elevated panel */
+  --lux-ink-3: #1c1a17;      /* highest panel / hover */
+  /* type */
+  --lux-bone: #ece6da;       /* primary ivory text (never pure #fff) */
+  --lux-bone-dim: #9c968b;   /* secondary text */
+  --lux-bone-faint: #6b665d; /* tertiary / mono labels */
+  /* hairlines */
+  --lux-line: rgba(236, 230, 218, 0.1);
+  --lux-line-strong: rgba(236, 230, 218, 0.2);
+  /* single locked accent */
+  --lux-gold: #c8a96a;
+  --lux-gold-deep: #8d7a4e;
+
+  /* fluid type scale */
+  --lux-display: clamp(3.1rem, 8.5vw, 8rem);
+  --lux-h2: clamp(2.1rem, 4.4vw, 3.6rem);
+  --lux-track-tight: -0.035em;
+  --lux-track-label: 0.3em;
+
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color: var(--lux-bone);
+  background-color: var(--lux-ink);
+}
+
+/* Reduced-motion is the floor: animations only attach under no-preference,
+   so reduce users get the final, fully-visible state with zero motion. */
+@keyframes lux-rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lux-veil {
+  from { opacity: 0; transform: scale(1.04); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lux-rise {
+    opacity: 0;
+    animation: lux-rise 0.9s var(--ease-lux) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+  .lux-veil {
+    opacity: 0;
+    animation: lux-veil 1.5s var(--ease-lux) both;
+  }
+}
+
+/* Duotone treatment: collapses arbitrary placeholder photography onto the
+   locked palette so it reads as on-brand editorial imagery. */
+.lux-duotone {
+  filter: grayscale(1) contrast(1.06) brightness(0.62);
+}
