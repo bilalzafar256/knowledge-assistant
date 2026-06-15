@@ -35,9 +35,14 @@ interface ChatInterfaceProps {
   sessionId: string;
   initialMessages?: UIMessage[];
   hasDocuments?: boolean;
+  /** Persisted running LLM spend (USD) for this session, used as the initial display value. */
+  initialCostUsd?: number;
 }
 
-export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = true }: ChatInterfaceProps) {
+/** Metadata the chat route attaches to each streamed assistant message. */
+type CostMetadata = { sessionCostUsd?: number; messageCostUsd?: number };
+
+export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = true, initialCostUsd = 0 }: ChatInterfaceProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -57,6 +62,18 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
   });
 
   const isLoading = status === "submitted" || status === "streaming";
+
+  // Live session spend: prefer the latest assistant message's metadata (updated
+  // after each query streams), falling back to the persisted initial total.
+  const sessionCost = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m?.role !== "assistant") continue;
+      const meta = m.metadata as CostMetadata | undefined;
+      if (Number.isFinite(meta?.sessionCostUsd)) return meta!.sessionCostUsd!;
+    }
+    return Number.isFinite(initialCostUsd) ? initialCostUsd : 0;
+  }, [messages, initialCostUsd]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -123,6 +140,17 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
 
   return (
     <div className="flex flex-col h-full">
+      {/* Session cost indicator */}
+      <div className="flex justify-end px-4 pt-2 shrink-0">
+        <Badge
+          variant="secondary"
+          className="text-xs font-medium text-muted-foreground"
+          title="Total LLM spend for this conversation"
+        >
+          Session cost: ${sessionCost.toFixed(4)}
+        </Badge>
+      </div>
+
       {/* Messages area */}
       <div className="relative flex-1 min-h-0">
         <ScrollArea className="h-full" ref={scrollRef as never} onScrollCapture={handleScroll}>

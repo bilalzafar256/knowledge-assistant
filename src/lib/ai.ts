@@ -8,6 +8,7 @@ import { logger } from "./axiom/server";
 import { db } from "./db";
 import { documentChunks } from "./schema";
 import { sql, eq, and } from "drizzle-orm";
+import type { CostSink } from "./pricing";
 
 // Anthropic powers all generative tasks (chat, parsing, synthesis, rerank).
 export const anthropic = createAnthropic({
@@ -76,9 +77,10 @@ Current date: ${new Date().toLocaleDateString("en-US", { weekday: "long", year: 
  */
 export async function generateEmbedding(
   text: string,
-  taskType: "RETRIEVAL_QUERY" | "RETRIEVAL_DOCUMENT" = "RETRIEVAL_QUERY"
+  taskType: "RETRIEVAL_QUERY" | "RETRIEVAL_DOCUMENT" = "RETRIEVAL_QUERY",
+  onUsage?: (tokens: number) => void
 ): Promise<number[]> {
-  const { embedding } = await embed({
+  const { embedding, usage } = await embed({
     model: google.embeddingModel(EMBEDDING_MODEL),
     value: text.replace(/\n/g, " "),
     // Attempt once — the AI SDK default is 2 retries (3 attempts). Embedding
@@ -89,6 +91,7 @@ export async function generateEmbedding(
       google: { outputDimensionality: EMBEDDING_DIMENSIONS, taskType },
     },
   });
+  onUsage?.(usage?.tokens ?? 0);
   return embedding;
 }
 
@@ -110,7 +113,8 @@ export type ConversationMessage = { role: "user" | "assistant"; content: string 
  */
 async function synthesizeSearchQuery(
   latestQuery: string,
-  priorMessages: ConversationMessage[]
+  priorMessages: ConversationMessage[],
+  sink?: CostSink
 ): Promise<string> {
   // No prior context — nothing to synthesize
   if (priorMessages.length === 0) return latestQuery;
@@ -122,7 +126,7 @@ async function synthesizeSearchQuery(
       .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content.slice(0, 400)}`)
       .join("\n");
 
-    const { text } = await generateText({
+    const { text, usage } = await generateText({
       model: anthropic(SYNTHESIS_MODEL),
       prompt:
         `You are a search query optimizer. Given a conversation and the user's latest message, ` +
@@ -133,6 +137,12 @@ async function synthesizeSearchQuery(
         `Standalone search query:`,
       maxOutputTokens: 60,
       temperature: 0,
+    });
+
+    sink?.({
+      model: SYNTHESIS_MODEL,
+      inputTokens: usage.inputTokens ?? 0,
+      outputTokens: usage.outputTokens ?? 0,
     });
 
     const synthesized = text.trim();
@@ -166,7 +176,8 @@ const COHERE_RERANK_MODEL = "rerank-v3.5";
 async function rerankChunks(
   query: string,
   candidates: RerankCandidate[],
-  topK: number
+  topK: number,
+  sink?: CostSink
 ): Promise<number[]> {
   if (candidates.length <= topK) {
     return candidates.map((_, i) => i);
@@ -174,7 +185,7 @@ async function rerankChunks(
 
   if (env.COHERE_API_KEY) {
     try {
-      return await cohereRerank(query, candidates, topK, env.COHERE_API_KEY);
+      return await cohereRerank(query, candidates, topK, env.COHERE_API_KEY, sink);
     } catch (e) {
       logger.warn("rag.rerank.cohere_failed", {
         error: e instanceof Error ? e.message : String(e),
@@ -182,14 +193,15 @@ async function rerankChunks(
     }
   }
 
-  return llmRerank(query, candidates, topK);
+  return llmRerank(query, candidates, topK, sink);
 }
 
 async function cohereRerank(
   query: string,
   candidates: RerankCandidate[],
   topK: number,
-  apiKey: string
+  apiKey: string,
+  sink?: CostSink
 ): Promise<number[]> {
   const documents = candidates.map(
     (c) => `[${c.documentTitle}] ${c.content.slice(0, 1500)}`
@@ -217,20 +229,24 @@ async function cohereRerank(
     results: { index: number; relevance_score: number }[];
   };
 
+  // Cohere rerank is priced per-search, not per-token.
+  sink?.({ model: COHERE_RERANK_MODEL, calls: 1 });
+
   return data.results.map((r) => r.index);
 }
 
 async function llmRerank(
   query: string,
   candidates: RerankCandidate[],
-  topK: number
+  topK: number,
+  sink?: CostSink
 ): Promise<number[]> {
   try {
     const chunkList = candidates
       .map((c, i) => `${i + 1}. [${c.documentTitle}] ${c.content.slice(0, 300).replace(/\n+/g, " ")}`)
       .join("\n");
 
-    const { text } = await generateText({
+    const { text, usage } = await generateText({
       model: anthropic(RERANK_MODEL),
       prompt:
         `Score each chunk 0–10 for relevance to the query. ` +
@@ -239,6 +255,12 @@ async function llmRerank(
         `Chunks:\n${chunkList}`,
       maxOutputTokens: 80,
       temperature: 0,
+    });
+
+    sink?.({
+      model: RERANK_MODEL,
+      inputTokens: usage.inputTokens ?? 0,
+      outputTokens: usage.outputTokens ?? 0,
     });
 
     const parsed = JSON.parse(text.trim()) as { scores: number[] };
@@ -271,7 +293,8 @@ async function llmRerank(
  */
 export function createSearchKnowledgeTool(
   userId: string,
-  priorMessages: ConversationMessage[] = []
+  priorMessages: ConversationMessage[] = [],
+  sink?: CostSink
 ) {
   return tool({
     description:
@@ -295,7 +318,7 @@ export function createSearchKnowledgeTool(
     }),
     execute: async ({ query, limit }: { query: string; limit: number }) => {
       // Synthesize a context-complete standalone query before embedding
-      const searchQuery = await synthesizeSearchQuery(query, priorMessages);
+      const searchQuery = await synthesizeSearchQuery(query, priorMessages, sink);
       logger.info("rag.query_synthesized", {
         userId,
         original: query,
@@ -303,7 +326,11 @@ export function createSearchKnowledgeTool(
       });
       try {
         // Embed the synthesized query (context-complete)
-        const queryEmbedding = await generateEmbedding(searchQuery);
+        const queryEmbedding = await generateEmbedding(
+          searchQuery,
+          "RETRIEVAL_QUERY",
+          (tokens) => sink?.({ model: EMBEDDING_MODEL, inputTokens: tokens })
+        );
         const vectorString = `[${queryEmbedding.join(",")}]`;
 
         // Fetch 3× more candidates than needed — re-ranker will trim to `limit`
@@ -385,7 +412,8 @@ export function createSearchKnowledgeTool(
         const topIndices = await rerankChunks(
           searchQuery,
           rows.map((r) => ({ content: r.content, documentTitle: r.document_title })),
-          limit
+          limit,
+          sink
         );
 
         logger.info("rag.rerank", {

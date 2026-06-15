@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { documents, documentChunks, chatSessions, chatMessages } from "@/lib/schema";
-import { eq, sql, desc } from "drizzle-orm";
+import { and, eq, sql, desc } from "drizzle-orm";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import {
   Clock,
   MessagesSquare,
   Layers,
+  Wallet,
 } from "lucide-react";
 import { timeAgo, truncate } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -31,7 +32,7 @@ export default async function DashboardPage() {
   if (!userId) redirect("/sign-in");
 
   // Fetch stats and recent documents in parallel
-  const [docCountResult, chunkCountResult, sessionCountResult, messageCountResult, recentDocs] = await Promise.all([
+  const [docCountResult, chunkCountResult, sessionCountResult, messageCountResult, recentDocs, totalSpendResult, topSessions] = await Promise.all([
     db
       .select({ count: sql<number>`count(*)` })
       .from(documents)
@@ -64,12 +65,32 @@ export default async function DashboardPage() {
       .where(eq(documents.userId, userId))
       .orderBy(desc(documents.createdAt))
       .limit(5),
+
+    // Total LLM spend across all sessions
+    db
+      .select({ total: sql<string>`coalesce(sum(${chatSessions.totalCostUsd}), 0)` })
+      .from(chatSessions)
+      .where(eq(chatSessions.userId, userId)),
+
+    // Highest-spending sessions
+    db
+      .select({
+        id: chatSessions.id,
+        title: chatSessions.title,
+        totalCostUsd: chatSessions.totalCostUsd,
+      })
+      .from(chatSessions)
+      .where(and(eq(chatSessions.userId, userId), sql`${chatSessions.totalCostUsd} > 0`))
+      .orderBy(desc(chatSessions.totalCostUsd))
+      .limit(5),
   ]);
 
   const docCount = Number(docCountResult[0]?.count ?? 0);
   const chunkCount = Number(chunkCountResult[0]?.count ?? 0);
   const sessionCount = Number(sessionCountResult[0]?.count ?? 0);
   const messageCount = Number(messageCountResult[0]?.count ?? 0);
+  const parsedSpend = Number(totalSpendResult[0]?.total ?? 0);
+  const totalSpend = Number.isFinite(parsedSpend) ? parsedSpend : 0;
 
   const stats = [
     {
@@ -112,6 +133,16 @@ export default async function DashboardPage() {
       iconColor: "text-sky-600 dark:text-sky-400",
       arrowColor: "group-hover:text-sky-600",
     },
+    {
+      label: "Total Spend",
+      value: `$${totalSpend.toFixed(2)}`,
+      icon: Wallet,
+      description: "LLM cost across all sessions",
+      href: "/dashboard/chat",
+      bg: "bg-amber-50 dark:bg-amber-900/20",
+      iconColor: "text-amber-600 dark:text-amber-400",
+      arrowColor: "group-hover:text-amber-600",
+    },
   ];
 
   return (
@@ -127,7 +158,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -198,6 +229,37 @@ export default async function DashboardPage() {
           </Button>
         </Card>
       </div>
+
+      {/* Top spending sessions */}
+      {topSessions.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Wallet className="h-4 w-4 text-amber-500" />
+            <h2 className="font-semibold text-foreground">Top spending sessions</h2>
+          </div>
+          <div className="space-y-2">
+            {topSessions.map((s) => (
+              <Link key={s.id} href={`/dashboard/chat/${s.id}`}>
+                <Card className="p-4 hover:shadow-sm hover:border-amber-200 dark:hover:border-amber-800 transition-all border-border/60 cursor-pointer">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                        <MessageSquare className="h-4 w-4 text-amber-500" />
+                      </div>
+                      <p className="font-medium text-foreground text-sm truncate">
+                        {s.title}
+                      </p>
+                    </div>
+                    <Badge className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0 font-semibold shrink-0">
+                      ${(Number.isFinite(Number(s.totalCostUsd)) ? Number(s.totalCostUsd) : 0).toFixed(4)}
+                    </Badge>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent Documents */}
       <div>

@@ -66,8 +66,8 @@ drizzle/                               # Generated migration SQL (applied by scr
 | `collections` | Document folders | `userId`, `name`, `color` |
 | `documents` | Uploaded doc text + metadata | `userId`, `collectionId` (FK, set null), `title`, `content`, `fileType`, `status` (`pending`/`processing`/`ready`/`failed`), `errorMessage` |
 | `document_chunks` | Vector chunks (N per document) | `documentId` (cascade), `userId` (denormalized), `content`, `chunkIndex`, `embedding vector(1536)`, plus generated `content_tsv` + GIN index (raw SQL) |
-| `chat_sessions` | Conversation threads | `userId`, `title` (auto from first msg), `pinned`, `isShared`, `shareId` (unique) |
-| `chat_messages` | Persisted history | `sessionId` (cascade), `userId`, `role` (`user`/`assistant`), `content` |
+| `chat_sessions` | Conversation threads | `userId`, `title` (auto from first msg), `pinned`, `isShared`, `shareId` (unique), `totalCostUsd` (denormalized running LLM spend) |
+| `chat_messages` | Persisted history | `sessionId` (cascade), `userId`, `role` (`user`/`assistant`), `content`, `inputTokens`/`outputTokens`/`costUsd` (assistant turns only) |
 | `rag_settings` | Per-user chunking | `userId` (unique), `chunkSize` (500), `chunkOverlap` (50) |
 | `audit_logs` | Append-only action log | `userId`, `action`, `resourceType`, `resourceId`, `ipAddress`, `userAgent` |
 | `telegram_tasks` | Telegram-bot state machine | `chatId`, `status`, `kind`, `planMarkdown`, `branchName`, `diffSummary`, `prUrl`, `mainPrUrl`, `revisionNotes`, `telegramMessageIds` |
@@ -84,6 +84,7 @@ The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated colu
 | `0003_material_freak.sql` | `telegram_tasks` |
 | `0004_main_pr_url.sql` | `telegram_tasks.main_pr_url` |
 | `0005_hybrid_search.sql` | `content_tsv` generated column + GIN index for lexical search |
+| `0006_absent_typhoid_mary.sql` | Cost tracking: `chat_messages.input_tokens/output_tokens/cost_usd` + `chat_sessions.total_cost_usd` |
 
 `scripts/db-migrate.mjs` applies every file in order; `scripts/db-baseline.mjs` is a brownfield helper that registers existing files without re-running (do not use on a fresh DB).
 
@@ -131,7 +132,8 @@ The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated colu
 | `env.ts` | Zod validation of all env vars; fails fast at startup |
 | `db.ts` | Lazy `neon-http` Drizzle client behind a Proxy (`db.*` works anywhere) |
 | `schema.ts` | All tables, relations, inferred types |
-| `ai.ts` | Anthropic + Google + OpenAI clients, models, `SYSTEM_PROMPT`, `generateEmbedding` (Google Gemini), `synthesizeSearchQuery`, `rerankChunks`, `createSearchKnowledgeTool` (the hybrid-search SQL) |
+| `ai.ts` | Anthropic + Google + OpenAI clients, models, `SYSTEM_PROMPT`, `generateEmbedding` (Google Gemini), `synthesizeSearchQuery`, `rerankChunks`, `createSearchKnowledgeTool` (the hybrid-search SQL); each model call reports usage via an optional `CostSink` |
+| `pricing.ts` | Per-model price tables + cost math (`costForEntry`, `sumCost`, `createCostAccumulator`) — single source of truth for LLM spend |
 | `arcjet.ts` | `chatAj` (20/min, by userId), `uploadAj` (50/hr + 200/day), base `aj` |
 | `csrf.ts` | `isCsrfSafe()` — Origin header validation |
 | `audit.ts` | `logAudit()` — fire-and-forget insert into `audit_logs` |
@@ -180,6 +182,10 @@ streamText (sonnet-4-6)   searchKnowledge tool, stopWhen stepCountIs(5), tempera
 ```
 
 `SYSTEM_PROMPT` in `ai.ts` is strict about grounding: answer only from retrieved chunks; never infer numbers/dates/names that aren't present; say so when the chunks don't contain the asked detail.
+
+### Cost accounting
+
+Each of the four model calls per query (synthesis, embedding, rerank, answer) reports its token usage through a **cost sink** threaded into `createSearchKnowledgeTool`. `src/lib/pricing.ts` is the single source of truth for per-model rates and the cost math (`createCostAccumulator`, `sumCost`). At stream finish, `api/chat/route.ts` prices the full pipeline, writes per-message `inputTokens/outputTokens/costUsd` on the assistant row, and atomically increments `chat_sessions.totalCostUsd`. The running session total is streamed back to the client as message metadata (`sessionCostUsd`) for the live chat-header indicator, and aggregated on the dashboard (total spend + top spending sessions). Sink calls only fire on success, preserving graceful degradation.
 
 ---
 
