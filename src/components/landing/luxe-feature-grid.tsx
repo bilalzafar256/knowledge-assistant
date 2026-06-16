@@ -79,16 +79,16 @@ const lead: Feature = {
 
 const rerank: Feature = {
   icon: Gauge,
-  title: "Reranking that moves the right chunk to rank one.",
-  body: "Cohere Rerank 3.5, with a Claude fallback when the key is unset.",
-  metric: "0.73 → 0.86",
-  metricLabel: "MRR",
+  title: "Grounded answers — measured, not claimed.",
+  body: "Hybrid search + reranking + Anthropic Contextual Retrieval, with a cross-family judge grading every run.",
+  metric: "95.6%",
+  metricLabel: "faithfulness",
 };
 
 const evals: Feature = {
   icon: FlaskConical,
-  title: "Scored on Vectara's Open RAG Benchmark.",
-  body: "Section-level ground truth across 1,000 arXiv papers. No self-reference, no saturated recall.",
+  title: "Scored on two public benchmarks.",
+  body: "Academic (Vectara Open RAG Benchmark, 1,000 arXiv papers) and enterprise (CUAD contracts). Published ground truth, no self-reference.",
   metric: "3,045",
   metricLabel: "expert Q&A",
 };

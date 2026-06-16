@@ -189,9 +189,29 @@ Run embeddings locally (e.g. Ollama `nomic-embed-text`, or `transformers.js` `bg
 
 ---
 
-## 3a. Future eval surfaces — enterprise golden sets (backlog)
+## 3a. Eval surfaces — domains beyond academic + legal
 
-The current eval is arXiv only (Open RAG Benchmark). Before GA we must validate on the real production distribution (policies / contracts / wikis / support / finance). **None of these is plug-and-play** — each needs an ingest + golden-importer adapter like the Open RAG Benchmark one. Test these later:
+**Done:** Open RAG Benchmark (arXiv academic) + **CUAD (enterprise contracts) — built & passing 3/4 hard gates doc-scoped** (`evals/benchmarks/cuad/`).
+
+**Gap:** a company's real document mix is far broader than "papers + contracts." The roadmap below covers every type — the highest-leverage next step is **RAGBench**, which bundles five enterprise domains in one already-RAG-formatted set, so a single adapter unlocks finance + support + legal + biomedical + general at once.
+
+### Recommended roadmap (priority order)
+
+| Priority | Dataset | Covers | Source | License | Notes |
+| --- | --- | --- | --- | --- | --- |
+| **1** | **RAGBench** | finance (TAT-QA), IT-support (TechQA/EManual/DelucionQA), legal (CUAD), biomedical, general (HotpotQA/MS-MARCO) | HF `rungalileo/ragbench` | mixed (per-source) | **best ROI — one adapter → 5 domains; already Q+context+answer** |
+| **2** | **DocVQA / DUDE** | **scanned/visual docs** (invoices, forms, slides, charts) | HF / rrc.cvc.uab.es | research | exercises the **image-OCR path** — currently untested by any eval |
+| **3** | Synthetic from own uploads | the *actual* customer doc mix | self-generated | n/a | most representative; harness already matches `expected_chunk_id` |
+| 4 | **FinanceBench** | deep 10-K/10-Q financial QA | HF `PatronusAI/financebench` | open subset free | finance cross-check (single-doc → use `--scope-doc`) |
+| 5 | CRAG / EnterpriseRAG-Bench / RAGTruth | hard multi-hop / company-internal / hallucination labels | HF / GitHub | varies | stretch coverage; RAGTruth for the faithfulness axis |
+
+**Carry-over lessons:** (a) single-document QA sets (CUAD, FinanceBench, DocVQA) need **`run.mjs --scope-doc`** for fair recall — a user asks about *their* doc, not the corpus; corpus-wide sets (HotpotQA, MS-MARCO) don't. (b) Each set needs an `ingest.mjs` + `import-golden.mjs` adapter pair, mirrored to the production pipeline; **RAGBench needs only one** because it's already in RAG format.
+
+---
+
+### Original backlog table (retained for reference)
+
+Before GA we must validate on the real production distribution (policies / contracts / wikis / support / finance). **None of these is plug-and-play** — each needs an ingest + golden-importer adapter like the Open RAG Benchmark one:
 
 | Dataset | Enterprise domain | What it is | Source | License note |
 | --- | --- | --- | --- | --- |
