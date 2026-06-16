@@ -154,7 +154,7 @@ flowchart LR
         P1["status → processing"] --> P2["load rag_settings<br/>(chunkSize / chunkOverlap)"]
         P2 --> P3["sanitizeText() → chunkText()<br/>(structure-aware: whole-sentence packing)"]
         P3 --> PC["generateChunkContext() × N<br/>(Contextual Retrieval — Haiku, doc block prompt-cached;<br/>→ contextualized_content, graceful-null on fail)"]
-        PC --> P4["generateEmbedding() × N<br/>(batched 20; embeds contextualized_content ?? content)"]
+        PC --> P4["generateEmbeddings()<br/>(embedMany — 20 chunks/request, retried; embeds contextualized_content ?? content)"]
         P4 --> P5["delete existing chunks<br/>(idempotent re-index)"]
         P5 --> P6["insert chunks + embeddings<br/>(batched 50)"]
     end

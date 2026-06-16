@@ -1,0 +1,22 @@
+Northwind Industries — IT Help Desk FAQ
+
+Q: How do I reach the IT help desk?
+A: Email it-support@northwind.example or use the #it-help Slack channel. The help
+desk responds within 4 business hours.
+
+Q: How do I reset my password?
+A: Visit reset.northwind.example and authenticate with your MFA device. Passwords
+must be at least 14 characters and are rotated every 90 days.
+
+Q: How do I connect to the VPN?
+A: Install the GlobalConnect client and sign in with your company SSO. The VPN
+gateway is vpn.northwind.example. MFA is required on every VPN login.
+
+Q: What laptop am I issued?
+A: Engineers receive a 16-inch MacBook Pro with 36 GB of RAM. Non-engineering
+staff receive a 14-inch MacBook Air with 16 GB of RAM. Hardware is refreshed
+every 3 years.
+
+Q: How much cloud storage do I get?
+A: Each employee has 100 GB of company Drive storage. Shared team drives start at
+1 TB and can be expanded by request to IT.

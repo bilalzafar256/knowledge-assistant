@@ -164,7 +164,7 @@ Inngest: ingest-document (retries: 3)  [src/inngest/ingest-document.ts]
   │    ├─ generateChunkContext() × N     (Anthropic Contextual Retrieval — claude-haiku-4-5 writes a
   │    │                                   ~100-tok context per chunk; doc block prompt-cached, warm on chunk 0;
   │    │                                   stored in contextualized_content, graceful-null on failure)
-  │    ├─ generateEmbedding() × N  (batched 20; embeds contextualized_content ?? content)
+  │    ├─ generateEmbeddings()     (embedMany — 20 chunks per Gemini request, retried; embeds contextualized_content ?? content)
   │    ├─ delete existing chunks   (idempotent re-index)
   │    └─ insert chunks + embeddings (batched 50)
   └─ status → ready  (or failed + errorMessage; re-throws so Inngest retries)
