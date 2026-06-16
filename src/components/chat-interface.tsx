@@ -21,6 +21,7 @@ import {
   Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MessageMarkdown } from "@/components/message-markdown";
 
 interface ToolCallResult {
   results?: Array<{
@@ -420,10 +421,11 @@ function MessageBubble({ message }: MessageBubbleProps) {
           )}
         >
           {textContent ? (
-            <div
-              className="prose-chat"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(textContent) }}
-            />
+            isUser ? (
+              <p className="whitespace-pre-wrap leading-relaxed">{textContent}</p>
+            ) : (
+              <MessageMarkdown content={textContent} />
+            )
           ) : !isUser && isSearching ? (
             <span className="text-muted-foreground italic">
               Searching knowledge base...
@@ -453,22 +455,3 @@ function MessageBubble({ message }: MessageBubbleProps) {
   );
 }
 
-function renderMarkdown(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/```(\w+)?\n?([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    .replace(/^[-*] (.+)$/gm, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
-    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
-    .replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>")
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/\n/g, "<br>");
-}
