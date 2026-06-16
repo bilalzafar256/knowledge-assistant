@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   FileText, Upload, Clock, Database, Eye,
-  FileArchive, Sheet, Image, Search, X,
+  FileArchive, Sheet, Image as ImageIcon, Search, X,
   ArrowDownAZ, ArrowUpZA, CalendarArrowDown, CalendarArrowUp, HardDrive,
   Loader2, CheckCircle2, AlertCircle, Folder, FolderMinus,
 } from "lucide-react";
@@ -20,9 +20,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { timeAgo, formatFileSize } from "@/lib/utils";
+import { timeAgo, formatFileSize, cn } from "@/lib/utils";
 import { DeleteDocumentButton } from "@/components/delete-document-button";
-import { cn } from "@/lib/utils";
 import type { CollectionItem } from "@/components/collections-sidebar";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -88,7 +87,7 @@ function FileIcon({ fileType }: { fileType: string | null }) {
   const t = fileType?.toLowerCase() ?? "";
   if (t === "pdf") return <FileArchive className="h-5 w-5 text-rose-500" />;
   if (["xls", "xlsx", "csv"].includes(t)) return <Sheet className="h-5 w-5 text-emerald-500" />;
-  if (["jpg", "jpeg", "png", "gif"].includes(t)) return <Image className="h-5 w-5 text-amber-500" />;
+  if (["jpg", "jpeg", "png", "gif"].includes(t)) return <ImageIcon className="h-5 w-5 text-amber-500" />;
   if (["doc", "docx"].includes(t)) return <FileText className="h-5 w-5 text-blue-500" />;
   return <FileText className="h-5 w-5 text-indigo-500" />;
 }

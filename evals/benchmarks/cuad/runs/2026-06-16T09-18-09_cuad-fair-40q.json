@@ -1,0 +1,2001 @@
+{
+  "label": "cuad-fair-40q",
+  "startedAt": "2026-06-16T09:18:09.098Z",
+  "finishedAt": "2026-06-16T09:20:45.893Z",
+  "durationSec": 157,
+  "config": {
+    "userId": "user_cuad_eval",
+    "chatModel": "claude-sonnet-4-6",
+    "embeddingModel": "gemini-embedding-001",
+    "judgeModel": "gemini-2.5-flash",
+    "topK": 5,
+    "concurrency": 3,
+    "ranAnswers": true
+  },
+  "goldenSet": {
+    "generatedAt": "2026-06-16T09:18:01.028Z",
+    "count": 40
+  },
+  "summary": {
+    "questions_total": 40,
+    "questions_evaluated": 40,
+    "recall_at_k_reranked": 0.325,
+    "recall_vector_at_5": 0.35,
+    "recall_vector_at_10": 0.475,
+    "recall_pure_vector_at_5": 0.35,
+    "recall_pure_vector_at_10": 0.475,
+    "mrr_reranked": 0.1754166666666667,
+    "mrr_vector": 0.22634920634920636,
+    "mrr_pure_vector": 0.22634920634920636,
+    "context_precision": 0.6200000000000001,
+    "faithfulness": 0.1,
+    "correctness": 0.01,
+    "citation": 0.2875,
+    "avg_latency_ms": 6313,
+    "total_input_tokens": 68118,
+    "total_output_tokens": 6917,
+    "estimated_cost_usd": 0.30810899999999997
+  },
+  "perQuestion": [
+    {
+      "id": "q_1",
+      "question": "What does this contract say about Agreement Date?",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Agreement Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Agreement Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Agreement Date\" that should be reviewed by a lawyer. Details: The date of the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Agreement Date?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nAdditionally, my role is to answer questions using the **company's internal knowledge base**, which contains company policies, procedures, product information, and similar internal resources. I'm not able to review or interpret external contracts or documents.\n\nHere's how I can help:\n\n- **If you're looking for company policies** related to contracts (e.g., contract review procedures, approval processes), I can search the knowledge base for that.\n- **If you have a specific contract-related question** about company standards or templates, I can look that up as well.\n\nCould you clarify what you're looking for, or share more context about the topic you'd like me to search?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract, but the contract was provided in the prompt. The answer also states that its role is to answer questions using the company's internal knowledge base, which is not true. The answer should have directly answered the question using the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, which is true given the input. However, the reference provided 'October 15, 2009' *is* the answer to the question 'What does this contract say about Agreement Date?'. The model failed to recognize the reference as the direct answer to the question. Instead, it gave a canned response about not having access to a contract, even though the relevant information was provided directly in the 'Reference' section.",
+        "citation": 0,
+        "citation_note": "0/5 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 166,
+        "latency_ms": 4886,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9201
+    },
+    {
+      "id": "q_2",
+      "question": "What does this contract say about Cap On Liability?",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Cap On Liability",
+        "type": "extractive",
+        "source": "text",
+        "category": "Cap On Liability",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Cap On Liability\" that should be reviewed by a lawyer. Details: Does the contract include a cap on liability upon the breach of a party’s obligation? This includes time limitation for the counterparty to bring claims or maximum amount for recovery."
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Cap On Liability?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help you find information about Cap On Liability, but I don't see any contract attached to your message. I only have access to the **company's internal knowledge base** — I'm not able to read or analyze external documents or attachments that you upload.\n\nHere's what I can do:\n\n1. **Search the knowledge base** — If your company has internal policies, templates, or guidelines related to \"Cap On Liability\" in contracts, I can search for that information.\n2. **Direct you to the right resource** — I can help you find who or what team to contact regarding contract review.\n\nWould you like me to search the knowledge base for any internal guidance on Cap On Liability? Or do you have a different question I can help with?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims that it cannot access external documents, which is not true. The answer also claims that it can search the company's internal knowledge base, which is not true. The answer does not provide any information about Cap On Liability, which is the user's request.",
+        "correctness": 0,
+        "correctness_note": "The answer incorrectly states that no contract was provided and that it only has access to an internal knowledge base. The reference provided is the contract text. The answer does not address the question about Cap On Liability based on the provided text.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1130,
+        "output_tokens": 167,
+        "latency_ms": 4425,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8458
+    },
+    {
+      "id": "q_3",
+      "question": "What does this contract say about Parties?",
+      "expected_document_title": "Trademark License Agreement",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Parties?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT "
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nIf you're referring to a specific company contract or agreement that may be stored in the knowledge base, I can search for it. Could you provide:\n\n1. **The name or title of the contract** (e.g., \"Vendor Agreement,\" \"Employee NDA,\" etc.)\n2. **Any other identifying details** (e.g., the other party's name, department it belongs to, or approximate date)\n\nThat way, I can search the knowledge base and retrieve the relevant information for you.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it doesn't have access to any contract document, but the context provided contains several contract documents. The answer is therefore incorrect.",
+        "correctness": 0,
+        "correctness_note": "The answer correctly states that it does not have access to a contract document, which is true given the input. However, the question is about 'this contract' implying a specific contract that the model should be able to infer or access from the context (which is 'ARCONIC INC.'). The model should have indicated that it cannot find a contract related to 'ARCONIC INC.' or asked for more specific details about a contract *from* ARCONIC INC. Instead, it gave a generic response about not having access to 'any contract document' and then asked for details as if it were a general search query, rather than a query about the provided reference.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 133,
+        "latency_ms": 3604,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8280
+    },
+    {
+      "id": "q_4",
+      "question": "What does this contract say about Non-Transferable License?",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Non-Transferable License",
+        "type": "extractive",
+        "source": "text",
+        "category": "Non-Transferable License",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Non-Transferable License\" that should be reviewed by a lawyer. Details: Does the contract limit the ability of a party to transfer the license being granted to a third party?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Non-Transferable License?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "The knowledge base returned several contract documents, but **none of them contain a specific section explicitly titled \"Non-Transferable License\"** that I can directly attribute to *your* contract.\n\nHere's what the retrieved documents do mention that is related:\n\n---\n\n### From *DovaPharmaceuticalsInc — Promotion Agreement (10-Q, 11/8/2018)*:\n- The rights granted are described as **\"non-transferable, non-assignable, and non-delegable.\"**\n- Valeant **\"shall not have any license rights hereunder nor any rights to sublicense any rights hereunder.\"**\n- Valeant **\"shall not acquire any license or other intellectual property interest, by implication or otherwise\"** in any technology or Know-How owned by Dova.\n\n---\n\n### From *MSCI Inc. — EX-10.10*:\n- Licenses granted are **non-exclusive, perpetual, irrevocable, world-wide, and royalty-free**, with rights to sublicense — this contract does **not** restrict transferability in the same way.\n\n---\n\n### From *Pacira Pharmaceuticals — Strategic Licensing, Distribution and Marketing Agreement*:\n- Grants an **exclusive right and license (with the right to sublicense)** — this contract also does **not** appear to include a non-transferable license clause.\n\n---\n\nCould you clarify **which specific contract** you're referring to? If you can provide the contract name or document title, I can search more precisely and give you a more accurate answer.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately states that none of the provided documents have a section explicitly titled \"Non-Transferable License.\" It then correctly extracts and summarizes relevant information from each document regarding transferability, assignability, and sublicensing rights, clearly distinguishing between contracts that do and do not restrict these rights. The answer also correctly identifies that the Pacira Pharmaceuticals document grants a right to sublicense, which is the opposite of a non-transferable license. The concluding request for clarification is appropriate given the context.",
+        "correctness": 0.2,
+        "correctness_note": "The answer correctly identifies that the provided reference does not have a section explicitly titled \"Non-Transferable License.\" However, it then proceeds to analyze other, irrelevant documents. The core of the question is about what *this* contract (the provided reference) says about a non-transferable license. The answer should have focused on extracting the relevant information directly from the provided reference, which it fails to do. It only briefly mentions the term \"non-transferable\" from the reference but then gets sidetracked by other documents. The answer should have directly quoted or paraphrased the relevant sentence from the provided reference.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 4855,
+        "output_tokens": 355,
+        "latency_ms": 14349,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 20029
+    },
+    {
+      "id": "q_5",
+      "question": "What does this contract say about Rofr/Rofo/Rofn?",
+      "expected_document_title": "1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "benchmark": {
+        "query_uuid": "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT__Rofr/Rofo/Rofn",
+        "type": "extractive",
+        "source": "text",
+        "category": "Rofr/Rofo/Rofn",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Rofr/Rofo/Rofn\" that should be reviewed by a lawyer. Details: Is there a clause granting one party a right of first refusal, right of first offer or right of first negotiation to purchase, license, market, or distribute equity interest, technology, assets, products or services?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Rofr/Rofo/Rofn?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0,
+        "context_precision_note": "0/5 relevant",
+        "reranked_titles": [
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement",
+          "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT",
+          "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT",
+          "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look up information about ROFR/ROFO/ROFN, but I should clarify — **I don't have access to any specific contract you're referring to**. I can only search the company's internal knowledge base for company-specific information.\n\nCould you clarify what you mean? For example:\n\n- **Are you asking about a company policy or template** related to Right of First Refusal (ROFR), Right of First Offer (ROFO), or Right of First Negotiation (ROFN)?\n- **Do you have a specific contract document** you'd like me to search for within the knowledge base?\n\nIf you can provide more context — such as the contract name, project, or department it relates to — I can search the knowledge base to see if relevant information is available.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer explicitly states, \"I don't have access to any specific contract you're referring to,\" and \"I can only search the company's internal knowledge base for company-specific information.\" This indicates that the model is not using the provided context to answer the question, but rather stating its limitations and asking for clarification. Therefore, it does not support any factual claims from the given context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, which is true, but it also fails to address the question based on the provided reference. The reference explicitly mentions 'negotiate exclusively with Sponsor for the next [****] in good faith effort to negotiate and execute a written sponsorship renewal agreement,' which is a form of Right of First Negotiation (ROFN). The answer should have identified this and explained it, rather than stating it can't access the contract.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1139,
+        "output_tokens": 186,
+        "latency_ms": 4514,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9266
+    },
+    {
+      "id": "q_6",
+      "question": "What does this contract say about Non-Compete?",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Non-Compete",
+        "type": "extractive",
+        "source": "text",
+        "category": "Non-Compete",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Non-Compete\" that should be reviewed by a lawyer. Details: Is there a restriction on the ability of a party to compete with the counterparty or operate in a certain geography or business or technology sector? "
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Non-Compete?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look into Non-Compete information, but I should clarify — I only have access to the **company's internal knowledge base** (policies, procedures, team info, products, etc.). I'm not able to read or analyze an external contract document that you may be referring to.\n\nCould you help me understand what you're looking for? For example:\n\n- Are you asking about the **company's Non-Compete policy** for employees?\n- Are you looking for **guidelines on how to handle Non-Compete clauses** in contracts?\n\nLet me know and I'll search the knowledge base for the relevant information!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer explicitly states that it cannot read or analyze an external contract document, which is a hallucination as the user provided context from external contract documents. The answer then asks clarifying questions based on this false premise.",
+        "correctness": 0,
+        "correctness_note": "The answer explicitly states it cannot read or analyze an external contract document, which is what the question is asking about. It then tries to reframe the question to fit its capabilities, but it does not answer the original question about the provided contract's non-compete clause.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1130,
+        "output_tokens": 139,
+        "latency_ms": 4351,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8335
+    },
+    {
+      "id": "q_7",
+      "question": "What does this contract say about Third Party Beneficiary?",
+      "expected_document_title": "2014-EX-10.1-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT__Third Party Beneficiary",
+        "type": "extractive",
+        "source": "text",
+        "category": "Third Party Beneficiary",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Third Party Beneficiary\" that should be reviewed by a lawyer. Details: Is there a non-contracting party who is a beneficiary to some or all of the clauses in the contract and therefore can enforce its rights against a contracting party?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Third Party Beneficiary?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nHowever, if information about a specific contract or its **Third Party Beneficiary** clause is stored in the company knowledge base, I can search for it. Could you provide more details such as:\n\n- **The name or title of the contract** (e.g., \"Master Services Agreement,\" \"Vendor Contract,\" etc.)\n- **Any other relevant context** (e.g., a specific vendor, client, or project name)\n\nThis will help me search the knowledge base accurately for you.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to any contract, but the user provided context documents. The answer also suggests searching a company knowledge base, which is not relevant to the task.",
+        "correctness": 0,
+        "correctness_note": "The user's answer completely ignores the provided reference text and instead asks for more information, as if no reference was given. The question was 'What does this contract say about Third Party Beneficiary?' and the reference *is* what the contract says about it. The answer should have summarized the reference.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1131,
+        "output_tokens": 130,
+        "latency_ms": 3836,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7234
+    },
+    {
+      "id": "q_8",
+      "question": "What does this contract say about Parties?",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Parties?",
+        "reranked_rank": -1,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT "
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nIf you're referring to a specific company contract or agreement that may be stored in our internal knowledge base, I can search for it. Could you provide more details such as:\n\n- **The name or title of the contract** (e.g., \"Vendor Agreement,\" \"Employee NDA\")\n- **Any other identifying details** (e.g., the other party's name, the contract's purpose)\n\nThat way, I can search the knowledge base and retrieve the relevant information for you.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims that no file or attachment has been shared, which is false. The context was provided in the prompt.",
+        "correctness": 0,
+        "correctness_note": "The answer correctly states that it does not have access to a contract document, which is true given the prompt. However, it then offers to search an internal knowledge base, which is an hallucination. The question is about a hypothetical contract, not one that would be stored in an internal knowledge base.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 130,
+        "latency_ms": 4450,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7506
+    },
+    {
+      "id": "q_9",
+      "question": "What does this contract say about Anti-Assignment?",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Anti-Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Anti-Assignment",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Anti-Assignment\" that should be reviewed by a lawyer. Details: Is consent or notice required of a party if the contract is assigned to a third party?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Anti-Assignment?",
+        "reranked_rank": 1,
+        "vector_rank": 8,
+        "pure_vector_rank": 8,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.1111111111111111,
+        "mrr_pure_vector": 0.1111111111111111,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look up information about Anti-Assignment in the knowledge base! However, it seems like you may be referring to a specific contract that wasn't attached or shared in our conversation.\n\nCould you clarify which contract you're referring to? For example:\n- **The name or title of the contract** (e.g., \"Vendor Agreement,\" \"Employee NDA,\" \"SaaS Subscription Agreement\")\n- **Any other identifying details** (e.g., the counterparty name, department it belongs to, or a contract ID)\n\nOnce I have that context, I'll search the knowledge base for the relevant Anti-Assignment provisions right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims that the contract was not attached or shared, which is false. The context was provided, and the answer did not attempt to answer the question based on the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question at all. It asks for clarification on a contract that was already provided in the reference text.",
+        "citation": 0,
+        "citation_note": "1/7 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 145,
+        "latency_ms": 3782,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7562
+    },
+    {
+      "id": "q_10",
+      "question": "What does this contract say about Governing Law?",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Governing Law",
+        "type": "extractive",
+        "source": "text",
+        "category": "Governing Law",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by a lawyer. Details: Which state/country's law governs the interpretation of the contract?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Governing Law?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nIf you're looking for **company-specific information** about governing law policies or standard contract terms used by the company, I can search the internal knowledge base for that. However, if you have a **specific contract document** you'd like reviewed, you would need to share its contents directly in the chat, or consult your Legal team for contract review.\n\nWould you like me to:\n1. **Search the knowledge base** for company policies related to governing law or standard contract terms?\n2. Or is there something else I can help you with?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it doesn't have access to any contract, which is false. The context provided contains several contract excerpts.",
+        "correctness": 0,
+        "correctness_note": "The answer completely misses the point of the question. The question is about the provided 'Reference' text, not a hypothetical contract. The answer states it doesn't have access to a contract, which is incorrect as the contract text was provided in the 'Reference' section. It then offers to search a knowledge base or review a document that it claims hasn't been shared, further demonstrating a misunderstanding of the input.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 140,
+        "latency_ms": 3977,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8157
+    },
+    {
+      "id": "q_11",
+      "question": "What does this contract say about Ip Ownership Assignment?",
+      "expected_document_title": "Promotion Agreement",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__Ip Ownership Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Ip Ownership Assignment",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Ip Ownership Assignment\" that should be reviewed by a lawyer. Details: Does intellectual property created  by one party become the property of the counterparty, either per the terms of the contract or upon the occurrence of certain events?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Ip Ownership Assignment?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "The knowledge base contains several contracts with IP ownership and assignment provisions. Here's a summary of what was found across the retrieved documents:\n\n---\n\n## IP Ownership & Assignment — Key Provisions Found\n\n### 1. 📄 Hertz Global Holdings — Intellectual Property Agreement (2016)\n\n**Ownership:**\n- HSI retains ownership of worldwide rights in and to the VRB Trademarks.\n- HSI retains ownership of HSI (HERTZ) Foreign and US ERB Trademarks, granting HERC a **royalty-free, non-exclusive license** for an Interim Period.\n- HSI will **assign all right, title and interest** in the HSI HERC Foreign ERB Trademarks to HERC.\n- HERC retains ownership of HERC (HERTZ) US ERB Trademarks for the Interim Period.\n\n**Assignment Restrictions:**\n- HERC **may not assign, transfer, sublicense, or delegate** any rights without the **prior written consent of HSI**. Any such purported assignment without consent is **void and without effect**.\n- The Agreement is binding on all successors and assigns, subject to the restrictions noted above.\n\n---\n\n### 2. 📄 Harpoon Therapeutics / AbbVie — Development Agreement (2020)\n\n- Neither party may assign without the **prior written consent** of the other (consent not to be unreasonably withheld).\n- **Exception:** Either party may assign **without consent** to an Affiliate or to a successor in a merger, sale of stock, or sale of assets.\n- If assigned to an Affiliate, the assigning party **remains responsible** for performance.\n- The permitted assignee must **assume all obligations** of the assignor.\n\n---\n\n### 3. 📄 Pacira Pharmaceuticals — Strategic Licensing, Distribution and Marketing Agreement\n\n- Either party may assign rights to an **Affiliate or successor** (via merger, consolidation, sale of stock/equity, or sale of substantially all assets) **without the other party's consent**.\n- Either party may grant a **security interest** in its rights in connection with a secured financing.\n- **Change of Control exception:** If a Change of Control results in control by a Third Party that markets a **Competing Product**, rights under the Agreement **may not be assigned without the express consent** of the other party (consent not to be unreasonably withheld).\n\n---\n\n> ⚠️ **Note:** You mentioned \"this contract\" — it's unclear which specific contract you're referring to. The knowledge base returned results from **three different agreements**. If you can specify the contract name or provide more context, I can narrow down the answer for you.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately summarizes the IP ownership and assignment provisions found across the three specified contracts in the context, without inventing any facts.",
+        "correctness": 0,
+        "correctness_note": "The answer provided information from three different contracts regarding IP ownership and assignment, none of which were the contract provided in the reference. The question specifically asked about 'this contract' (referring to the provided reference text), and the answer failed to address the specific contract in the reference.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 4879,
+        "output_tokens": 616,
+        "latency_ms": 20771,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 25396
+    },
+    {
+      "id": "q_12",
+      "question": "What does this contract say about Expiration Date?",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Expiration Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Expiration Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed by a lawyer. Details: On what date will the contract's initial term expire?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Expiration Date?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nCould you clarify what you're looking for? For example:\n\n- **Are you asking about a specific internal company contract or agreement?** If so, please provide the name or topic of the contract, and I can search the knowledge base for relevant information.\n- **Do you have a document you'd like me to review?** I'm not able to receive file uploads or attachments directly.\n\nPlease share more details and I'll do my best to help!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer is a canned response that does not address the question. It claims no document has been shared, but a document was shared in the prompt.",
+        "correctness": 0,
+        "correctness_note": "The answer completely misses the point of the question. The question is asking to interpret the provided 'Reference' text, which is the contract in question. The answer states it doesn't have access to any contract, which is incorrect given the context.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1130,
+        "output_tokens": 122,
+        "latency_ms": 3433,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8555
+    },
+    {
+      "id": "q_13",
+      "question": "What does this contract say about Governing Law?",
+      "expected_document_title": "Promotion Agreement",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__Governing Law",
+        "type": "extractive",
+        "source": "text",
+        "category": "Governing Law",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by a lawyer. Details: Which state/country's law governs the interpretation of the contract?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Governing Law?",
+        "reranked_rank": 3,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.25,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or text has been shared here.\n\nIf you're asking about a **company-specific contract template or policy** related to governing law, I can search the knowledge base for that. However, if you have a **specific contract document** you'd like me to review, you would need to paste the relevant text directly into the chat.\n\nCould you clarify what you're looking for? For example:\n- Are you asking about the **governing law clause in a standard company contract template**?\n- Or do you have specific contract text you'd like to share?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to any contract document, which is false. The context provided contains several contract documents.",
+        "correctness": 0,
+        "correctness_note": "The user provided the relevant text in the prompt itself, not as a separate document. The answer incorrectly states that no text has been shared and asks for clarification, rather than answering the question based on the provided reference.",
+        "citation": 0,
+        "citation_note": "0/2 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 134,
+        "latency_ms": 7995,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 12909
+    },
+    {
+      "id": "q_14",
+      "question": "What does this contract say about Insurance?",
+      "expected_document_title": "Development Agreement",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Insurance",
+        "type": "extractive",
+        "source": "text",
+        "category": "Insurance",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Insurance\" that should be reviewed by a lawyer. Details: Is there a requirement for insurance that must be maintained by one party for the benefit of the counterparty?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Insurance?",
+        "reranked_rank": 2,
+        "vector_rank": 4,
+        "pure_vector_rank": 4,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 0.2,
+        "mrr_pure_vector": 0.2,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help you find information about Insurance in your contract! However, I don't see any contract attached to your message.\n\nCould you please:\n- **Paste the relevant contract text** directly into the chat, or\n- **Clarify which specific contract** you're referring to (e.g., a vendor contract, employment contract, or a named agreement stored in the knowledge base)?\n\nOnce I have that context, I can search the knowledge base or help you interpret the relevant insurance clauses.",
+        "faithfulness": 0,
+        "faithfulness_note": "The user provided context and asked a question. The answer states that no contract was provided, which is incorrect. The answer then asks the user to provide the contract text or clarify which contract, which is also incorrect as the context was already provided.",
+        "correctness": 0,
+        "correctness_note": "The answer states that it doesn't see any contract attached, implying it cannot answer the question. However, the 'Reference' provided in the prompt *is* the contract text the question is asking about. The answer fails to use the provided reference to answer the question.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 1127,
+        "output_tokens": 111,
+        "latency_ms": 3299,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8824
+    },
+    {
+      "id": "q_15",
+      "question": "What does this contract say about License Grant?",
+      "expected_document_title": "2008-EX-10.10-",
+      "benchmark": {
+        "query_uuid": "MSCIINC_02_28_2008-EX-10.10-__License Grant",
+        "type": "extractive",
+        "source": "text",
+        "category": "License Grant",
+        "original_question": "Highlight the parts (if any) of this contract related to \"License Grant\" that should be reviewed by a lawyer. Details: Does the contract contain a license granted by one party to its counterparty?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about License Grant?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nTo help you find information about a **License Grant**, could you clarify:\n\n1. **Which contract or document** are you referring to? (e.g., a specific vendor agreement, software license, customer contract — provide the name or identifier if you have it)\n2. Is this contract stored in the **company knowledge base**, or is it a document you'd like to paste/share directly here?\n\nIf it's in the knowledge base, I can search for it by name or topic — just let me know!",
+        "faithfulness": 0,
+        "faithfulness_note": "The user provided context and asked a question. The answer states that no document has been shared, which is incorrect. It then asks for clarification on a contract that was already provided in the context.",
+        "correctness": 0,
+        "correctness_note": "The answer completely misses the point. The reference provided *is* the contract excerpt the question is asking about. The answer states it doesn't have access to any contract, which is incorrect given the context.",
+        "citation": 0,
+        "citation_note": "0/1 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 135,
+        "latency_ms": 3891,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8818
+    },
+    {
+      "id": "q_16",
+      "question": "What does this contract say about Joint Ip Ownership?",
+      "expected_document_title": "Development Agreement",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Joint Ip Ownership",
+        "type": "extractive",
+        "source": "text",
+        "category": "Joint Ip Ownership",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Joint Ip Ownership\" that should be reviewed by a lawyer. Details: Is there any clause providing for joint or shared ownership of intellectual property between the parties to the contract?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Joint Ip Ownership?",
+        "reranked_rank": -1,
+        "vector_rank": 14,
+        "pure_vector_rank": 14,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.06666666666666667,
+        "mrr_pure_vector": 0.06666666666666667,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved chunks from the **Harpoon Therapeutics / AbbVie Development and Option Agreement (dated November 20, 2019)**, here is what the contract says about **Joint IP Ownership**:\n\n---\n\n## Joint IP Ownership — Key Provisions\n\n### 1. Ownership & Allocation\n- The determination of whether inventions are \"conceived, discovered, developed, or otherwise made\" by a Party — for the purpose of allocating IP rights (including patents and copyrights) — **shall be made in accordance with Applicable Law in the United States**.\n\n### 2. Disclosure Obligations\n- **Each Party** must promptly disclose to the other, in writing, the conception, discovery, development, or making of any **Joint Know-How or Joint Patents** by persons performing activities under the Agreement.\n- Each Party must **execute and record assignments** and other necessary documents consistent with such ownership promptly upon request.\n\n### 3. Assignment of Rights\n- Each Party must ensure that all persons performing activities under the Agreement are obligated to **assign their rights** in any resulting inventions to that Party (with limited exceptions for governmental, not-for-profit, and public institutions with standard policies against assignment).\n\n### 4. Prosecution & Maintenance of Joint Patents\n- **Harpoon** has the right (but not the obligation) to prepare, file, prosecute, and maintain **Joint Patents** worldwide, at **Harpoon's sole cost and expense**.\n- Harpoon must provide AbbVie with copies of material communications to/from patent authorities and drafts of material filings, giving AbbVie a reasonable opportunity to review and comment.\n- Harpoon must **consider in good faith** AbbVie's requests and suggestions regarding prosecution strategy.\n- If Harpoon decides **not** to pursue a Joint Patent in a given country, it must provide reasonable prior written notice to AbbVie, after which **AbbVie has the option** (at its sole discretion and expense) to assume control of prosecution in that jurisdiction.\n\n### 5. Enforcement of Joint Patents\n- **AbbVie has the first right** (but not the obligation) to prosecute infringement of Joint Patents in the Territory, at its sole expense, retaining control of the proceedings.\n- Harpoon has the right to **join as a party** to such proceedings with its own counsel at its own expense, though AbbVie retains control.\n- If AbbVie does **not** take commercially reasonable steps to prosecute infringement of Joint Patents, **Harpoon may prosecute** such infringement at its own expense.\n\n### 6. Defense Strategy\n- Both Parties shall **consult with each other** on the strategy for defense of Joint Patents.\n\n---\n\n> ⚠️ **Note:** Several specific details in the contract are **redacted** (marked as `[***]`), including certain thresholds, timeframes, and conditions. Where redactions appear, the full terms are not available in the retrieved text.",
+        "faithfulness": 1,
+        "faithfulness_note": "All claims are directly supported by the provided context. The answer accurately summarizes the key provisions regarding Joint IP Ownership, including ownership allocation, disclosure, assignment, prosecution, enforcement, and defense, while also noting the presence of redactions.",
+        "correctness": 0,
+        "correctness_note": "The provided answer details various aspects of Joint IP Ownership based on the 'Harpoon Therapeutics / AbbVie Development and Option Agreement'. However, the reference text provided only discusses what happens if AbbVie *does not* exercise its License Option, specifically stating that 'Harpoon retains all rights under Harpoon's interests in the Joint Patents and the Joint Know-How, if any, to Exploit the Licensed Compounds and Licensed Products in its sole discretion without duty to account to AbbVie'. This single sentence does not provide information about the general rules of Joint IP Ownership, such as ownership allocation, disclosure obligations, prosecution, or enforcement, which are extensively covered in the answer. Therefore, the answer is not based on the provided reference.",
+        "citation": 1,
+        "citation_note": "2/2 title tokens matched",
+        "input_tokens": 4617,
+        "output_tokens": 679,
+        "latency_ms": 23582,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 28731
+    },
+    {
+      "id": "q_17",
+      "question": "What does this contract say about Effective Date?",
+      "expected_document_title": "Trademark License Agreement",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Effective Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Effective Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Effective Date\" that should be reviewed by a lawyer. Details: The date when the contract is effective "
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Effective Date?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nAdditionally, my role is to answer questions using the **company's internal knowledge base**. I'm not able to review, interpret, or analyze external documents or contracts that you paste or upload.\n\nHere's how I can help:\n\n- **If you're looking for company policies or templates** related to contracts (e.g., standard contract terms, effective date policies), I can search the knowledge base for that.\n- **For specific contract review**, you would need to consult your **Legal team** directly.\n\nWould you like me to search the knowledge base for any contract-related company policies or guidelines?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract, but the contract was provided in the context. The answer also states that it cannot review, interpret, or analyze external documents, which is contrary to its function.",
+        "correctness": 0,
+        "correctness_note": "The answer correctly states that it doesn't have access to the contract, but it then goes on to explain its limitations and offer alternative help. The question is very specific about what the contract says about the effective date, and the reference provided is a snippet that *would* be part of an effective date clause. The answer does not address the question using the provided reference at all, even to say that the reference itself is incomplete for answering the question.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 152,
+        "latency_ms": 4375,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8812
+    },
+    {
+      "id": "q_18",
+      "question": "What does this contract say about Uncapped Liability?",
+      "expected_document_title": "1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "benchmark": {
+        "query_uuid": "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT__Uncapped Liability",
+        "type": "extractive",
+        "source": "text",
+        "category": "Uncapped Liability",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Uncapped Liability\" that should be reviewed by a lawyer. Details: Is a party’s liability uncapped upon the breach of its obligation in the contract? This also includes uncap liability for a particular type of breach such as IP infringement or breach of confidentiality obligation."
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Uncapped Liability?",
+        "reranked_rank": -1,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look into uncapped liability, but I should let you know that I only have access to the **company's internal knowledge base** — I'm not able to read or analyze a specific contract document you may be referring to.\n\nCould you clarify what you're looking for? For example:\n\n- Are you asking about the **company's standard policy** on uncapped liability in contracts?\n- Are you looking for **guidance on how to handle uncapped liability clauses** when reviewing contracts?\n\nLet me know and I'll search the knowledge base for the most relevant information!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it cannot access the provided context, which is false. It then asks clarifying questions instead of answering the implicit question about uncapped liability based on the context.",
+        "correctness": 0,
+        "correctness_note": "The answer explicitly states it cannot access the contract document provided in the reference, and therefore cannot answer the question about what the contract says regarding uncapped liability. It then asks clarifying questions about the company's internal policy, which is not what the original question asked for.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1131,
+        "output_tokens": 127,
+        "latency_ms": 8903,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 13848
+    },
+    {
+      "id": "q_19",
+      "question": "What does this contract say about Document Name?",
+      "expected_document_title": "2013-EX-10.1-Strategic Alliance Agreement",
+      "benchmark": {
+        "query_uuid": "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Document Name?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I wasn't able to find any information specifically about a **\"Document Name\"** clause or field in the retrieved results. The knowledge base returned several contracts (an Endorsement Agreement, a Supply Agreement, and a Development Agreement), but none of them contain content specifically addressing a section or field called \"Document Name.\"\n\nCould you clarify what you're looking for? For example:\n- Are you referring to a **specific contract** by name?\n- Are you asking about a **particular clause or section** within a contract?\n- Is \"Document Name\" a specific field or term used in a contract you're working with?\n\nWith more context, I can search the knowledge base more precisely and give you a more accurate answer.",
+        "faithfulness": 0,
+        "faithfulness_note": "The user is asking a question about a document name clause. The answer states that it was unable to find any information about a \"Document Name\" clause or field in the retrieved results. This is a hallucination. The answer should have stated that the document name is not explicitly mentioned in the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it couldn't find information about \"Document Name\" in the \"Strategic Alliance Agreement\" but then lists other agreements it found. The reference provided is \"Strategic Alliance Agreement\", so the answer should focus on that specific document. The answer is not directly addressing the question based on the provided reference.",
+        "citation": 0,
+        "citation_note": "1/4 title tokens matched",
+        "input_tokens": 4510,
+        "output_tokens": 154,
+        "latency_ms": 9914,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 13638
+    },
+    {
+      "id": "q_20",
+      "question": "What does this contract say about Change Of Control?",
+      "expected_document_title": "Trademark License Agreement",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Change Of Control",
+        "type": "extractive",
+        "source": "text",
+        "category": "Change Of Control",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Change Of Control\" that should be reviewed by a lawyer. Details: Does one party have the right to terminate or is consent or notice required of the counterparty if such party undergoes a change of control, such as a merger, stock sale, transfer of all or substantially all of its assets or business, or assignment by operation of law?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Change Of Control?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "ThriventVariableInsuranceAccountB_20190701_N-6_EX-99.D(IV)_11720968_EX-99.D(IV)_Endorsement Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nTo help you, could you clarify what you mean? For example:\n\n- **Are you referring to a specific internal company policy or template contract** stored in the knowledge base? If so, please provide the name or topic of the document.\n- **Do you have a contract document you'd like to paste text from?** You're welcome to share the relevant text directly in the chat.\n\nOnce I have more context, I can search the knowledge base or help you interpret the information provided.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it doesn't have access to any contract, but the user provided context from several contracts. The answer is unhelpful and inaccurate.",
+        "correctness": 0,
+        "correctness_note": "The user provided the relevant text in the prompt itself, which the answer completely ignored. The answer is a canned response that does not address the question at all.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 128,
+        "latency_ms": 4114,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7628
+    },
+    {
+      "id": "q_21",
+      "question": "What does this contract say about Insurance?",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Insurance",
+        "type": "extractive",
+        "source": "text",
+        "category": "Insurance",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Insurance\" that should be reviewed by a lawyer. Details: Is there a requirement for insurance that must be maintained by one party for the benefit of the counterparty?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Insurance?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nIf you're asking about **company insurance policies or procedures**, I can search the internal knowledge base for that information. Could you clarify what you're looking for? For example:\n\n- **Employee benefits** (health, dental, vision insurance)?\n- **Business/liability insurance** policies?\n- **A specific internal policy document** related to insurance?\n\nLet me know and I'll search the knowledge base right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to any contract document, which is false. The context provided contains several contract documents. The answer then offers to search an \"internal knowledge base\" which is not relevant to the user's request or the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract document, which is incorrect as the contract excerpt was provided in the 'Reference' section. It then offers to search an internal knowledge base, which is irrelevant to the provided reference.",
+        "citation": 0,
+        "citation_note": "0/5 title tokens matched",
+        "input_tokens": 1127,
+        "output_tokens": 114,
+        "latency_ms": 3585,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9935
+    },
+    {
+      "id": "q_22",
+      "question": "What does this contract say about Parties?",
+      "expected_document_title": "Development Agreement",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Parties?",
+        "reranked_rank": -1,
+        "vector_rank": 7,
+        "pure_vector_rank": 7,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.125,
+        "mrr_pure_vector": 0.125,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT",
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document — no file or attachment has been shared in our conversation.\n\nAdditionally, my role is to answer questions using the **company's internal knowledge base**. I'm not able to read, interpret, or analyze external documents or contracts that you paste or upload.\n\nHere's how I can help:\n\n- **If you're looking for company policies or guidelines** related to contracts (e.g., contract review procedures, approval processes, vendor agreements), I can search the knowledge base for that.\n- **If you have a specific contract-related question** about company procedures, I'm happy to look that up.\n\nWould you like me to search the knowledge base for any contract-related topics?",
+        "faithfulness": 0,
+        "faithfulness_note": "The user provided context and a question, but the answer claims no context was provided. The answer also states it cannot read, interpret, or analyze external documents, which is incorrect given its function.",
+        "correctness": 0,
+        "correctness_note": "The answer correctly states that it cannot access external documents, but it does not answer the question about \"Parties\" in the contract. The question is unanswerable given the provided reference, which is a single word \"Harpoon\" and not a contract document.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 154,
+        "latency_ms": 4473,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8982
+    },
+    {
+      "id": "q_23",
+      "question": "What does this contract say about Volume Restriction?",
+      "expected_document_title": "Sponsorship Agreement",
+      "benchmark": {
+        "query_uuid": "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Volume Restriction",
+        "type": "extractive",
+        "source": "text",
+        "category": "Volume Restriction",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Volume Restriction\" that should be reviewed by a lawyer. Details: Is there a fee increase or consent requirement, etc. if one party’s use of the product/services exceeds certain threshold?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Volume Restriction?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT "
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help you find information about Volume Restriction! However, I don't see any contract attached to your message, and my knowledge base contains internal company documents rather than individual contracts you may be referencing.\n\nCould you clarify what you're looking for? For example:\n- **Are you referring to a specific company policy or agreement** that may be stored in our knowledge base? If so, could you provide more context (e.g., the contract or policy name)?\n- **Do you have a contract document** you'd like me to help interpret? If so, you would need to share the relevant text directly in the chat, as I can only search our internal knowledge base.\n\nOnce I have more context, I'll do my best to assist!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims that the provided context is not a contract and that the knowledge base contains internal company documents rather than individual contracts. This is incorrect. The provided context consists of excerpts from several contracts, as indicated by the document titles (e.g., \"SPONSORSHIP AGREEMENT\", \"WEB SITE HOSTING AGREEMENT\"). The answer also states that it can only search an \"internal knowledge base,\" which is an unnecessary and potentially misleading disclaimer given that the context was directly provided.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question about 'Volume Restriction' based on the provided reference. The reference discusses social media posts and dates, not volume restrictions in a contract. The answer also incorrectly assumes there's a missing contract or that it needs to search an internal knowledge base, which is not relevant to the provided reference text.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 163,
+        "latency_ms": 4422,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9651
+    },
+    {
+      "id": "q_24",
+      "question": "What does this contract say about Parties?",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Parties?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "WASTE2ENERGYHOLDINGS,INC_06_03_2010-EX-10.2-STRATEGIC ALLIANCE AGREEMENT",
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document — no file or attachment has been shared in our conversation.\n\nAdditionally, my role is to answer questions using the **company's internal knowledge base**. I'm not able to review, interpret, or analyze external documents or contracts that you paste or upload.\n\nHere's how I can help:\n\n- **If you're looking for company policies or guidelines** related to contracts (e.g., contract review procedures, approval processes, vendor agreements), I can search the knowledge base for that.\n- **If you have a specific company-related question** about contracts or agreements, feel free to ask and I'll look it up.\n\nWould you like me to search the knowledge base for any contract-related topics?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract document, but the contract document was provided in the prompt. The answer also states that it cannot review, interpret, or analyze external documents or contracts, which is contrary to its function.",
+        "correctness": 0,
+        "correctness_note": "The answer correctly states that it cannot access a contract document, but it does not answer the question about 'Parties' based on the provided reference. The reference 'CNET' is not a contract document and does not contain information about contract parties. The answer correctly identifies its limitations but fails to address the question using the provided (albeit irrelevant) reference.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 158,
+        "latency_ms": 4428,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 10853
+    },
+    {
+      "id": "q_25",
+      "question": "What does this contract say about Post-Termination Services?",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Post-Termination Services",
+        "type": "extractive",
+        "source": "text",
+        "category": "Post-Termination Services",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Post-Termination Services\" that should be reviewed by a lawyer. Details: Is a party subject to obligations after the termination or expiration of a contract, including any post-termination transition, payment, transfer of IP, wind-down, last-buy, or similar commitments?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Post-Termination Services?",
+        "reranked_rank": 2,
+        "vector_rank": 2,
+        "pure_vector_rank": 2,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.3333333333333333,
+        "mrr_vector": 0.3333333333333333,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nTo help you find information about **Post-Termination Services**, I can search the company knowledge base if this relates to an internal company policy, standard contract template, or agreement type we use. Could you clarify:\n\n1. **What contract or document** are you referring to? (e.g., a specific vendor agreement, client contract template, employment agreement)\n2. **Is this an internal company document** that might be stored in our knowledge base?\n\nIf you can provide that context, I'll search right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to any contract document, which is false. The context provided contains several contract documents.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the contract text was provided in the 'Reference' section. The answer then asks for clarification on a document that was already provided. It completely misses the information in the reference.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1132,
+        "output_tokens": 137,
+        "latency_ms": 3934,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9120
+    },
+    {
+      "id": "q_26",
+      "question": "What does this contract say about Anti-Assignment?",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Anti-Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Anti-Assignment",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Anti-Assignment\" that should be reviewed by a lawyer. Details: Is consent or notice required of a party if the contract is assigned to a third party?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Anti-Assignment?",
+        "reranked_rank": 4,
+        "vector_rank": 1,
+        "pure_vector_rank": 1,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.2,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.5,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT "
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look into Anti-Assignment information, but I should clarify — I only have access to the **company's internal knowledge base** (policies, procedures, products, team info, etc.), not any external contracts or documents you may be referring to.\n\nCould you clarify what you mean? For example:\n- Are you asking about the company's **internal policy** on anti-assignment clauses?\n- Are you referring to a **specific company contract template** that may be documented in the knowledge base?\n\nLet me know and I'll search for the relevant information right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims to only have access to an \"internal knowledge base\" and not \"external contracts or documents.\" This is a hallucination, as the context provided consists entirely of excerpts from external legal documents (10-K filings, amendments to agreements). The answer therefore invents facts not in the context.",
+        "correctness": 0,
+        "correctness_note": "The answer completely avoids answering the question by stating it only has access to an internal knowledge base and cannot access external contracts. The question clearly provides the relevant contract text, so the model should have been able to answer based on that text.",
+        "citation": 0,
+        "citation_note": "0/5 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 128,
+        "latency_ms": 4619,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9478
+    },
+    {
+      "id": "q_27",
+      "question": "What does this contract say about Termination For Convenience?",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Termination For Convenience",
+        "type": "extractive",
+        "source": "text",
+        "category": "Termination For Convenience",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Termination For Convenience\" that should be reviewed by a lawyer. Details: Can a party terminate this  contract without cause (solely by giving a notice and allowing a waiting  period to expire)?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Termination For Convenience?",
+        "reranked_rank": -1,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document — no file or attachment has been shared in our conversation.\n\nTo help you, I can search the **company knowledge base** for internal policies or guidelines related to \"Termination For Convenience\" clauses. However, if you're referring to a **specific external contract**, you would need to share the relevant text directly in the chat for me to review it.\n\nWould you like me to:\n1. **Search the knowledge base** for any company policies or standard language around Termination For Convenience?\n2. Have you **paste the relevant contract text** here so I can help interpret it?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract document, which is false. The context provided is the contract document.",
+        "correctness": 0,
+        "correctness_note": "The user provided the contract text in the prompt, but the answer states that no contract document was shared. The answer then offers to search a knowledge base or have the user paste the text, which is irrelevant given the context.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1132,
+        "output_tokens": 138,
+        "latency_ms": 9859,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 14765
+    },
+    {
+      "id": "q_28",
+      "question": "What does this contract say about Document Name?",
+      "expected_document_title": "Endorsement Agreement",
+      "benchmark": {
+        "query_uuid": "GridironBionutrientsInc_20171206_8-K_EX-10.2_10972556_EX-10.2_Endorsement Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Document Name?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "It looks like your question references **\"Document Name\"** as a placeholder — this appears to be a generic term rather than an actual document title in the knowledge base.\n\nCould you clarify what you're looking for? For example:\n- **Which specific contract or document** are you referring to? (e.g., a supply agreement, endorsement agreement, sponsorship agreement, etc.)\n- **What specific topic or clause** within that contract are you asking about?\n\nThe knowledge base does contain several contracts, including:\n- A **Supply Agreement** (Loha Company Ltd, 2019)\n- An **Endorsement Agreement** (Thrivent Variable Insurance Account B, 2019)\n- A **Sponsorship Agreement** (N2K Inc., 1997)\n\nPlease provide more details and I'll do my best to find the relevant information for you!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not directly address the question, instead asking for clarification. It also invents the idea that \"Document Name\" was a placeholder in the prompt, which it was not.",
+        "correctness": 0,
+        "correctness_note": "The answer completely misunderstands the question. The question asks what the contract says about 'Document Name', implying 'Document Name' is a field or clause within the contract. The answer interprets 'Document Name' as a placeholder for the contract itself and asks for clarification on which contract is being referred to, which is incorrect given the reference provided. The reference clearly states 'ENDORSEMENT AGREEMENT ADDENDUM I', which is the document the question is asking about. The answer fails to address what 'ENDORSEMENT AGREEMENT ADDENDUM I' says about 'Document Name'.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 3797,
+        "output_tokens": 190,
+        "latency_ms": 9327,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 14519
+    },
+    {
+      "id": "q_29",
+      "question": "What does this contract say about Minimum Commitment?",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Minimum Commitment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Minimum Commitment",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Minimum Commitment\" that should be reviewed by a lawyer. Details: Is there a minimum order size or minimum amount or units per-time period that one party must buy from the counterparty under the contract?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Minimum Commitment?",
+        "reranked_rank": 1,
+        "vector_rank": 14,
+        "pure_vector_rank": 14,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.06666666666666667,
+        "mrr_pure_vector": 0.06666666666666667,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help look into Minimum Commitment details, but I should let you know that I only have access to the **company's internal knowledge base** — I'm not able to read or analyze external documents or contracts you may be referring to.\n\nCould you clarify what you're looking for? For example:\n\n- Are you asking about **a specific company policy or internal agreement** related to minimum commitments (e.g., vendor contracts, partner agreements, or customer terms)?\n- Is there a **specific contract or document name** I can search for in the knowledge base?\n\nPlease provide more context and I'll search the knowledge base right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it cannot access external documents or contracts, which is false given the nature of the request and the provided context. The answer also asks for clarification that is already present in the prompt.",
+        "correctness": 0,
+        "correctness_note": "The answer states it cannot access external documents, which is true, but it does not answer the question based on the provided reference. The reference explicitly mentions \"expected non-binding forecast\" and \"Number of batches\" in relation to minimum commitment, which the answer completely misses.",
+        "citation": 0,
+        "citation_note": "1/7 title tokens matched",
+        "input_tokens": 1130,
+        "output_tokens": 141,
+        "latency_ms": 4083,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 10372
+    },
+    {
+      "id": "q_30",
+      "question": "What does this contract say about Exclusivity?",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Exclusivity",
+        "type": "extractive",
+        "source": "text",
+        "category": "Exclusivity",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Exclusivity\" that should be reviewed by a lawyer. Details: Is there an exclusive dealing  commitment with the counterparty? This includes a commitment to procure all “requirements” from one party of certain technology, goods, or services or a prohibition on licensing or selling technology, goods or services to third parties, or a prohibition on  collaborating or working with other parties), whether during the contract or  after the contract ends (or both)."
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Exclusivity?",
+        "reranked_rank": -1,
+        "vector_rank": 3,
+        "pure_vector_rank": 3,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.25,
+        "mrr_pure_vector": 0.25,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nTo help you with this, you have a couple of options:\n\n1. **Paste the contract text** directly into the chat, and I can help you identify and explain the exclusivity clauses.\n2. **Ask a company-specific question** about exclusivity policies or standard contract terms, and I can search our internal knowledge base for relevant information.\n\nHow would you like to proceed?",
+        "faithfulness": 0,
+        "faithfulness_note": "The user provided context documents, but the answer claims that no file or attachment has been shared. The answer also suggests options that are not relevant given that the context was already provided.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the contract text was provided in the reference. It fails to answer the question based on the provided text.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 109,
+        "latency_ms": 3682,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9452
+    },
+    {
+      "id": "q_31",
+      "question": "What does this contract say about Document Name?",
+      "expected_document_title": "Development Agreement",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Document Name?",
+        "reranked_rank": 4,
+        "vector_rank": 6,
+        "pure_vector_rank": 6,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.2,
+        "mrr_vector": 0.14285714285714285,
+        "mrr_pure_vector": 0.14285714285714285,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "It looks like your question references **\"Document Name\"** as a placeholder — this appears to be a generic term rather than an actual document title in the knowledge base.\n\nCould you clarify what you're looking for? For example:\n- **Which specific contract or document** are you referring to? (e.g., a supply agreement, endorsement agreement, sponsorship agreement, etc.)\n- **What specific topic or clause** within that contract are you asking about?\n\nThe knowledge base does contain several contracts, including:\n- A **Supply Agreement** (Loha Company Ltd, 2019)\n- An **Endorsement Agreement** (Thrivent Variable Insurance Account B, 2019)\n- A **Sponsorship Agreement** (N2K Inc, 1997)\n\nPlease provide more details and I'll do my best to find the relevant information for you!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not directly address the question, which is likely a hallucination based on the prompt. The prompt asks for a score and rationale, not for clarification on a document name.",
+        "correctness": 0,
+        "correctness_note": "The question asks what the contract says about \"Document Name\". The reference is \"DEVELOPMENT AND OPTION AGREEMENT\". The answer states that \"Document Name\" is a placeholder and asks for clarification, then lists other contracts. It does not address what the *referenced* contract (DEVELOPMENT AND OPTION AGREEMENT) says about \"Document Name\".",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 3797,
+        "output_tokens": 190,
+        "latency_ms": 11788,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 16432
+    },
+    {
+      "id": "q_32",
+      "question": "What does this contract say about Revenue/Profit Sharing?",
+      "expected_document_title": "Development Agreement",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Revenue/Profit Sharing",
+        "type": "extractive",
+        "source": "text",
+        "category": "Revenue/Profit Sharing",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Revenue/Profit Sharing\" that should be reviewed by a lawyer. Details: Is one party required to share revenue or profit with the counterparty for any technology, goods, or services?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Revenue/Profit Sharing?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I'd be happy to help you find information about Revenue/Profit Sharing in the contract, but I'll need a bit more context. Could you clarify:\n\n1. **Which contract are you referring to?** (e.g., a specific vendor contract, partner agreement, employee contract, or a contract name/number)\n\nThis will help me search the knowledge base more accurately and retrieve the most relevant information for you.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer does not directly address the user's implied question about revenue/profit sharing. Instead, it asks for clarification that is not necessary given the provided context. The context clearly contains information about revenue and profit sharing from multiple documents. The answer also includes conversational filler.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question. The question asks what the contract says about revenue/profit sharing, and the provided reference is a snippet from a contract. The answer instead asks for clarification about which contract is being referred to, which is unnecessary given the context of the question and reference. It also fails to extract any information about revenue/profit sharing from the provided text.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 1132,
+        "output_tokens": 92,
+        "latency_ms": 3333,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7603
+    },
+    {
+      "id": "q_33",
+      "question": "What does this contract say about No-Solicit Of Employees?",
+      "expected_document_title": "Promotion Agreement",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__No-Solicit Of Employees",
+        "type": "extractive",
+        "source": "text",
+        "category": "No-Solicit Of Employees",
+        "original_question": "Highlight the parts (if any) of this contract related to \"No-Solicit Of Employees\" that should be reviewed by a lawyer. Details: Is there a restriction on a party’s soliciting or hiring employees and/or contractors from the  counterparty, whether during the contract or after the contract ends (or both)?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about No-Solicit Of Employees?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation. I can only search the **company's internal knowledge base** for company-specific information.\n\nCould you clarify what you're looking for? For example:\n\n- **Are you asking about a company policy** regarding non-solicitation of employees (e.g., in employment agreements or HR policies)?\n- **Do you have a specific contract name or document** you'd like me to look up in the knowledge base?\n\nIf you can provide more context, I'll search the knowledge base right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to any contract, which is false. The context provided is a contract. The answer then asks for clarification on what the user is looking for, which is unnecessary as the context is already provided.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the contract text was provided in the reference. It then asks clarifying questions that are unnecessary given the provided reference.",
+        "citation": 0.5,
+        "citation_note": "1/2 title tokens matched",
+        "input_tokens": 1134,
+        "output_tokens": 129,
+        "latency_ms": 3212,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 7457
+    },
+    {
+      "id": "q_34",
+      "question": "What does this contract say about Renewal Term?",
+      "expected_document_title": "1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Renewal Term",
+        "type": "extractive",
+        "source": "text",
+        "category": "Renewal Term",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Renewal Term\" that should be reviewed by a lawyer. Details: What is the renewal term after the initial term expires? This includes automatic extensions and unilateral extensions with prior notice."
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Renewal Term?",
+        "reranked_rank": -1,
+        "vector_rank": 4,
+        "pure_vector_rank": 4,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.2,
+        "mrr_pure_vector": 0.2,
+        "context_precision": 0.4,
+        "context_precision_note": "2/5 relevant",
+        "reranked_titles": [
+          "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nHowever, if information about contract renewal terms is documented in the company knowledge base, I can search for it. Could you provide more context, such as:\n\n- **Which contract** are you referring to? (e.g., a vendor agreement, client contract, employment contract, software license, etc.)\n- **Any specific details** like the contract name, vendor/client name, or contract type?\n\nThis will help me search the knowledge base more effectively for the relevant information.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it doesn't have access to any contract, which is false. The context provided contains several contracts. The answer then asks for more context, which is unnecessary given the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer does not address the question using the provided reference. The reference explicitly states information about the renewal term, but the answer claims no document was shared and asks for more context.",
+        "citation": 0,
+        "citation_note": "1/4 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 125,
+        "latency_ms": 4877,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8767
+    },
+    {
+      "id": "q_35",
+      "question": "What does this contract say about Expiration Date?",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Expiration Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Expiration Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed by a lawyer. Details: On what date will the contract's initial term expire?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Expiration Date?",
+        "reranked_rank": 1,
+        "vector_rank": 11,
+        "pure_vector_rank": 11,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0.5,
+        "mrr_vector": 0.08333333333333333,
+        "mrr_pure_vector": 0.08333333333333333,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT",
+          "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document in our conversation — no file or attachment has been shared with me.\n\nIf you're asking about a **company-specific contract, policy, or agreement** stored in the knowledge base, I can search for it. Could you clarify:\n\n1. **What contract are you referring to?** (e.g., vendor contract, employee agreement, software license, NDA template)\n2. **Any additional context?** (e.g., a specific vendor name, department, or document title)\n\nWith that detail, I can search the knowledge base and retrieve the relevant information for you.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it doesn't have access to any contract document, which is false. The context provided contains several contract documents. The answer then asks for clarification that is unnecessary given the provided context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the contract text was provided in the reference. It then asks for clarification that was already provided.",
+        "citation": 0.5,
+        "citation_note": "1/3 title tokens matched",
+        "input_tokens": 1130,
+        "output_tokens": 135,
+        "latency_ms": 3790,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8761
+    },
+    {
+      "id": "q_36",
+      "question": "What does this contract say about Agreement Date?",
+      "expected_document_title": "2014-EX-10.1-COOPERATION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT__Agreement Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Agreement Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Agreement Date\" that should be reviewed by a lawyer. Details: The date of the contract"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Agreement Date?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nAdditionally, my knowledge base contains **company-internal information** (policies, procedures, products, team info, etc.), so it wouldn't contain the contents of a specific contract you're working with.\n\nTo get help with your contract, you could:\n- **Paste the relevant contract text** directly into the chat, and I can help you interpret it.\n- **Clarify if this is a company-standard contract template** — if so, I can search the knowledge base to see if there's a standard version documented internally.\n\nHow would you like to proceed?",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract, but the contract was provided in the prompt. It also claims its knowledge base contains company-internal information, which is not true.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, which is true given the input. However, the question provides the *only* relevant text from the 'contract' (the reference) that mentions a date. The answer should have directly addressed the question using the provided reference, even if it's a snippet. It failed to interpret the provided text in relation to 'Agreement Date'.",
+        "citation": 0,
+        "citation_note": "0/3 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 145,
+        "latency_ms": 4200,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8951
+    },
+    {
+      "id": "q_37",
+      "question": "What does this contract say about Audit Rights?",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Audit Rights",
+        "type": "extractive",
+        "source": "text",
+        "category": "Audit Rights",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Audit Rights\" that should be reviewed by a lawyer. Details: Does a party have the right to  audit the books, records, or physical locations of the counterparty to ensure compliance with the contract?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Audit Rights?",
+        "reranked_rank": 4,
+        "vector_rank": 3,
+        "pure_vector_rank": 3,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.2,
+        "mrr_vector": 0.25,
+        "mrr_pure_vector": 0.25,
+        "context_precision": 1,
+        "context_precision_note": "5/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nTo help you find information about **Audit Rights**, could you clarify:\n\n1. **Which contract or document** are you referring to? (e.g., a vendor agreement, client contract, partnership agreement — and ideally its name or identifier)\n2. Is this contract stored in the **company knowledge base**, or is it a document you'd like to paste/share directly here?\n\nIf it's in the knowledge base, I can search for it by name or topic. Just provide more details and I'll look it up right away!",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract, which is false as the context was provided. It then asks for clarification on a contract that was already provided.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the contract text was provided in the reference. It should have used the reference to answer the question.",
+        "citation": 0,
+        "citation_note": "1/7 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 140,
+        "latency_ms": 4003,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8250
+    },
+    {
+      "id": "q_38",
+      "question": "What does this contract say about License Grant?",
+      "expected_document_title": "Trademark License Agreement",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__License Grant",
+        "type": "extractive",
+        "source": "text",
+        "category": "License Grant",
+        "original_question": "Highlight the parts (if any) of this contract related to \"License Grant\" that should be reviewed by a lawyer. Details: Does the contract contain a license granted by one party to its counterparty?"
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about License Grant?",
+        "reranked_rank": -1,
+        "vector_rank": 7,
+        "pure_vector_rank": 7,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.125,
+        "mrr_pure_vector": 0.125,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "MSCIINC_02_28_2008-EX-10.10-",
+          "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract document — no file or attachment has been shared in our conversation.\n\nTo help you, could you clarify:\n\n- **Are you referring to a specific internal company contract or agreement** stored in the knowledge base (e.g., a vendor agreement template, software license policy, or customer contract)? If so, please provide the **name or title** of the document so I can search for it.\n- **Or do you have a document you'd like to paste text from?** You can share the relevant excerpt directly in the chat and I can help interpret it.",
+        "faithfulness": 0,
+        "faithfulness_note": "The answer claims it does not have access to the contract document, but the context was provided in the prompt. The answer is a canned response and does not address the question.",
+        "correctness": 0,
+        "correctness_note": "The answer completely misses the point. The question provides the relevant text from the contract in the 'Reference' section. The answer incorrectly states it doesn't have access to the contract and asks for clarification, which is unnecessary.",
+        "citation": 1,
+        "citation_note": "2/3 title tokens matched",
+        "input_tokens": 1128,
+        "output_tokens": 129,
+        "latency_ms": 4149,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 9202
+    },
+    {
+      "id": "q_39",
+      "question": "What does this contract say about Effective Date?",
+      "expected_document_title": "1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Effective Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Effective Date",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Effective Date\" that should be reviewed by a lawyer. Details: The date when the contract is effective "
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Effective Date?",
+        "reranked_rank": -1,
+        "vector_rank": -1,
+        "pure_vector_rank": -1,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 0,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 0,
+        "mrr_reranked": 0,
+        "mrr_vector": 0,
+        "mrr_pure_vector": 0,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT ",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement"
+        ]
+      },
+      "answer": {
+        "text": "I don't have access to any contract you're referring to — no document has been shared in our conversation.\n\nCould you clarify what you're looking for? For example:\n\n- **Are you asking about a specific company contract or agreement** stored in the knowledge base (e.g., a vendor agreement, employment contract template, or partnership agreement)? If so, please provide the **name or title of the contract**.\n- **Do you have a contract document** you'd like me to review? If so, please **paste the relevant text** directly into the chat.\n\nOnce I have more details, I can search the knowledge base or assist you further!",
+        "faithfulness": 0,
+        "faithfulness_note": "The user provided context and then an answer. The answer is a canned response that does not address the context provided. It is not relevant to the context.",
+        "correctness": 0,
+        "correctness_note": "The answer states it doesn't have access to the contract, but the reference text *is* the contract text provided in the prompt. The answer fails to extract the information about the Effective Date from the provided reference.",
+        "citation": 0,
+        "citation_note": "1/4 title tokens matched",
+        "input_tokens": 1129,
+        "output_tokens": 140,
+        "latency_ms": 3709,
+        "steps_used": 1
+      },
+      "eval_latency_ms": 8116
+    },
+    {
+      "id": "q_40",
+      "question": "What does this contract say about Competitive Restriction Exception?",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Competitive Restriction Exception",
+        "type": "extractive",
+        "source": "text",
+        "category": "Competitive Restriction Exception",
+        "original_question": "Highlight the parts (if any) of this contract related to \"Competitive Restriction Exception\" that should be reviewed by a lawyer. Details: This category includes the exceptions or carveouts to Non-Compete, Exclusivity and No-Solicit of Customers above."
+      },
+      "retrieval": {
+        "synthesized_query": "What does this contract say about Competitive Restriction Exception?",
+        "reranked_rank": -1,
+        "vector_rank": 9,
+        "pure_vector_rank": 9,
+        "recall_at_k": 0,
+        "recall_vector_at_5": 0,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 0,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0,
+        "mrr_vector": 0.1,
+        "mrr_pure_vector": 0.1,
+        "context_precision": 0.8,
+        "context_precision_note": "4/5 relevant",
+        "reranked_titles": [
+          "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement",
+          "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement",
+          "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+          "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT"
+        ]
+      },
+      "answer": {
+        "text": "The knowledge base returned results from several contracts, but **none of them contain a section explicitly titled or labeled \"Competitive Restriction Exception.\"**\n\nThe retrieved documents do include related provisions (such as non-competition clauses and exclusivity terms) from the following contracts:\n\n- **Dova Pharmaceuticals Promotion Agreement** – Contains a Non-Competition/Non-Solicitation section, but specific details are heavily redacted (`[***]`).\n- **Hertz Global Holdings Intellectual Property Agreement** – Includes a non-competition clause during an \"Interim Period.\"\n- **Harpoon Therapeutics Development Agreement** – Contains exclusivity provisions regarding \"Competing Products.\"\n- **N2K Inc. Sponsorship Agreement** – Addresses competing offers for sponsorships.\n\nCould you clarify which specific contract you're referring to? If you can provide the **contract name or document title**, I can search more precisely and give you a more accurate answer.",
+        "faithfulness": 1,
+        "faithfulness_note": "The answer accurately states that none of the provided documents contain a section explicitly titled \"Competitive Restriction Exception.\" It then correctly identifies and briefly describes related provisions (non-competition, exclusivity) from each of the listed contracts, noting redactions where applicable. The answer also appropriately asks for clarification if a specific contract is intended.",
+        "correctness": 0.2,
+        "correctness_note": "The answer correctly states that the provided text does not contain a section explicitly titled \"Competitive Restriction Exception.\" However, it then goes on to list other contracts and their provisions, which are not relevant to the *provided reference text*. The question is specifically about \"this contract\" (referring to the provided reference). The answer does not extract the relevant information from the provided reference regarding competitive restriction exceptions. The reference *does* contain information about exceptions to competitive restrictions (CNET displaying links to competing retailers).",
+        "citation": 1,
+        "citation_note": "2/3 title tokens matched",
+        "input_tokens": 4385,
+        "output_tokens": 211,
+        "latency_ms": 14577,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 21228
+    }
+  ]
+}

@@ -8,7 +8,6 @@ import { documents, documentChunks, collections } from "@/lib/schema";
 import { eq, sql, desc, asc } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
-import { DocumentList } from "@/components/document-list";
 import type { DocRow } from "@/components/document-list";
 import { DocumentsWithCollections } from "@/components/documents-with-collections";
 import type { Metadata } from "next";

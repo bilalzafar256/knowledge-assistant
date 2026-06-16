@@ -11,15 +11,15 @@ import {
   COHERE_RERANK_MODEL,
 } from "./env.mjs";
 
+// Single-query synthesis — mirrors src/lib/ai.ts synthesizeSearchQuery. (A
+// multi-query expansion variant was trialled June 2026 and measured net-negative
+// on correctness in a controlled ablation, so it was reverted.)
 async function synthesizeSearchQuery(latestQuery, priorMessages) {
   if (!priorMessages || priorMessages.length === 0) return latestQuery;
   try {
     const recent = priorMessages.slice(-6);
     const history = recent
-      .map(
-        (m) =>
-          `${m.role === "user" ? "User" : "Assistant"}: ${m.content.slice(0, 400)}`
-      )
+      .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content.slice(0, 400)}`)
       .join("\n");
     const { text } = await generateText({
       model: anthropic(SYNTHESIS_MODEL),
@@ -129,6 +129,8 @@ export async function searchKnowledge({
   userId,
   priorMessages = [],
   limit = 5,
+  documentId = null, // optional: scope retrieval to a single document (enterprise
+                     // single-doc QA, e.g. CUAD — a user asking about THEIR contract)
 }) {
   const searchQuery = await synthesizeSearchQuery(query, priorMessages);
   const queryEmbedding = await embed(searchQuery, "RETRIEVAL_QUERY");
@@ -138,14 +140,14 @@ export async function searchKnowledge({
   const perRetriever = Math.max(candidateLimit * 2, 20);
   const rrfK = 60;
 
-  // Hybrid: vector + BM25 fused via Reciprocal Rank Fusion.
-  // Mirrors src/lib/ai.ts.
+  // Hybrid: vector + BM25 fused via Reciprocal Rank Fusion. Mirrors src/lib/ai.ts.
   const rows = await sql`
     WITH vector_hits AS (
       SELECT id, ROW_NUMBER() OVER (ORDER BY embedding <=> ${vectorString}::vector) AS rank
       FROM document_chunks
       WHERE user_id = ${userId}
         AND embedding IS NOT NULL
+        AND (${documentId}::uuid IS NULL OR document_id = ${documentId}::uuid)
       ORDER BY embedding <=> ${vectorString}::vector
       LIMIT ${perRetriever}
     ),
@@ -159,6 +161,7 @@ export async function searchKnowledge({
       FROM document_chunks dc, bm25_query bq
       WHERE dc.user_id = ${userId}
         AND dc.content_tsv @@ bq.q
+        AND (${documentId}::uuid IS NULL OR dc.document_id = ${documentId}::uuid)
       ORDER BY ts_rank_cd(dc.content_tsv, bq.q) DESC
       LIMIT ${perRetriever}
     ),
@@ -190,16 +193,18 @@ export async function searchKnowledge({
   // Diagnostic: also fetch pure-vector top-15 (no fusion) so eval can compare
   // "fused candidate quality" vs "vector-only candidate quality" side-by-side.
   const pureVectorRows = await sql`
-    SELECT id, document_id, metadata
+    SELECT id, document_id, content, metadata
     FROM document_chunks
     WHERE user_id = ${userId}
       AND embedding IS NOT NULL
+      AND (${documentId}::uuid IS NULL OR document_id = ${documentId}::uuid)
     ORDER BY embedding <=> ${vectorString}::vector
     LIMIT 15
   `;
   const pureVectorCandidates = pureVectorRows.map((r) => ({
     chunkId: r.id,
     documentId: r.document_id,
+    content: r.content, // enables answer-span recall matching (CUAD)
     metadata: r.metadata ?? {},
   }));
 
@@ -233,6 +238,7 @@ export async function searchKnowledge({
     chunkId: r.id,
     documentId: r.document_id,
     documentTitle: r.document_title,
+    content: r.content, // enables answer-span recall matching (CUAD)
     metadata: r.metadata ?? {},
     similarity: r.similarity,
   }));

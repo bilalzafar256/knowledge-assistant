@@ -1,0 +1,649 @@
+{
+  "generatedAt": "2026-06-16T09:22:45.796Z",
+  "userId": "user_cuad_eval",
+  "source": "TheAtticusProject/cuad (CC-BY 4.0)",
+  "seed": 42,
+  "count": 40,
+  "questions": [
+    {
+      "id": "q_1",
+      "question": "Highlight the parts (if any) of this contract related to \"Agreement Date\" that should be reviewed by a lawyer. Details: The date of the contract",
+      "expected_document_id": "95f92bf3-b631-42a7-b5b6-a39947567559",
+      "expected_answer_text": "October 15, 2009",
+      "expected_chunk_id": "89d884e0-31ca-415f-b6f3-51eb9acc6db5",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "expected_answer_excerpt": "October 15, 2009",
+      "source_chunk_content": "October 15, 2009",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Agreement Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Agreement Date"
+      }
+    },
+    {
+      "id": "q_2",
+      "question": "Highlight the parts (if any) of this contract related to \"Cap On Liability\" that should be reviewed by a lawyer. Details: Does the contract include a cap on liability upon the breach of a party’s obligation? This includes time limitation for the counterparty to bring claims or maximum amount for recovery.",
+      "expected_document_id": "ae987400-25f4-4131-8380-de955819307f",
+      "expected_answer_text": "The Company shall indemnify and hold           CNET harmless from and against any Losses that CNET may suffer, incur           or be subjected to by reason of any legal action, proceeding,\n\n\n\n\n\n          arbitration or other claim by a third party, whether commenced or           threatened, arising out of or as a result of (a) any breach or alleged           breach by the Company of its representations, warranties or covenants           hereunder; (b) the use by CNET of the Company Marks or any content           provided by the Company to CNET expressly for display in connection           with or as part of the Promotions, including claims of infringement or           misappropriation of intellectual property rights; or (c) the operation           of the Company Site or the offer or sale of the Products by the           Company or through the Company Sit",
+      "expected_chunk_id": "58ad89c6-6e98-4a87-8812-68f6d0a987a8",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "expected_answer_excerpt": "The Company shall indemnify and hold           CNET harmless from and against any Losses that CNET may suffer, incur           or be subjected to by reason of any legal action, proceeding,\n\n\n\n\n\n          arbitration or other claim by a third party, whether commenced or           threatened, arising out of or as a result of (a) any breach or alleged           breach by the Company of its representations, warranties or covenants           hereunder; (b) the use by CNET of the Company Marks or any content           provided by the Company to CNET expressly for display in connection           with or as part of the Promotions, including claims of infringement or           misappropriation of intellectual property rights; or (c) the operation           of the Company Site or the offer or sale of the Products by the           Company or through the Company Sit",
+      "source_chunk_content": "The Company shall indemnify and hold           CNET harmless from and against any Losses that CNET may suffer, incur           or be subjected to by reason of any legal action, proceeding,\n\n\n\n\n\n          arbitration or other claim by a third party, whether commenced or           threatened, arising out of or as a result of (a) any breach or alleged           breach by the Company of its representations, warranties or covenants           hereunder; (b) the use by CNET of the Company Marks or any content           provided by the Company to CNET expressly for display in connection           with or as part of the Promotions, including claims of infringement or           misappropriation of intellectual property rights; or (c) the operation           of the Company Site or the offer or sale of the Products by the           Company or through the Company Sit",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Cap On Liability",
+        "type": "extractive",
+        "source": "text",
+        "category": "Cap On Liability"
+      }
+    },
+    {
+      "id": "q_3",
+      "question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract",
+      "expected_document_id": "79059ca3-475b-465f-9b6b-0eaed98fb6cf",
+      "expected_answer_text": "ARCONIC INC.",
+      "expected_chunk_id": "276a1d3e-d6a5-4949-9c85-67dc4028e952",
+      "expected_document_title": "Trademark License Agreement",
+      "expected_answer_excerpt": "ARCONIC INC.",
+      "source_chunk_content": "ARCONIC INC.",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties"
+      }
+    },
+    {
+      "id": "q_4",
+      "question": "Highlight the parts (if any) of this contract related to \"Non-Transferable License\" that should be reviewed by a lawyer. Details: Does the contract limit the ability of a party to transfer the license being granted to a third party?",
+      "expected_document_id": "2065aea6-b9df-4bc8-b66d-1159fb6ad583",
+      "expected_answer_text": "To the extent that certain components of the Software may be downloaded to Customer's or User's computer as a result of accessing the Software as part of the Hosting Services, eGain grants Customers a non-exclusive, non-transferable, limited license, with right to sublicense solely to Users, to use such Software only in connection with the Hosting Services.",
+      "expected_chunk_id": "9b952d11-8760-4536-b69f-58b84fa3bf36",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "expected_answer_excerpt": "To the extent that certain components of the Software may be downloaded to Customer's or User's computer as a result of accessing the Software as part of the Hosting Services, eGain grants Customers a non-exclusive, non-transferable, limited license, with right to sublicense solely to Users, to use such Software only in connection with the Hosting Services.",
+      "source_chunk_content": "To the extent that certain components of the Software may be downloaded to Customer's or User's computer as a result of accessing the Software as part of the Hosting Services, eGain grants Customers a non-exclusive, non-transferable, limited license, with right to sublicense solely to Users, to use such Software only in connection with the Hosting Services.",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Non-Transferable License",
+        "type": "extractive",
+        "source": "text",
+        "category": "Non-Transferable License"
+      }
+    },
+    {
+      "id": "q_5",
+      "question": "Highlight the parts (if any) of this contract related to \"Rofr/Rofo/Rofn\" that should be reviewed by a lawyer. Details: Is there a clause granting one party a right of first refusal, right of first offer or right of first negotiation to purchase, license, market, or distribute equity interest, technology, assets, products or services?",
+      "expected_document_id": "45f02b38-3104-4fe9-a903-821ebb43ee36",
+      "expected_answer_text": "Excite will                   negotiate exclusively with Sponsor for the next [****] in good                   faith effort to negotiate and execute a written sponsorship                   renewal agreement.",
+      "expected_chunk_id": "b34f9159-e69b-43fa-b140-afe7f0bb1e26",
+      "expected_document_title": "1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "expected_answer_excerpt": "Excite will                   negotiate exclusively with Sponsor for the next [****] in good                   faith effort to negotiate and execute a written sponsorship                   renewal agreement.",
+      "source_chunk_content": "Excite will                   negotiate exclusively with Sponsor for the next [****] in good                   faith effort to negotiate and execute a written sponsorship                   renewal agreement.",
+      "benchmark": {
+        "query_uuid": "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT__Rofr/Rofo/Rofn",
+        "type": "extractive",
+        "source": "text",
+        "category": "Rofr/Rofo/Rofn"
+      }
+    },
+    {
+      "id": "q_6",
+      "question": "Highlight the parts (if any) of this contract related to \"Non-Compete\" that should be reviewed by a lawyer. Details: Is there a restriction on the ability of a party to compete with the counterparty or operate in a certain geography or business or technology sector? ",
+      "expected_document_id": "0103289a-fc2b-44aa-8e0a-e6810c01fd6c",
+      "expected_answer_text": "Party A irrevocably undertakes that, without Party B's consent, Party A shall not conduct any other business or make any commercial arrangement, including without limitation being engaged in or otherwise participating in any commercial activities and businesses independently or together with any other person or entity, nor shall it carry out any activities that may be competitive with or cause adverse effect to Party B's business.",
+      "expected_chunk_id": "dc913a3f-7c25-4c7a-9417-16971436dbce",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "Party A irrevocably undertakes that, without Party B's consent, Party A shall not conduct any other business or make any commercial arrangement, including without limitation being engaged in or otherwise participating in any commercial activities and businesses independently or together with any other person or entity, nor shall it carry out any activities that may be competitive with or cause adverse effect to Party B's business.",
+      "source_chunk_content": "Party A irrevocably undertakes that, without Party B's consent, Party A shall not conduct any other business or make any commercial arrangement, including without limitation being engaged in or otherwise participating in any commercial activities and businesses independently or together with any other person or entity, nor shall it carry out any activities that may be competitive with or cause adverse effect to Party B's business.",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Non-Compete",
+        "type": "extractive",
+        "source": "text",
+        "category": "Non-Compete"
+      }
+    },
+    {
+      "id": "q_7",
+      "question": "Highlight the parts (if any) of this contract related to \"Third Party Beneficiary\" that should be reviewed by a lawyer. Details: Is there a non-contracting party who is a beneficiary to some or all of the clauses in the contract and therefore can enforce its rights against a contracting party?",
+      "expected_document_id": "572a616a-222c-4466-b83e-1a50780e9b6b",
+      "expected_answer_text": "Nothing in this AGREEMENT shall be construed to confer any right, privilege or benefit on, or to otherwise create any vested right or third-party beneficiary relationship with any person or entity not a party to the AGREEMENT, unless otherwise provided in this AGREEMENT.",
+      "expected_chunk_id": "856826df-6c33-45bc-ab8b-427d2e76c576",
+      "expected_document_title": "2014-EX-10.1-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "Nothing in this AGREEMENT shall be construed to confer any right, privilege or benefit on, or to otherwise create any vested right or third-party beneficiary relationship with any person or entity not a party to the AGREEMENT, unless otherwise provided in this AGREEMENT.",
+      "source_chunk_content": "Nothing in this AGREEMENT shall be construed to confer any right, privilege or benefit on, or to otherwise create any vested right or third-party beneficiary relationship with any person or entity not a party to the AGREEMENT, unless otherwise provided in this AGREEMENT.",
+      "benchmark": {
+        "query_uuid": "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT__Third Party Beneficiary",
+        "type": "extractive",
+        "source": "text",
+        "category": "Third Party Beneficiary"
+      }
+    },
+    {
+      "id": "q_8",
+      "question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract",
+      "expected_document_id": "2065aea6-b9df-4bc8-b66d-1159fb6ad583",
+      "expected_answer_text": "eGain",
+      "expected_chunk_id": "06f9ee88-42f2-4910-a54c-bab781b44e74",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "expected_answer_excerpt": "eGain",
+      "source_chunk_content": "eGain",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties"
+      }
+    },
+    {
+      "id": "q_9",
+      "question": "Highlight the parts (if any) of this contract related to \"Anti-Assignment\" that should be reviewed by a lawyer. Details: Is consent or notice required of a party if the contract is assigned to a third party?",
+      "expected_document_id": "56185ef0-26e3-41b3-a162-8ecfbc6b24b1",
+      "expected_answer_text": "Neither party shall, without the prior written consent (not to be unreasonably withheld or delayed) of the other party having been obtained, assign or transfer this Agreement to any person or entity, in whole or in part (and any attempt to do so shall be void), provided that, each party may assign or transfer this Agreement without such consent to any Affiliate or to any successor by merger of such party, or upon a sale or other transfer of all or substantially all of such party's assets or business to which the subject matter of this Agreement pertains, provided that the acquirer of the business confirms to the Supplier in writing its agreement to be bound by all of the terms and conditions of this Agreement and that the assignor shall remain liable for the obligations hereunder.",
+      "expected_chunk_id": "2b297cd1-e7b2-4c49-b9e4-c4f107959582",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "expected_answer_excerpt": "Neither party shall, without the prior written consent (not to be unreasonably withheld or delayed) of the other party having been obtained, assign or transfer this Agreement to any person or entity, in whole or in part (and any attempt to do so shall be void), provided that, each party may assign or transfer this Agreement without such consent to any Affiliate or to any successor by merger of such party, or upon a sale or other transfer of all or substantially all of such party's assets or business to which the subject matter of this Agreement pertains, provided that the acquirer of the business confirms to the Supplier in writing its agreement to be bound by all of the terms and conditions of this Agreement and that the assignor shall remain liable for the obligations hereunder.",
+      "source_chunk_content": "Neither party shall, without the prior written consent (not to be unreasonably withheld or delayed) of the other party having been obtained, assign or transfer this Agreement to any person or entity, in whole or in part (and any attempt to do so shall be void), provided that, each party may assign or transfer this Agreement without such consent to any Affiliate or to any successor by merger of such party, or upon a sale or other transfer of all or substantially all of such party's assets or business to which the subject matter of this Agreement pertains, provided that the acquirer of the business confirms to the Supplier in writing its agreement to be bound by all of the terms and conditions of this Agreement and that the assignor shall remain liable for the obligations hereunder.",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Anti-Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Anti-Assignment"
+      }
+    },
+    {
+      "id": "q_10",
+      "question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by a lawyer. Details: Which state/country's law governs the interpretation of the contract?",
+      "expected_document_id": "ae987400-25f4-4131-8380-de955819307f",
+      "expected_answer_text": "This Agreement will be construed in accordance with           and governed by the laws of the State of California, without regard to           principles of  conflicts of law.",
+      "expected_chunk_id": "2a267b9d-4d01-4a55-86dd-3df181322c35",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "expected_answer_excerpt": "This Agreement will be construed in accordance with           and governed by the laws of the State of California, without regard to           principles of  conflicts of law.",
+      "source_chunk_content": "This Agreement will be construed in accordance with           and governed by the laws of the State of California, without regard to           principles of  conflicts of law.",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Governing Law",
+        "type": "extractive",
+        "source": "text",
+        "category": "Governing Law"
+      }
+    },
+    {
+      "id": "q_11",
+      "question": "Highlight the parts (if any) of this contract related to \"Ip Ownership Assignment\" that should be reviewed by a lawyer. Details: Does intellectual property created  by one party become the property of the counterparty, either per the terms of the contract or upon the occurrence of certain events?",
+      "expected_document_id": "bcf0f960-2a1d-4272-a18a-3b0d10e464fc",
+      "expected_answer_text": "The ownership, and all goodwill from the use, of any Dova Trademarks and Copyrights shall at all times vest in and inure to the benefit of Dova, and Valeant shall assign, and hereby does assign, any rights it may have in the foregoing to Dova.",
+      "expected_chunk_id": "69fec143-6423-4d07-929e-9615cacbceea",
+      "expected_document_title": "Promotion Agreement",
+      "expected_answer_excerpt": "The ownership, and all goodwill from the use, of any Dova Trademarks and Copyrights shall at all times vest in and inure to the benefit of Dova, and Valeant shall assign, and hereby does assign, any rights it may have in the foregoing to Dova.",
+      "source_chunk_content": "The ownership, and all goodwill from the use, of any Dova Trademarks and Copyrights shall at all times vest in and inure to the benefit of Dova, and Valeant shall assign, and hereby does assign, any rights it may have in the foregoing to Dova.",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__Ip Ownership Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Ip Ownership Assignment"
+      }
+    },
+    {
+      "id": "q_12",
+      "question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed by a lawyer. Details: On what date will the contract's initial term expire?",
+      "expected_document_id": "2065aea6-b9df-4bc8-b66d-1159fb6ad583",
+      "expected_answer_text": "This Agreement shall continue in effect from the Effective Date for a one (1) year period, unless earlier terminated as set forth below, and thereafter shall renew automatically for successive one (1) year periods unless either party gives the other party at least thirty (30) days prior written notice of its intent not to renew the Agreement.",
+      "expected_chunk_id": "7f640191-2f9d-4ebe-affb-694bcbd76d1c",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "expected_answer_excerpt": "This Agreement shall continue in effect from the Effective Date for a one (1) year period, unless earlier terminated as set forth below, and thereafter shall renew automatically for successive one (1) year periods unless either party gives the other party at least thirty (30) days prior written notice of its intent not to renew the Agreement.",
+      "source_chunk_content": "This Agreement shall continue in effect from the Effective Date for a one (1) year period, unless earlier terminated as set forth below, and thereafter shall renew automatically for successive one (1) year periods unless either party gives the other party at least thirty (30) days prior written notice of its intent not to renew the Agreement.",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Expiration Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Expiration Date"
+      }
+    },
+    {
+      "id": "q_13",
+      "question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by a lawyer. Details: Which state/country's law governs the interpretation of the contract?",
+      "expected_document_id": "bcf0f960-2a1d-4272-a18a-3b0d10e464fc",
+      "expected_answer_text": "This Agreement and any and all matters arising directly or indirectly herefrom shall be governed by and construed and enforced in accordance with the internal laws of the [***] applicable to agreements made and to be performed entirely in such state, including its statutes of limitation but without giving effect to the conflict of law principles thereof.",
+      "expected_chunk_id": "0f7ad1bf-c2c8-4a3c-b41c-125d92c3faa4",
+      "expected_document_title": "Promotion Agreement",
+      "expected_answer_excerpt": "This Agreement and any and all matters arising directly or indirectly herefrom shall be governed by and construed and enforced in accordance with the internal laws of the [***] applicable to agreements made and to be performed entirely in such state, including its statutes of limitation but without giving effect to the conflict of law principles thereof.",
+      "source_chunk_content": "This Agreement and any and all matters arising directly or indirectly herefrom shall be governed by and construed and enforced in accordance with the internal laws of the [***] applicable to agreements made and to be performed entirely in such state, including its statutes of limitation but without giving effect to the conflict of law principles thereof.",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__Governing Law",
+        "type": "extractive",
+        "source": "text",
+        "category": "Governing Law"
+      }
+    },
+    {
+      "id": "q_14",
+      "question": "Highlight the parts (if any) of this contract related to \"Insurance\" that should be reviewed by a lawyer. Details: Is there a requirement for insurance that must be maintained by one party for the benefit of the counterparty?",
+      "expected_document_id": "c8f5b804-f9a1-448b-8630-2fd09b171528",
+      "expected_answer_text": "Upon request by a Party, the other Party shall provide Certificates of Insurance evidencing compliance with this Section. The insurance policies shall be under an occurrence form, but if only a claims-made form is available to a Party, then such Party shall continue to maintain such insurance after the expiration or termination of this Agreement for the longer of (a) a period of [***] following termination or expiration of this Agreement in its entirety, or (b) with respect to a particular Party, [***] by a Party.",
+      "expected_chunk_id": "64e6aa97-afa1-49e3-86cf-c335795c20db",
+      "expected_document_title": "Development Agreement",
+      "expected_answer_excerpt": "Upon request by a Party, the other Party shall provide Certificates of Insurance evidencing compliance with this Section. The insurance policies shall be under an occurrence form, but if only a claims-made form is available to a Party, then such Party shall continue to maintain such insurance after the expiration or termination of this Agreement for the longer of (a) a period of [***] following termination or expiration of this Agreement in its entirety, or (b) with respect to a particular Party, [***] by a Party.",
+      "source_chunk_content": "Upon request by a Party, the other Party shall provide Certificates of Insurance evidencing compliance with this Section. The insurance policies shall be under an occurrence form, but if only a claims-made form is available to a Party, then such Party shall continue to maintain such insurance after the expiration or termination of this Agreement for the longer of (a) a period of [***] following termination or expiration of this Agreement in its entirety, or (b) with respect to a particular Party, [***] by a Party.",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Insurance",
+        "type": "extractive",
+        "source": "text",
+        "category": "Insurance"
+      }
+    },
+    {
+      "id": "q_15",
+      "question": "Highlight the parts (if any) of this contract related to \"License Grant\" that should be reviewed by a lawyer. Details: Does the contract contain a license granted by one party to its counterparty?",
+      "expected_document_id": "98040fda-d383-48dc-90fa-1f7e3874334d",
+      "expected_answer_text": "MS hereby grants (subject to any existing third party contractual obligations) to MSCI a non-exclusive, perpetual, irrevocable, world- wide, royalty-free license for MSCI to use, modify, copy, create derivative works of and sublicense, for any business purpose, the MS Licensed Materials.",
+      "expected_chunk_id": "d8f375cb-1fd4-48df-9c2c-97b0fd79efc2",
+      "expected_document_title": "2008-EX-10.10-",
+      "expected_answer_excerpt": "MS hereby grants (subject to any existing third party contractual obligations) to MSCI a non-exclusive, perpetual, irrevocable, world- wide, royalty-free license for MSCI to use, modify, copy, create derivative works of and sublicense, for any business purpose, the MS Licensed Materials.",
+      "source_chunk_content": "MS hereby grants (subject to any existing third party contractual obligations) to MSCI a non-exclusive, perpetual, irrevocable, world- wide, royalty-free license for MSCI to use, modify, copy, create derivative works of and sublicense, for any business purpose, the MS Licensed Materials.",
+      "benchmark": {
+        "query_uuid": "MSCIINC_02_28_2008-EX-10.10-__License Grant",
+        "type": "extractive",
+        "source": "text",
+        "category": "License Grant"
+      }
+    },
+    {
+      "id": "q_16",
+      "question": "Highlight the parts (if any) of this contract related to \"Joint Ip Ownership\" that should be reviewed by a lawyer. Details: Is there any clause providing for joint or shared ownership of intellectual property between the parties to the contract?",
+      "expected_document_id": "c8f5b804-f9a1-448b-8630-2fd09b171528",
+      "expected_answer_text": "For clarity, if AbbVie does not exercise its License Option, Harpoon retains all rights under Harpoon's interests in the Joint Patents and the Joint Know-How, if any, to Exploit the Licensed Compounds and Licensed Products in its sole discretion without duty to account to AbbVie in connection with such use or Exploitation.",
+      "expected_chunk_id": "94ff86d7-752d-4447-9bfe-75bf5d96a3f3",
+      "expected_document_title": "Development Agreement",
+      "expected_answer_excerpt": "For clarity, if AbbVie does not exercise its License Option, Harpoon retains all rights under Harpoon's interests in the Joint Patents and the Joint Know-How, if any, to Exploit the Licensed Compounds and Licensed Products in its sole discretion without duty to account to AbbVie in connection with such use or Exploitation.",
+      "source_chunk_content": "For clarity, if AbbVie does not exercise its License Option, Harpoon retains all rights under Harpoon's interests in the Joint Patents and the Joint Know-How, if any, to Exploit the Licensed Compounds and Licensed Products in its sole discretion without duty to account to AbbVie in connection with such use or Exploitation.",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Joint Ip Ownership",
+        "type": "extractive",
+        "source": "text",
+        "category": "Joint Ip Ownership"
+      }
+    },
+    {
+      "id": "q_17",
+      "question": "Highlight the parts (if any) of this contract related to \"Effective Date\" that should be reviewed by a lawyer. Details: The date when the contract is effective ",
+      "expected_document_id": "79059ca3-475b-465f-9b6b-0eaed98fb6cf",
+      "expected_answer_text": "[ ] day of [ ], 2020",
+      "expected_chunk_id": "88a94ef0-15e5-4792-9bdc-ccc3456c3317",
+      "expected_document_title": "Trademark License Agreement",
+      "expected_answer_excerpt": "[ ] day of [ ], 2020",
+      "source_chunk_content": "[ ] day of [ ], 2020",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Effective Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Effective Date"
+      }
+    },
+    {
+      "id": "q_18",
+      "question": "Highlight the parts (if any) of this contract related to \"Uncapped Liability\" that should be reviewed by a lawyer. Details: Is a party’s liability uncapped upon the breach of its obligation in the contract? This also includes uncap liability for a particular type of breach such as IP infringement or breach of confidentiality obligation.",
+      "expected_document_id": "45f02b38-3104-4fe9-a903-821ebb43ee36",
+      "expected_answer_text": "EXCEPT UNDER SECTION 13(c) and (d), IN NO EVENT WILL EITHER                   PARTY BE LIABLE TO THE OTHER FOR ANY SPECIAL, INCIDENTAL OR                   CONSEQUENTIAL DAMAGES, WHETHER BASED ON BREACH OF CONTRACT,                   TORT (INCLUDING NEGLIGENCE) OR OTHERWISE, WHETHER OR NOT THAT                   PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "expected_chunk_id": "046e26b4-8f11-4008-8769-c9590dacf6d3",
+      "expected_document_title": "1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "expected_answer_excerpt": "EXCEPT UNDER SECTION 13(c) and (d), IN NO EVENT WILL EITHER                   PARTY BE LIABLE TO THE OTHER FOR ANY SPECIAL, INCIDENTAL OR                   CONSEQUENTIAL DAMAGES, WHETHER BASED ON BREACH OF CONTRACT,                   TORT (INCLUDING NEGLIGENCE) OR OTHERWISE, WHETHER OR NOT THAT                   PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "source_chunk_content": "EXCEPT UNDER SECTION 13(c) and (d), IN NO EVENT WILL EITHER                   PARTY BE LIABLE TO THE OTHER FOR ANY SPECIAL, INCIDENTAL OR                   CONSEQUENTIAL DAMAGES, WHETHER BASED ON BREACH OF CONTRACT,                   TORT (INCLUDING NEGLIGENCE) OR OTHERWISE, WHETHER OR NOT THAT                   PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "benchmark": {
+        "query_uuid": "N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT__Uncapped Liability",
+        "type": "extractive",
+        "source": "text",
+        "category": "Uncapped Liability"
+      }
+    },
+    {
+      "id": "q_19",
+      "question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract",
+      "expected_document_id": "1285f788-03f7-4490-9665-9075fa48b229",
+      "expected_answer_text": "Strategic Alliance Agreement",
+      "expected_chunk_id": "260bda86-4a11-406f-833c-094aa1ca7467",
+      "expected_document_title": "2013-EX-10.1-Strategic Alliance Agreement",
+      "expected_answer_excerpt": "Strategic Alliance Agreement",
+      "source_chunk_content": "Strategic Alliance Agreement",
+      "benchmark": {
+        "query_uuid": "CHERRYHILLMORTGAGEINVESTMENTCORP_09_26_2013-EX-10.1-Strategic Alliance Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name"
+      }
+    },
+    {
+      "id": "q_20",
+      "question": "Highlight the parts (if any) of this contract related to \"Change Of Control\" that should be reviewed by a lawyer. Details: Does one party have the right to terminate or is consent or notice required of the counterparty if such party undergoes a change of control, such as a merger, stock sale, transfer of all or substantially all of its assets or business, or assignment by operation of law?",
+      "expected_document_id": "79059ca3-475b-465f-9b6b-0eaed98fb6cf",
+      "expected_answer_text": "Notwithstanding the foregoing, no such consent of Licensor is required under this Agreement in the event of a Change of Control of Licensee so long as: (a) the resulting, surviving or transferee Person assumes all the obligations of the Licensee by operation of Law or pursuant to an agreement in form and substance reasonably satisfactory to the Licensor; and (b) the licenses granted herein shall not be transferrable or sublicensable to Affiliates of such Person unless such Affiliates were Affiliates of Licensee prior to such Change of Control.",
+      "expected_chunk_id": "9a12bbd5-4c08-4000-92cb-95bf94a0a509",
+      "expected_document_title": "Trademark License Agreement",
+      "expected_answer_excerpt": "Notwithstanding the foregoing, no such consent of Licensor is required under this Agreement in the event of a Change of Control of Licensee so long as: (a) the resulting, surviving or transferee Person assumes all the obligations of the Licensee by operation of Law or pursuant to an agreement in form and substance reasonably satisfactory to the Licensor; and (b) the licenses granted herein shall not be transferrable or sublicensable to Affiliates of such Person unless such Affiliates were Affiliates of Licensee prior to such Change of Control.",
+      "source_chunk_content": "Notwithstanding the foregoing, no such consent of Licensor is required under this Agreement in the event of a Change of Control of Licensee so long as: (a) the resulting, surviving or transferee Person assumes all the obligations of the Licensee by operation of Law or pursuant to an agreement in form and substance reasonably satisfactory to the Licensor; and (b) the licenses granted herein shall not be transferrable or sublicensable to Affiliates of such Person unless such Affiliates were Affiliates of Licensee prior to such Change of Control.",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__Change Of Control",
+        "type": "extractive",
+        "source": "text",
+        "category": "Change Of Control"
+      }
+    },
+    {
+      "id": "q_21",
+      "question": "Highlight the parts (if any) of this contract related to \"Insurance\" that should be reviewed by a lawyer. Details: Is there a requirement for insurance that must be maintained by one party for the benefit of the counterparty?",
+      "expected_document_id": "95f92bf3-b631-42a7-b5b6-a39947567559",
+      "expected_answer_text": "Such insurance shall be with a reputable insurance company and where  reasonably possible (taking into account the availability of such insurance) shall be maintained for not less than [**] ([**]) years following  the expiry or termination of this Agreement.",
+      "expected_chunk_id": "721a3b17-1823-4169-a8e6-42f95c0fa76f",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "expected_answer_excerpt": "Such insurance shall be with a reputable insurance company and where  reasonably possible (taking into account the availability of such insurance) shall be maintained for not less than [**] ([**]) years following  the expiry or termination of this Agreement.",
+      "source_chunk_content": "Such insurance shall be with a reputable insurance company and where  reasonably possible (taking into account the availability of such insurance) shall be maintained for not less than [**] ([**]) years following  the expiry or termination of this Agreement.",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Insurance",
+        "type": "extractive",
+        "source": "text",
+        "category": "Insurance"
+      }
+    },
+    {
+      "id": "q_22",
+      "question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract",
+      "expected_document_id": "c8f5b804-f9a1-448b-8630-2fd09b171528",
+      "expected_answer_text": "Harpoon",
+      "expected_chunk_id": "c8978b57-a860-4311-a6ba-289c8c5be4d0",
+      "expected_document_title": "Development Agreement",
+      "expected_answer_excerpt": "Harpoon",
+      "source_chunk_content": "Harpoon",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties"
+      }
+    },
+    {
+      "id": "q_23",
+      "question": "Highlight the parts (if any) of this contract related to \"Volume Restriction\" that should be reviewed by a lawyer. Details: Is there a fee increase or consent requirement, etc. if one party’s use of the product/services exceeds certain threshold?",
+      "expected_document_id": "e3346eb7-7cf6-42f2-b495-020b76fc98fd",
+      "expected_answer_text": "The Association will also share/retweet up to three (3) social media posts on Facebook, Twitter and Instagram-one before National Get Fit Don't Sit Day, one on May 2 and one after the campaign.",
+      "expected_chunk_id": "1e4e2a60-8675-4334-8eff-75b460da35d4",
+      "expected_document_title": "Sponsorship Agreement",
+      "expected_answer_excerpt": "The Association will also share/retweet up to three (3) social media posts on Facebook, Twitter and Instagram-one before National Get Fit Don't Sit Day, one on May 2 and one after the campaign.",
+      "source_chunk_content": "The Association will also share/retweet up to three (3) social media posts on Facebook, Twitter and Instagram-one before National Get Fit Don't Sit Day, one on May 2 and one after the campaign.",
+      "benchmark": {
+        "query_uuid": "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Volume Restriction",
+        "type": "extractive",
+        "source": "text",
+        "category": "Volume Restriction"
+      }
+    },
+    {
+      "id": "q_24",
+      "question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawyer. Details: The two or more parties who signed the contract",
+      "expected_document_id": "ae987400-25f4-4131-8380-de955819307f",
+      "expected_answer_text": "CNET",
+      "expected_chunk_id": "fde43273-9e7d-4eaa-9338-0bc84294bf88",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "expected_answer_excerpt": "CNET",
+      "source_chunk_content": "CNET",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Parties",
+        "type": "extractive",
+        "source": "text",
+        "category": "Parties"
+      }
+    },
+    {
+      "id": "q_25",
+      "question": "Highlight the parts (if any) of this contract related to \"Post-Termination Services\" that should be reviewed by a lawyer. Details: Is a party subject to obligations after the termination or expiration of a contract, including any post-termination transition, payment, transfer of IP, wind-down, last-buy, or similar commitments?",
+      "expected_document_id": "2065aea6-b9df-4bc8-b66d-1159fb6ad583",
+      "expected_answer_text": "Except in the event of termination for Customer's breach, eGain shall provide Customer with an electronic copy of the final Reports (covering the month just prior to termination of this Agreement).",
+      "expected_chunk_id": "7f640191-2f9d-4ebe-affb-694bcbd76d1c",
+      "expected_document_title": "2000-EX-10.8-HOSTING AGREEMENT",
+      "expected_answer_excerpt": "Except in the event of termination for Customer's breach, eGain shall provide Customer with an electronic copy of the final Reports (covering the month just prior to termination of this Agreement).",
+      "source_chunk_content": "Except in the event of termination for Customer's breach, eGain shall provide Customer with an electronic copy of the final Reports (covering the month just prior to termination of this Agreement).",
+      "benchmark": {
+        "query_uuid": "WEBHELPCOMINC_03_22_2000-EX-10.8-HOSTING AGREEMENT__Post-Termination Services",
+        "type": "extractive",
+        "source": "text",
+        "category": "Post-Termination Services"
+      }
+    },
+    {
+      "id": "q_26",
+      "question": "Highlight the parts (if any) of this contract related to \"Anti-Assignment\" that should be reviewed by a lawyer. Details: Is consent or notice required of a party if the contract is assigned to a third party?",
+      "expected_document_id": "95f92bf3-b631-42a7-b5b6-a39947567559",
+      "expected_answer_text": "Should there be a Change of Control of either Party resulting in the control of such Party by a Third Party which  markets or sells a Competing Product in any part of the Territory, then the rights under this Agreement may not be assigned without the  express consent of the other Party which consent shall not be unreasonably withheld.",
+      "expected_chunk_id": "e678dc7e-911e-4721-8a5b-b77405026709",
+      "expected_document_title": "R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT",
+      "expected_answer_excerpt": "Should there be a Change of Control of either Party resulting in the control of such Party by a Third Party which  markets or sells a Competing Product in any part of the Territory, then the rights under this Agreement may not be assigned without the  express consent of the other Party which consent shall not be unreasonably withheld.",
+      "source_chunk_content": "Should there be a Change of Control of either Party resulting in the control of such Party by a Third Party which  markets or sells a Competing Product in any part of the Territory, then the rights under this Agreement may not be assigned without the  express consent of the other Party which consent shall not be unreasonably withheld.",
+      "benchmark": {
+        "query_uuid": "PACIRA PHARMACEUTICALS, INC. - A_R STRATEGIC LICENSING, DISTRIBUTION AND MARKETING AGREEMENT __Anti-Assignment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Anti-Assignment"
+      }
+    },
+    {
+      "id": "q_27",
+      "question": "Highlight the parts (if any) of this contract related to \"Termination For Convenience\" that should be reviewed by a lawyer. Details: Can a party terminate this  contract without cause (solely by giving a notice and allowing a waiting  period to expire)?",
+      "expected_document_id": "0103289a-fc2b-44aa-8e0a-e6810c01fd6c",
+      "expected_answer_text": "Party B shall have the right to terminate this Agreement in advance without the prior written consent from Party A, bysending a written notice to Party A but Party A may not terminate or rescind this Agreement;",
+      "expected_chunk_id": "0ab2abf5-2623-4468-bdd2-559d4245c6d8",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "Party B shall have the right to terminate this Agreement in advance without the prior written consent from Party A, bysending a written notice to Party A but Party A may not terminate or rescind this Agreement;",
+      "source_chunk_content": "Party B shall have the right to terminate this Agreement in advance without the prior written consent from Party A, bysending a written notice to Party A but Party A may not terminate or rescind this Agreement;",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Termination For Convenience",
+        "type": "extractive",
+        "source": "text",
+        "category": "Termination For Convenience"
+      }
+    },
+    {
+      "id": "q_28",
+      "question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract",
+      "expected_document_id": "c8eefddc-28d9-446e-bea1-2ebd357d7b54",
+      "expected_answer_text": "ENDORSEMENT AGREEMENT ADDENDUM I",
+      "expected_chunk_id": "300d8b02-2d20-4d4f-ad34-0ba67ad1c7cd",
+      "expected_document_title": "Endorsement Agreement",
+      "expected_answer_excerpt": "ENDORSEMENT AGREEMENT ADDENDUM I",
+      "source_chunk_content": "ENDORSEMENT AGREEMENT ADDENDUM I",
+      "benchmark": {
+        "query_uuid": "GridironBionutrientsInc_20171206_8-K_EX-10.2_10972556_EX-10.2_Endorsement Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name"
+      }
+    },
+    {
+      "id": "q_29",
+      "question": "Highlight the parts (if any) of this contract related to \"Minimum Commitment\" that should be reviewed by a lawyer. Details: Is there a minimum order size or minimum amount or units per-time period that one party must buy from the counterparty under the contract?",
+      "expected_document_id": "56185ef0-26e3-41b3-a162-8ecfbc6b24b1",
+      "expected_answer_text": "Fleet shall ensure that it has sufficient experienced production staff available to meet the requirements set out in each Production Schedule and at a minimum, to meet the expected non-binding forecast set out below:\n\n[***] [***] [***] [***] [***] [***]\n\nN u m b e r  o f batches",
+      "expected_chunk_id": "b56eb104-f5a7-4c34-abf7-3f074f6b5087",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "expected_answer_excerpt": "Fleet shall ensure that it has sufficient experienced production staff available to meet the requirements set out in each Production Schedule and at a minimum, to meet the expected non-binding forecast set out below:\n\n[***] [***] [***] [***] [***] [***]\n\nN u m b e r  o f batches",
+      "source_chunk_content": "Fleet shall ensure that it has sufficient experienced production staff available to meet the requirements set out in each Production Schedule and at a minimum, to meet the expected non-binding forecast set out below:\n\n[***] [***] [***] [***] [***] [***]\n\nN u m b e r  o f batches",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Minimum Commitment",
+        "type": "extractive",
+        "source": "text",
+        "category": "Minimum Commitment"
+      }
+    },
+    {
+      "id": "q_30",
+      "question": "Highlight the parts (if any) of this contract related to \"Exclusivity\" that should be reviewed by a lawyer. Details: Is there an exclusive dealing  commitment with the counterparty? This includes a commitment to procure all “requirements” from one party of certain technology, goods, or services or a prohibition on licensing or selling technology, goods or services to third parties, or a prohibition on  collaborating or working with other parties), whether during the contract or  after the contract ends (or both).",
+      "expected_document_id": "0103289a-fc2b-44aa-8e0a-e6810c01fd6c",
+      "expected_answer_text": "Party A irrevocably undertakes that Party A will take Party B as its exclusive and sole partner to provide the business consultancy and technical services as well as technical consultancy to Party A and its subsidiaries",
+      "expected_chunk_id": "dc913a3f-7c25-4c7a-9417-16971436dbce",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "Party A irrevocably undertakes that Party A will take Party B as its exclusive and sole partner to provide the business consultancy and technical services as well as technical consultancy to Party A and its subsidiaries",
+      "source_chunk_content": "Party A irrevocably undertakes that Party A will take Party B as its exclusive and sole partner to provide the business consultancy and technical services as well as technical consultancy to Party A and its subsidiaries",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Exclusivity",
+        "type": "extractive",
+        "source": "text",
+        "category": "Exclusivity"
+      }
+    },
+    {
+      "id": "q_31",
+      "question": "Highlight the parts (if any) of this contract related to \"Document Name\" that should be reviewed by a lawyer. Details: The name of the contract",
+      "expected_document_id": "c8f5b804-f9a1-448b-8630-2fd09b171528",
+      "expected_answer_text": "DEVELOPMENT AND OPTION AGREEMENT",
+      "expected_chunk_id": "c8978b57-a860-4311-a6ba-289c8c5be4d0",
+      "expected_document_title": "Development Agreement",
+      "expected_answer_excerpt": "DEVELOPMENT AND OPTION AGREEMENT",
+      "source_chunk_content": "DEVELOPMENT AND OPTION AGREEMENT",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Document Name",
+        "type": "extractive",
+        "source": "text",
+        "category": "Document Name"
+      }
+    },
+    {
+      "id": "q_32",
+      "question": "Highlight the parts (if any) of this contract related to \"Revenue/Profit Sharing\" that should be reviewed by a lawyer. Details: Is one party required to share revenue or profit with the counterparty for any technology, goods, or services?",
+      "expected_document_id": "c8f5b804-f9a1-448b-8630-2fd09b171528",
+      "expected_answer_text": "AbbVie shall pay to Harpoon the royalty amounts due with respect to a given [***] within [***] after the end of such [***].",
+      "expected_chunk_id": "20bc0905-a182-43e1-b071-d273c0249470",
+      "expected_document_title": "Development Agreement",
+      "expected_answer_excerpt": "AbbVie shall pay to Harpoon the royalty amounts due with respect to a given [***] within [***] after the end of such [***].",
+      "source_chunk_content": "AbbVie shall pay to Harpoon the royalty amounts due with respect to a given [***] within [***] after the end of such [***].",
+      "benchmark": {
+        "query_uuid": "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Revenue/Profit Sharing",
+        "type": "extractive",
+        "source": "text",
+        "category": "Revenue/Profit Sharing"
+      }
+    },
+    {
+      "id": "q_33",
+      "question": "Highlight the parts (if any) of this contract related to \"No-Solicit Of Employees\" that should be reviewed by a lawyer. Details: Is there a restriction on a party’s soliciting or hiring employees and/or contractors from the  counterparty, whether during the contract or after the contract ends (or both)?",
+      "expected_document_id": "bcf0f960-2a1d-4272-a18a-3b0d10e464fc",
+      "expected_answer_text": "[***], neither Valeant nor Dova (nor any of their respective Affiliates) shall directly or indirectly solicit for hire or employee as an employee, consultant or otherwise any of the other Party's professional personnel who have had direct involvement with the JSC, with the Valeant Activities under this Agreement (which, in the case of Valeant, includes the Field Force Personnel) or with Dova's commercialization activities for the Product, without the other Party's prior written consent.",
+      "expected_chunk_id": "dec34d9d-6dc4-4131-ad0b-db1dcf150a8f",
+      "expected_document_title": "Promotion Agreement",
+      "expected_answer_excerpt": "[***], neither Valeant nor Dova (nor any of their respective Affiliates) shall directly or indirectly solicit for hire or employee as an employee, consultant or otherwise any of the other Party's professional personnel who have had direct involvement with the JSC, with the Valeant Activities under this Agreement (which, in the case of Valeant, includes the Field Force Personnel) or with Dova's commercialization activities for the Product, without the other Party's prior written consent.",
+      "source_chunk_content": "[***], neither Valeant nor Dova (nor any of their respective Affiliates) shall directly or indirectly solicit for hire or employee as an employee, consultant or otherwise any of the other Party's professional personnel who have had direct involvement with the JSC, with the Valeant Activities under this Agreement (which, in the case of Valeant, includes the Field Force Personnel) or with Dova's commercialization activities for the Product, without the other Party's prior written consent.",
+      "benchmark": {
+        "query_uuid": "DovaPharmaceuticalsInc_20181108_10-Q_EX-10.2_11414857_EX-10.2_Promotion Agreement__No-Solicit Of Employees",
+        "type": "extractive",
+        "source": "text",
+        "category": "No-Solicit Of Employees"
+      }
+    },
+    {
+      "id": "q_34",
+      "question": "Highlight the parts (if any) of this contract related to \"Renewal Term\" that should be reviewed by a lawyer. Details: What is the renewal term after the initial term expires? This includes automatic extensions and unilateral extensions with prior notice.",
+      "expected_document_id": "c67458e1-2c50-488b-9e25-d547e6349e3d",
+      "expected_answer_text": "Agreement, which notice must be given not less than fifteen (15) days before the end of the respective initial or renewal term.",
+      "expected_chunk_id": "e7d93e2d-6c19-4c7d-b2e6-bc403ad7a3a8",
+      "expected_document_title": "1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+      "expected_answer_excerpt": "Agreement, which notice must be given not less than fifteen (15) days before the end of the respective initial or renewal term.",
+      "source_chunk_content": "Agreement, which notice must be given not less than fifteen (15) days before the end of the respective initial or renewal term.",
+      "benchmark": {
+        "query_uuid": "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Renewal Term",
+        "type": "extractive",
+        "source": "text",
+        "category": "Renewal Term"
+      }
+    },
+    {
+      "id": "q_35",
+      "question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed by a lawyer. Details: On what date will the contract's initial term expire?",
+      "expected_document_id": "0103289a-fc2b-44aa-8e0a-e6810c01fd6c",
+      "expected_answer_text": "Party A and Party B agree and confirm that the term of cooperation under this Agreement shall commence from the execution date hereof and end on the expiration date of the operation term of Party B (\"Term of Cooperation\").",
+      "expected_chunk_id": "0ab2abf5-2623-4468-bdd2-559d4245c6d8",
+      "expected_document_title": "2014-EX-10-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "Party A and Party B agree and confirm that the term of cooperation under this Agreement shall commence from the execution date hereof and end on the expiration date of the operation term of Party B (\"Term of Cooperation\").",
+      "source_chunk_content": "Party A and Party B agree and confirm that the term of cooperation under this Agreement shall commence from the execution date hereof and end on the expiration date of the operation term of Party B (\"Term of Cooperation\").",
+      "benchmark": {
+        "query_uuid": "TUNIUCORP_03_06_2014-EX-10-COOPERATION AGREEMENT__Expiration Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Expiration Date"
+      }
+    },
+    {
+      "id": "q_36",
+      "question": "Highlight the parts (if any) of this contract related to \"Agreement Date\" that should be reviewed by a lawyer. Details: The date of the contract",
+      "expected_document_id": "572a616a-222c-4466-b83e-1a50780e9b6b",
+      "expected_answer_text": "day of , 2014",
+      "expected_chunk_id": "be58e1d4-6e7b-4274-9e25-9bc93fa2fef8",
+      "expected_document_title": "2014-EX-10.1-COOPERATION AGREEMENT",
+      "expected_answer_excerpt": "day of , 2014",
+      "source_chunk_content": "day of , 2014",
+      "benchmark": {
+        "query_uuid": "STWRESOURCESHOLDINGCORP_08_06_2014-EX-10.1-COOPERATION AGREEMENT__Agreement Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Agreement Date"
+      }
+    },
+    {
+      "id": "q_37",
+      "question": "Highlight the parts (if any) of this contract related to \"Audit Rights\" that should be reviewed by a lawyer. Details: Does a party have the right to  audit the books, records, or physical locations of the counterparty to ensure compliance with the contract?",
+      "expected_document_id": "56185ef0-26e3-41b3-a162-8ecfbc6b24b1",
+      "expected_answer_text": "Columbia or any other person appointed by Columbia shall have the right, in connection with any such audit, to inspect and obtain copies of any records or other documents and materials associated with or related to the manufacture of the Product.",
+      "expected_chunk_id": "746a8034-ad50-4a5a-a9c7-20d76869ee24",
+      "expected_document_title": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT",
+      "expected_answer_excerpt": "Columbia or any other person appointed by Columbia shall have the right, in connection with any such audit, to inspect and obtain copies of any records or other documents and materials associated with or related to the manufacture of the Product.",
+      "source_chunk_content": "Columbia or any other person appointed by Columbia shall have the right, in connection with any such audit, to inspect and obtain copies of any records or other documents and materials associated with or related to the manufacture of the Product.",
+      "benchmark": {
+        "query_uuid": "Columbia Laboratories, (Bermuda) Ltd. - AMEND NO. 2 TO MANUFACTURING AND SUPPLY AGREEMENT__Audit Rights",
+        "type": "extractive",
+        "source": "text",
+        "category": "Audit Rights"
+      }
+    },
+    {
+      "id": "q_38",
+      "question": "Highlight the parts (if any) of this contract related to \"License Grant\" that should be reviewed by a lawyer. Details: Does the contract contain a license granted by one party to its counterparty?",
+      "expected_document_id": "79059ca3-475b-465f-9b6b-0eaed98fb6cf",
+      "expected_answer_text": "Licensor on behalf of itself and its Affliates hereby grants to Licensee the limited licenses to use and have used the Licensed Mark: (i) for the Licensed Products as set forth on Schedule 2; and (ii) as set forth on Schedule 1, concerning agreements entered into by Licensee prior to the Effective Date (\"Existing Agreements\").",
+      "expected_chunk_id": "88a94ef0-15e5-4792-9bdc-ccc3456c3317",
+      "expected_document_title": "Trademark License Agreement",
+      "expected_answer_excerpt": "Licensor on behalf of itself and its Affliates hereby grants to Licensee the limited licenses to use and have used the Licensed Mark: (i) for the Licensed Products as set forth on Schedule 2; and (ii) as set forth on Schedule 1, concerning agreements entered into by Licensee prior to the Effective Date (\"Existing Agreements\").",
+      "source_chunk_content": "Licensor on behalf of itself and its Affliates hereby grants to Licensee the limited licenses to use and have used the Licensed Mark: (i) for the Licensed Products as set forth on Schedule 2; and (ii) as set forth on Schedule 1, concerning agreements entered into by Licensee prior to the Effective Date (\"Existing Agreements\").",
+      "benchmark": {
+        "query_uuid": "ArconicRolledProductsCorp_20191217_10-12B_EX-2.7_11923804_EX-2.7_Trademark License Agreement__License Grant",
+        "type": "extractive",
+        "source": "text",
+        "category": "License Grant"
+      }
+    },
+    {
+      "id": "q_39",
+      "question": "Highlight the parts (if any) of this contract related to \"Effective Date\" that should be reviewed by a lawyer. Details: The date when the contract is effective ",
+      "expected_document_id": "c67458e1-2c50-488b-9e25-d547e6349e3d",
+      "expected_answer_text": "The term of this Agreement for the Hosted Site shall commence upon April 1, 1999 and shall continue for a period of six (6) months, unless earlier terminated in accordance with provisions hereof.",
+      "expected_chunk_id": "e7d93e2d-6c19-4c7d-b2e6-bc403ad7a3a8",
+      "expected_document_title": "1999-EX-10.3-WEB SITE HOSTING AGREEMENT",
+      "expected_answer_excerpt": "The term of this Agreement for the Hosted Site shall commence upon April 1, 1999 and shall continue for a period of six (6) months, unless earlier terminated in accordance with provisions hereof.",
+      "source_chunk_content": "The term of this Agreement for the Hosted Site shall commence upon April 1, 1999 and shall continue for a period of six (6) months, unless earlier terminated in accordance with provisions hereof.",
+      "benchmark": {
+        "query_uuid": "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Effective Date",
+        "type": "extractive",
+        "source": "text",
+        "category": "Effective Date"
+      }
+    },
+    {
+      "id": "q_40",
+      "question": "Highlight the parts (if any) of this contract related to \"Competitive Restriction Exception\" that should be reviewed by a lawyer. Details: This category includes the exceptions or carveouts to Non-Compete, Exclusivity and No-Solicit of Customers above.",
+      "expected_document_id": "ae987400-25f4-4131-8380-de955819307f",
+      "expected_answer_text": "The      parties acknowledge that the foregoing will not prevent CNET from      displaying text links and other references to Competing Computer Products      Retailers as reasonably necessary to provide appropriate editorial and      search related services on the CNET Sites. The Retail Promotions granted to      the Company shall be placed in such a way as to provide no more or less      prominence to the Company than is provided to any other Competing Computer      Retailer signing an agreement with CNET.",
+      "expected_chunk_id": "41e98a0e-d203-488f-8225-42ba4f3c3ee1",
+      "expected_document_title": "1998-EX-10.13-PROMOTION AGREEMENT",
+      "expected_answer_excerpt": "The      parties acknowledge that the foregoing will not prevent CNET from      displaying text links and other references to Competing Computer Products      Retailers as reasonably necessary to provide appropriate editorial and      search related services on the CNET Sites. The Retail Promotions granted to      the Company shall be placed in such a way as to provide no more or less      prominence to the Company than is provided to any other Competing Computer      Retailer signing an agreement with CNET.",
+      "source_chunk_content": "The      parties acknowledge that the foregoing will not prevent CNET from      displaying text links and other references to Competing Computer Products      Retailers as reasonably necessary to provide appropriate editorial and      search related services on the CNET Sites. The Retail Promotions granted to      the Company shall be placed in such a way as to provide no more or less      prominence to the Company than is provided to any other Competing Computer      Retailer signing an agreement with CNET.",
+      "benchmark": {
+        "query_uuid": "CYBERIANOUTPOSTINC_07_09_1998-EX-10.13-PROMOTION AGREEMENT__Competitive Restriction Exception",
+        "type": "extractive",
+        "source": "text",
+        "category": "Competitive Restriction Exception"
+      }
+    }
+  ]
+}

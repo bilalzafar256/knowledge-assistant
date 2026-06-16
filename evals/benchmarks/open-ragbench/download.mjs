@@ -100,7 +100,7 @@ let missCount = 0;
 let failCount = 0;
 let cursor = 0;
 
-async function worker(id) {
+async function worker(_id) {
   while (true) {
     const i = cursor++;
     if (i >= paperIds.length) return;

@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/db-migrate.mjs",
@@ -18,7 +18,11 @@
     "eval:ragbench:ingest": "node evals/benchmarks/open-ragbench/ingest.mjs",
     "eval:ragbench:golden": "node evals/benchmarks/open-ragbench/import-golden.mjs",
     "eval:ragbench:run": "node evals/benchmarks/open-ragbench/run.mjs",
-    "eval:ragbench:report": "node evals/benchmarks/open-ragbench/report.mjs"
+    "eval:ragbench:report": "node evals/benchmarks/open-ragbench/report.mjs",
+    "eval:cuad:ingest": "node evals/benchmarks/cuad/ingest.mjs",
+    "eval:cuad:golden": "node evals/benchmarks/cuad/import-golden.mjs",
+    "eval:cuad:run": "node evals/benchmarks/cuad/run.mjs",
+    "eval:cuad:report": "node evals/benchmarks/open-ragbench/report.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.82",
@@ -76,6 +80,7 @@
     ]
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22.0.0",
     "@types/pdf-parse": "^1.1.5",

@@ -72,6 +72,7 @@ function aggregate(items) {
     count: items.length,
     recall: items.reduce((s, q) => s + (q.retrieval?.recall_at_k ?? 0), 0) / n,
     mrr: items.reduce((s, q) => s + (q.retrieval?.mrr_reranked ?? 0), 0) / n,
+    cp: items.reduce((s, q) => s + (q.retrieval?.context_precision ?? 0), 0) / n,
     faith: items.reduce((s, q) => s + (q.answer?.faithfulness ?? 0), 0) / n,
     corr: items.reduce((s, q) => s + (q.answer?.correctness ?? 0), 0) / n,
   };
@@ -83,8 +84,22 @@ const byType = [...group(withBench, (q) => q.benchmark?.type).entries()]
   .map(([k, xs]) => ({ key: k, ...aggregate(xs) }))
   .sort((a, b) => b.count - a.count);
 
+// ── Diagnostic: where correctness leaks (recall hit vs miss) ──────────────────
+// The single most actionable decomposition. Correctness has two independent
+// failure modes: (1) retrieval missed → the answer can't be right, and (2)
+// retrieval hit but the answer was still weak. Separating them tells us whether
+// to invest in retrieval or in the answer/chunk-quality step. Only meaningful
+// when answers were generated.
+const answered = withBench.filter((q) => q.answer != null);
+const recallHits = answered.filter((q) => (q.retrieval?.recall_at_k ?? 0) === 1);
+const recallMisses = answered.filter((q) => (q.retrieval?.recall_at_k ?? 0) === 0);
+// "Hit-but-weak": retrieval surfaced the right section yet correctness < 0.5.
+// With section-level recall matching, this is the signature of the fact-bearing
+// CHUNK not ranking — a chunking / chunk-context problem, not a noise problem.
+const WEAK_THRESHOLD = 0.5;
+const hitButWeak = recallHits.filter((q) => (q.answer?.correctness ?? 0) < WEAK_THRESHOLD);
+
 // ── Plain-language interpretation ─────────────────────────────────────────────
-const recallPct = s.recall_at_k_reranked * 100;
 const fabPct = s.faithfulness != null ? (1 - s.faithfulness) * 100 : null;
 const avgLatencyS = s.avg_latency_ms != null ? (s.avg_latency_ms / 1000).toFixed(1) : "—";
 const costPerQ = s.estimated_cost_usd != null
@@ -118,8 +133,6 @@ function tier(metric, value) {
 const verdicts = TIERS
   .filter((m) => s[m.key] != null)
   .map((m) => ({ ...m, value: s[m.key], ...tier(m, s[m.key]) }));
-const strongCount = verdicts.filter((v) => v.name === "Meets gate").length;
-const acceptableCount = verdicts.filter((v) => v.name === "Below gate (pilot)").length;
 const needsWorkCount = verdicts.filter((v) => v.name === "Needs work").length;
 // Launch decision is driven by HARD gates, not a tier tally: GA requires every
 // hard gate to meet its threshold; a hard gate below pilot floor blocks even beta.
@@ -179,17 +192,39 @@ if (fabPct != null) {
 lines.push(`- On average, the correct chunk ranks at position **${s.mrr_reranked > 0 ? (1 / s.mrr_reranked).toFixed(1) : "—"}**.`);
 lines.push("");
 
+// ── Diagnostic section: correctness decomposition ─────────────────────────────
+if (run.config.ranAnswers && answered.length > 0) {
+  const aHit = aggregate(recallHits);
+  const aMiss = aggregate(recallMisses);
+  lines.push("## Diagnostic: where correctness leaks");
+  lines.push("");
+  lines.push("Correctness fails in two independent ways. Splitting by whether retrieval found the right section tells us where to invest — retrieval vs the answer/chunk-quality step.");
+  lines.push("");
+  lines.push("| Slice | Count | Correctness | Faithfulness | Context prec. |");
+  lines.push("| --- | ---: | ---: | ---: | ---: |");
+  lines.push(`| Retrieval **hit** | ${aHit.count} | ${pct(aHit.corr)} | ${pct(aHit.faith)} | ${pct(aHit.cp)} |`);
+  lines.push(`| Retrieval **miss** | ${aMiss.count} | ${pct(aMiss.corr)} | ${pct(aMiss.faith)} | ${pct(aMiss.cp)} |`);
+  lines.push("");
+  const hitCorr = aggregate(hitButWeak);
+  lines.push(
+    `**Hit-but-weak:** ${hitButWeak.length} of ${recallHits.length} retrieval hits still scored correctness < ${WEAK_THRESHOLD} ` +
+      `(their context precision ${pct(hitCorr.cp)} vs all-hits ${pct(aHit.cp)}). ` +
+      `When these two precisions are close, noise is **not** the cause — with section-level recall matching, it points to the fact-bearing chunk not ranking (a chunking / chunk-context problem).`
+  );
+  lines.push("");
+}
+
 if (byModality.length > 0) {
   lines.push("## Where it shines, where it struggles");
   lines.push("");
   lines.push("### By modality");
   lines.push("Question stratified by what the question *requires*: text, a table, an image, or several.");
   lines.push("");
-  lines.push("| Modality | Count | Recall@k | MRR | Faith | Corr |");
-  lines.push("| --- | ---: | ---: | ---: | ---: | ---: |");
+  lines.push("| Modality | Count | Recall@k | MRR | Ctx prec. | Faith | Corr |");
+  lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: |");
   for (const r of byModality) {
     lines.push(
-      `| ${r.key} | ${r.count} | ${pct(r.recall)} | ${num(r.mrr, 3)} | ${pct(r.faith)} | ${pct(r.corr)} |`
+      `| ${r.key} | ${r.count} | ${pct(r.recall)} | ${num(r.mrr, 3)} | ${pct(r.cp)} | ${pct(r.faith)} | ${pct(r.corr)} |`
     );
   }
   lines.push("");
@@ -198,11 +233,11 @@ if (byModality.length > 0) {
   lines.push("- **extractive** — answer is a span of text from the source");
   lines.push("- **abstractive** — answer synthesises or paraphrases across the source");
   lines.push("");
-  lines.push("| Type | Count | Recall@k | MRR | Faith | Corr |");
-  lines.push("| --- | ---: | ---: | ---: | ---: | ---: |");
+  lines.push("| Type | Count | Recall@k | MRR | Ctx prec. | Faith | Corr |");
+  lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: |");
   for (const r of byType) {
     lines.push(
-      `| ${r.key} | ${r.count} | ${pct(r.recall)} | ${num(r.mrr, 3)} | ${pct(r.faith)} | ${pct(r.corr)} |`
+      `| ${r.key} | ${r.count} | ${pct(r.recall)} | ${num(r.mrr, 3)} | ${pct(r.cp)} | ${pct(r.faith)} | ${pct(r.corr)} |`
     );
   }
   lines.push("");

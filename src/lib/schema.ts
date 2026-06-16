@@ -97,6 +97,15 @@ export const documentChunks = pgTable(
       .references(() => documents.id, { onDelete: "cascade" }),
     userId: text("user_id").notNull(),
     content: text("content").notNull(),
+    /**
+     * Anthropic Contextual Retrieval: a ~100-token, Haiku-generated context
+     * snippet situating this chunk in its parent document. Prepended to `content`
+     * before embedding so the vector captures document context. NULL when
+     * contextualization was skipped or failed (then the raw `content` is embedded).
+     * The generated `content_tsv` column uses COALESCE(contextualized_content,
+     * content) so BM25 benefits too — see migration 0007 (raw SQL).
+     */
+    contextualizedContent: text("contextualized_content"),
     chunkIndex: integer("chunk_index").notNull(),
     embedding: vector("embedding", { dimensions: 1536 }),
     metadata: jsonb("metadata").$type<Record<string, unknown>>().default({}),

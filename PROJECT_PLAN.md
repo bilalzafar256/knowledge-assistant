@@ -65,14 +65,14 @@ drizzle/                               # Generated migration SQL (applied by scr
 |---|---|---|
 | `collections` | Document folders | `userId`, `name`, `color` |
 | `documents` | Uploaded doc text + metadata | `userId`, `collectionId` (FK, set null), `title`, `content`, `fileType`, `status` (`pending`/`processing`/`ready`/`failed`), `errorMessage` |
-| `document_chunks` | Vector chunks (N per document) | `documentId` (cascade), `userId` (denormalized), `content`, `chunkIndex`, `embedding vector(1536)`, plus generated `content_tsv` + GIN index (raw SQL) |
+| `document_chunks` | Vector chunks (N per document) | `documentId` (cascade), `userId` (denormalized), `content`, `contextualizedContent` (nullable — Contextual Retrieval), `chunkIndex`, `embedding vector(1536)`, plus generated `content_tsv` = `to_tsvector(COALESCE(contextualized_content, content))` + GIN index (raw SQL) |
 | `chat_sessions` | Conversation threads | `userId`, `title` (auto from first msg), `pinned`, `isShared`, `shareId` (unique), `totalCostUsd` (denormalized running LLM spend) |
 | `chat_messages` | Persisted history | `sessionId` (cascade), `userId`, `role` (`user`/`assistant`), `content`, `inputTokens`/`outputTokens`/`costUsd` (assistant turns only) |
 | `rag_settings` | Per-user chunking | `userId` (unique), `chunkSize` (500), `chunkOverlap` (50) |
 | `audit_logs` | Append-only action log | `userId`, `action`, `resourceType`, `resourceId`, `ipAddress`, `userAgent` |
 | `telegram_tasks` | Telegram-bot state machine | `chatId`, `status`, `kind`, `planMarkdown`, `branchName`, `diffSummary`, `prUrl`, `mainPrUrl`, `revisionNotes`, `telegramMessageIds` |
 
-The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated column + GIN index live in raw SQL migrations (`0000`, `0005`), not in `schema.ts`.
+The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated column + GIN index live in raw SQL migrations (`0000`, `0005`; `content_tsv` redefined in `0007` to index `COALESCE(contextualized_content, content)`), not in `schema.ts`.
 
 ### Migrations (`drizzle/`)
 
@@ -85,6 +85,7 @@ The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated colu
 | `0004_main_pr_url.sql` | `telegram_tasks.main_pr_url` |
 | `0005_hybrid_search.sql` | `content_tsv` generated column + GIN index for lexical search |
 | `0006_absent_typhoid_mary.sql` | Cost tracking: `chat_messages.input_tokens/output_tokens/cost_usd` + `chat_sessions.total_cost_usd` |
+| `0007_mighty_king_bedlam.sql` | Contextual Retrieval: `document_chunks.contextualized_content` + redefine `content_tsv` to `COALESCE(contextualized_content, content)` |
 
 `scripts/db-migrate.mjs` applies every file in order; `scripts/db-baseline.mjs` is a brownfield helper that registers existing files without re-running (do not use on a fresh DB).
 
@@ -139,7 +140,7 @@ The pgvector `ivfflat` index on `embedding` and the `content_tsv` generated colu
 | `audit.ts` | `logAudit()` — fire-and-forget insert into `audit_logs` |
 | `inngest.ts` | Inngest client + `document/uploaded` event type |
 | `file-parser.ts` | `extractText()` for PDF (pdf-parse), DOC/DOCX (mammoth), XLS/XLSX (xlsx), JPG/PNG (claude-sonnet-4-6 vision), text/md/json; accepted types + 50 MB cap |
-| `utils.ts` | `cn`, `formatFileSize`, `timeAgo`, `truncate`, `sanitizeText`, `chunkText` (word-window, ~4 chars/token) |
+| `utils.ts` | `cn`, `formatFileSize`, `timeAgo`, `truncate`, `sanitizeText`, `chunkText` (structure-aware: sentence-boundary packing + whole-sentence overlap, ~4 chars/token) |
 | `axiom/` | `axiom.ts` (client), `server.ts` (`logger` + `withAxiom`), `otel.ts` (tracer → OTLP) |
 
 ---
@@ -159,8 +160,11 @@ Inngest: ingest-document (retries: 3)  [src/inngest/ingest-document.ts]
   ├─ ingestDocument()              [src/app/workflows/ingest.ts]
   │    ├─ fetch document (scoped by userId)
   │    ├─ load per-user rag_settings (chunkSize / chunkOverlap)
-  │    ├─ sanitizeText() → chunkText()
-  │    ├─ generateEmbedding() × N  (batched 20, parallel within batch)
+  │    ├─ sanitizeText() → chunkText()   (structure-aware: packs whole sentences, never splits mid-sentence)
+  │    ├─ generateChunkContext() × N     (Anthropic Contextual Retrieval — claude-haiku-4-5 writes a
+  │    │                                   ~100-tok context per chunk; doc block prompt-cached, warm on chunk 0;
+  │    │                                   stored in contextualized_content, graceful-null on failure)
+  │    ├─ generateEmbedding() × N  (batched 20; embeds contextualized_content ?? content)
   │    ├─ delete existing chunks   (idempotent re-index)
   │    └─ insert chunks + embeddings (batched 50)
   └─ status → ready  (or failed + errorMessage; re-throws so Inngest retries)
@@ -209,7 +213,9 @@ evals/
 
 **Metrics** — retrieval: Recall@k (reranked + candidate pool + pure-vector diagnostic), MRR, context precision. Answer: faithfulness, correctness, citation accuracy, latency, token cost. Auto-broken-down by modality (`text`/`text-image`/`text-table`/`text-table-image`) and type (`extractive`/`abstractive`).
 
-**Ground-truth matching** — the chunker tags each chunk's `metadata.section_id` at ingest; a retrieval hit is scored when any retrieved chunk's `(documentId, section_id)` matches the expected pair.
+**Ground-truth matching** — the chunker tags each chunk's `metadata.section_id` at ingest; a retrieval hit is scored when any retrieved chunk's `(documentId, section_id)` matches the expected pair. `run.mjs` also supports an `expected_chunk_id` match (used by golden sets without section ids, e.g. CUAD).
+
+**Contextual Retrieval note** — the eval ingesters mirror production: each chunk is contextualized (Haiku, prompt-cached) and the embedded/BM25-indexed text is `contextualized_content`, while the answer model still reads the original `content`. A June 2026 controlled ablation found **multi-query expansion + an adaptive rerank floor net-negative on answer correctness** (they lift recall but pull off-target chunks into answers) → both reverted; contextual retrieval + structure-aware chunking kept. Full write-up in `docs/GO_LIVE_READINESS.md`.
 
 **Isolation** — benchmark docs live under `OPEN_RAGBENCH_USER_ID` (default `user_open_ragbench_eval`) so they don't mix with other corpora. Note this is *logical* (tenant) isolation only: the harness writes to the same `DATABASE_URL` as the app. The full corpus is ~440 MB (37k+ chunks × `vector(1536)` embeddings) and **will exceed Neon's 512 MB free-tier limit**, causing live uploads to 500 with `could not extend file because project size limit ... exceeded`. Run evals against a throwaway Neon branch, or tear the tenant down afterward:
 
@@ -226,6 +232,21 @@ pnpm eval:ragbench:golden -- --sample 2000
 pnpm eval:ragbench:run -- --label baseline
 pnpm eval:ragbench:report
 ```
+
+### Second domain — CUAD (enterprise contracts)
+
+The GA gate requires ≥2 domains. **CUAD** (Contract Understanding Atticus Dataset, CC-BY 4.0) is the enterprise cross-check — 510 commercial contracts with expert clause-extraction Q&A, far more *extractive* than adversarial arXiv. Adapters under `evals/benchmarks/cuad/` (`ingest.mjs` · `import-golden.mjs` · `run.mjs`) mirror the production pipeline into an isolated `user_cuad_eval` tenant; the golden importer locates each answer span's chunk → `expected_chunk_id`. Data (`data.zip`, ~18 MB) is fetched from the public Atticus GitHub mirror (no HF token needed) and gitignored.
+
+```
+pnpm eval:cuad:ingest -- --limit 100      # ingest contracts (contextual retrieval)
+pnpm eval:cuad:golden -- --sample 100     # stratified by clause category
+pnpm eval:cuad:run -- --label cuad-xcheck --scope-doc --concurrency 4
+pnpm eval:cuad:report -- --run evals/benchmarks/cuad/runs/<file>.json
+```
+
+`--scope-doc` (a `run.mjs` flag) scopes retrieval to each question's own document — the realistic single-contract scenario. Without it, CUAD recall collapses (~35%) because every contract in the corpus has the same clause types; with it, recall@5 90% / faithfulness 97% / citation 100% / correctness 76.5% (n=40, Haiku rerank fallback). This is the **enterprise correctness gate** — far above the adversarial arXiv ceiling.
+
+Cleanup: `DELETE FROM documents WHERE user_id='user_cuad_eval';`
 
 ---
 

@@ -1,0 +1,185 @@
+{
+  "label": "judgefix-smoke3",
+  "startedAt": "2026-06-10T21:16:25.976Z",
+  "finishedAt": "2026-06-10T21:17:17.708Z",
+  "durationSec": 52,
+  "config": {
+    "userId": "user_open_ragbench_eval",
+    "chatModel": "claude-sonnet-4-6",
+    "embeddingModel": "gemini-embedding-001",
+    "judgeModel": "gemini-2.5-flash",
+    "topK": 5,
+    "concurrency": 1,
+    "ranAnswers": true
+  },
+  "goldenSet": {
+    "generatedAt": "2026-06-10T21:16:25.799Z",
+    "count": 3
+  },
+  "summary": {
+    "questions_total": 3,
+    "questions_evaluated": 3,
+    "recall_at_k_reranked": 1,
+    "recall_vector_at_5": 1,
+    "recall_vector_at_10": 1,
+    "recall_pure_vector_at_5": 1,
+    "recall_pure_vector_at_10": 1,
+    "mrr_reranked": 0.75,
+    "mrr_vector": 0.8333333333333334,
+    "mrr_pure_vector": 0.7777777777777778,
+    "context_precision": 0.3333333333333333,
+    "faithfulness": 1,
+    "correctness": 1,
+    "citation": 1,
+    "avg_latency_ms": 12849,
+    "total_input_tokens": 8161,
+    "total_output_tokens": 1130,
+    "estimated_cost_usd": 0.041433
+  },
+  "perQuestion": [
+    {
+      "id": "q_1",
+      "question": "Why is there a spike at zero novelty in generated scaffolds?",
+      "expected_document_title": "GP-MoLFormer: A Foundation Model For Molecular Generation",
+      "benchmark": {
+        "query_uuid": "c7b59282-1a57-48c4-94eb-376bac609ad4",
+        "paper_id": "2405.04912v2",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is there a spike at zero novelty in generated scaffolds?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "GP-MoLFormer: A Foundation Model For Molecular Generation",
+          "GP-MoLFormer: A Foundation Model For Molecular Generation",
+          "GP-MoLFormer: A Foundation Model For Molecular Generation",
+          "GP-MoLFormer: A Foundation Model For Molecular Generation",
+          "GP-MoLFormer: A Foundation Model For Molecular Generation"
+        ]
+      },
+      "answer": {
+        "text": "Based on the **GP-MoLFormer: A Foundation Model For Molecular Generation** document, the spike at zero novelty in generated scaffolds has a straightforward explanation:\n\n> *\"While many of the generated scaffolds are present in the training set (indicated by a spike at novelty = 0), we note that there are many novel scaffolds in the generated molecules as well.\"*\n\nIn other words, **the spike at novelty = 0 means those generated scaffolds are exact matches to scaffolds already seen in the training set** — they are not novel relative to the training data.\n\n### Key context:\n- The analysis compared ~**2.2M scaffolds** extracted from GP-MoLFormer-generated molecules against ~**1M scaffolds** from the training set.\n- Novelty is measured as similarity to the *most similar scaffold in the training set*, so a value of 0 indicates the scaffold was already present in training.\n- The document notes this behavior is **similar to CogMol**, another generative model trained on a much smaller dataset, suggesting this is a common characteristic of molecular generative models rather than a unique flaw.\n- Despite the spike, the distribution also shows **many novel scaffolds** being generated beyond those already in the training set.",
+        "faithfulness": 1,
+        "faithfulness_note": "Every factual claim in the answer is directly supported by the provided context, particularly [1].",
+        "correctness": 1,
+        "correctness_note": "The answer correctly and comprehensively explains why there is a spike at zero novelty in generated scaffolds, directly using information from the reference. It accurately states that the spike indicates generated scaffolds are identical or very similar to those in the training set, and provides additional relevant context from the reference.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2972,
+        "output_tokens": 282,
+        "latency_ms": 10928,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 15268
+    },
+    {
+      "id": "q_2",
+      "question": "Why is an extensive collection of building blocks necessary for synthetic accessibility?",
+      "expected_document_title": "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+      "benchmark": {
+        "query_uuid": "a596fd52-73ac-4801-be78-0c22a9d15e1f",
+        "paper_id": "2405.01155v3",
+        "type": "abstractive",
+        "source": "text-image"
+      },
+      "retrieval": {
+        "synthesized_query": "Why is an extensive collection of building blocks necessary for synthetic accessibility?",
+        "reranked_rank": 0,
+        "vector_rank": 0,
+        "pure_vector_rank": 0,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 1,
+        "mrr_vector": 1,
+        "mrr_pure_vector": 1,
+        "context_precision": 0.2,
+        "context_precision_note": "1/5 relevant",
+        "reranked_titles": [
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints",
+          "SynFlowNet: Design of Diverse and Novel Molecules with Synthesis\n  Constraints"
+        ]
+      },
+      "answer": {
+        "text": "Based on the retrieved document **\"SynFlowNet: Design of Diverse and Novel Molecules with Synthesis Constraints\"**, here is why an extensive collection of building blocks is necessary for synthetic accessibility:\n\n## Why an Extensive Building Block Collection is Necessary\n\nThe core reason is directly stated in the document:\n\n> *\"To ensure synthetic accessibility of all samples, our model is inherently constrained by the initial set of available building blocks (BBs). To cover a large chemical space, it is thus crucial to use an extensive BB collection.\"*\n\nIn other words, since the model can **only generate molecules that are constructable from its available building blocks**, the breadth of that collection directly determines the breadth of synthesizable chemical space the model can explore.\n\n### Key Supporting Points\n\n- **State space scales with building block count:** The document shows that the size of the explorable state space increases rapidly with the number of building blocks. For example, using `L=3` (maximum trajectory length of 3) and **10,000 building blocks**, SynFlowNet matches the size of the Enamine REAL space — a large commercially available library of synthesizable compounds.\n- **Full building block set = 221,181 molecules:** The complete BB set used in the study contains this many molecules, enabling broad chemical space coverage.\n- **Reaction-constrained models limit exploration:** The document notes that \"reaction-constrained models considerably limit the exploration of the chemical space,\" making it even more important to compensate with a large and diverse BB collection.\n- **Scalability is required:** Because of this necessity, the model must \"demonstrate scalability to accommodate larger sets of BBs, both in terms of training efficiency and overall performance.\"\n\n### In Summary\n\nWithout a large BB collection, the model's synthetic accessibility constraint becomes a bottleneck — it can only produce a narrow slice of chemical space. An extensive BB collection is what allows the model to remain both **synthesizable** (every generated molecule can be made from real reagents) and **chemically diverse** (covering a wide range of molecular structures).",
+        "faithfulness": 1,
+        "faithfulness_note": "Every factual claim in the answer is directly supported by the provided context. The answer accurately extracts and synthesizes information from the document to explain why an extensive collection of building blocks is necessary for synthetic accessibility.",
+        "correctness": 1,
+        "correctness_note": "The answer correctly addresses the question using information consistent with the reference. It directly quotes the core reason and elaborates on it with supporting points from the document, explaining why an extensive collection is crucial for covering a large chemical space and ensuring synthetic accessibility.",
+        "citation": 1,
+        "citation_note": "8/8 title tokens matched",
+        "input_tokens": 2734,
+        "output_tokens": 450,
+        "latency_ms": 15327,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 19798
+    },
+    {
+      "id": "q_3",
+      "question": "Do larger and more productive firms utilize import knowledge from peers more effectively?",
+      "expected_document_title": "Learning to Import through Production Networks",
+      "benchmark": {
+        "query_uuid": "80ad77c4-e6a9-4e4d-81e2-d933080eabcf",
+        "paper_id": "2405.13422v2",
+        "type": "extractive",
+        "source": "text"
+      },
+      "retrieval": {
+        "synthesized_query": "Do larger and more productive firms utilize import knowledge from peers more effectively?",
+        "reranked_rank": 3,
+        "vector_rank": 1,
+        "pure_vector_rank": 2,
+        "recall_at_k": 1,
+        "recall_vector_at_5": 1,
+        "recall_vector_at_10": 1,
+        "recall_pure_vector_at_5": 1,
+        "recall_pure_vector_at_10": 1,
+        "mrr_reranked": 0.25,
+        "mrr_vector": 0.5,
+        "mrr_pure_vector": 0.3333333333333333,
+        "context_precision": 0.6,
+        "context_precision_note": "3/5 relevant",
+        "reranked_titles": [
+          "Learning to Import through Production Networks",
+          "Learning to Import through Production Networks",
+          "Learning to Import through Production Networks",
+          "Learning to Import through Production Networks",
+          "Learning to Import through Production Networks"
+        ]
+      },
+      "answer": {
+        "text": "Yes, based on the document **\"Learning to Import through Production Networks\"**, the answer is clearly **yes** — larger and more productive firms do utilize import knowledge from peers more effectively. Here are the key findings:\n\n---\n\n## Larger & More Productive Firms and Import Knowledge Spillovers\n\n### ✅ Better Absorption of Import Knowledge\n> *\"We find evidence that larger and more productive firms absorb and utilize import-relevant information better.\"*\n\nHigh-performance firms (defined as large, well-connected, or highly productive) **benefit relatively more from import spillovers** compared to their smaller or less productive counterparts.\n\n---\n\n### ❌ Less Effective at Disseminating Knowledge\nInterestingly, the same firms that are better at absorbing knowledge are **less effective at spreading it**:\n> *\"They are, strategically or not, less effective in disseminating the information.\"*\n\n---\n\n### ⚠️ Spillovers Weak When High-Performance Firms Link to Low-Performance Peers\nThe research also reveals an important nuance:\n> *\"Spillovers are particularly weak — or even absent — when high-performance firms are linked to low-performance importing peers.\"*\n\nThis is attributed to potential **mismatches in input quality needs** — information from low-performance suppliers may simply be less relevant or useful to high-performance firms.\n\n---\n\n### 📌 Additional Context\n- Spillover effects are found to be significant primarily for **origin-specific import knowledge**, not for non-origin-specific importing.\n- The results are interpreted as potentially reflecting **economies of scale in learning how to import or in implementing it**.\n\n---\n\nIn summary, firm size and productivity are significant moderators of how effectively import knowledge from peers is absorbed and leveraged.",
+        "faithfulness": 1,
+        "faithfulness_note": "Every factual claim in the answer is supported by the context.",
+        "correctness": 1,
+        "correctness_note": "The answer directly addresses the question and provides a 'Yes' based on the reference. It then elaborates on the findings from the document, which are consistent with the reference's 'Yes' and provide additional context and nuances that support the initial affirmative answer. The structure and content accurately reflect the information provided in the implied source material.",
+        "citation": 1,
+        "citation_note": "full title match",
+        "input_tokens": 2455,
+        "output_tokens": 398,
+        "latency_ms": 12293,
+        "steps_used": 2
+      },
+      "eval_latency_ms": 16663
+    }
+  ]
+}

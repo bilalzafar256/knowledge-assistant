@@ -46,7 +46,7 @@ const MAX_STEPS = 5;
  * latency. `allRetrieved` is populated by the tool's execute closure so the
  * caller can compute recall over everything the model actually saw.
  */
-export async function runChat({ userId, userQuery }) {
+export async function runChat({ userId, userQuery, documentId = null }) {
   const t0 = Date.now();
   const allRetrieved = [];
 
@@ -61,14 +61,15 @@ export async function runChat({ userId, userQuery }) {
         .describe(
           "The user's question or topic to search for. Include all relevant context from the conversation."
         ),
-      limit: z.number().min(1).max(10).default(3),
+      limit: z.number().min(1).max(10).default(5),
     }),
     execute: async ({ query, limit }) => {
       const result = await searchKnowledge({
         query,
         userId,
         priorMessages: [],
-        limit: limit ?? 3,
+        limit: limit ?? 5,
+        documentId,
       });
       allRetrieved.push({ step: allRetrieved.length, ...result });
       if (result.rerankedTopK.length === 0) {

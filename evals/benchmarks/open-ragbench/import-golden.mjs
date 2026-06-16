@@ -120,7 +120,7 @@ if (SAMPLE && SAMPLE < enriched.length) {
     buckets.get(e.source).push(e);
   }
   sampled = [];
-  for (const [source, items] of buckets) {
+  for (const [, items] of buckets) {
     shuffle(items);
     const take = Math.max(1, Math.round((items.length / enriched.length) * SAMPLE));
     sampled.push(...items.slice(0, take));
