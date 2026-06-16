@@ -1,0 +1,38 @@
+{
+  "company": "Northwind Industries",
+  "catalog_year": 2026,
+  "products": [
+    {
+      "sku": "NW-SENSOR-100",
+      "name": "Northwind TempSense 100",
+      "category": "Industrial Sensors",
+      "price_usd": 249.0,
+      "operating_range_celsius": [-40, 125],
+      "accuracy_celsius": 0.2,
+      "warranty_years": 3,
+      "connectivity": ["Modbus", "4-20mA"]
+    },
+    {
+      "sku": "NW-GATEWAY-220",
+      "name": "Northwind EdgeGateway 220",
+      "category": "Connectivity",
+      "price_usd": 1180.0,
+      "max_devices": 256,
+      "ports": { "ethernet": 2, "rs485": 4 },
+      "power_watts": 18,
+      "warranty_years": 5
+    },
+    {
+      "sku": "NW-PANEL-50",
+      "name": "Northwind ControlPanel 50",
+      "category": "HMI",
+      "price_usd": 3450.0,
+      "display_inches": 10.1,
+      "resolution": "1280x800",
+      "ip_rating": "IP65",
+      "warranty_years": 2
+    }
+  ],
+  "support_email": "support@northwind.example",
+  "bulk_discount": { "threshold_units": 50, "discount_percent": 12 }
+}

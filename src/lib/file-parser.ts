@@ -105,8 +105,28 @@ async function extractPdf(buffer: Buffer): Promise<string> {
 // ── Word (DOC / DOCX) ────────────────────────────────────────────────────────
 
 async function extractWord(buffer: Buffer): Promise<string> {
+  // mammoth only reads Office Open XML (.docx — a ZIP, magic "PK\x03\x04").
+  // Legacy binary .doc is an OLE2 compound file (magic D0 CF 11 E0) and makes
+  // mammoth throw an opaque error. Detect it up front and explain the fix.
+  const isOle2 =
+    buffer.length >= 8 &&
+    buffer[0] === 0xd0 &&
+    buffer[1] === 0xcf &&
+    buffer[2] === 0x11 &&
+    buffer[3] === 0xe0;
+  if (isOle2) {
+    throw new Error(
+      "Legacy .doc files aren't supported. Please re-save as .docx (Word → Save As → Word Document) and upload again."
+    );
+  }
+
   const mammoth = await import("mammoth");
-  const result = await mammoth.extractRawText({ buffer });
+  let result;
+  try {
+    result = await mammoth.extractRawText({ buffer });
+  } catch {
+    throw new Error("Could not read this Word document. Please re-save it as .docx and try again.");
+  }
   const text = result.value.trim();
   if (!text) throw new Error("No text found in Word document.");
   return text;

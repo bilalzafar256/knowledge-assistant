@@ -1,7 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { tool, embed, generateText } from "ai";
+import { tool, embed, embedMany, generateText } from "ai";
 import { z } from "zod";
 import { env } from "./env";
 import { logger } from "./axiom/server";
@@ -93,6 +93,38 @@ export async function generateEmbedding(
   });
   onUsage?.(usage?.tokens ?? 0);
   return embedding;
+}
+
+/**
+ * Embeds a batch of texts in a SINGLE Gemini request via `embedMany`.
+ *
+ * This is the ingestion path and is deliberately different from the per-query
+ * `generateEmbedding` above:
+ *  - **Batched**: one HTTP request per ~20 chunks instead of one per chunk. On
+ *    Gemini's free-tier embedding quota (low requests/min), embedding chunks
+ *    individually slams the rate limit ~20× faster and stalls ingestion.
+ *  - **Retried** (`maxRetries: 5`): ingestion is a background job, so transient
+ *    429/503s should back off and retry rather than fail the whole document —
+ *    the opposite trade-off from the query hot path, which fails fast.
+ *
+ * Mirrors the eval harness `embedBatch` (evals/lib/ai.mjs) so app ingestion and
+ * benchmark ingestion produce identical vectors (CLAUDE.md parity rule).
+ */
+export async function generateEmbeddings(
+  texts: string[],
+  taskType: "RETRIEVAL_QUERY" | "RETRIEVAL_DOCUMENT" = "RETRIEVAL_DOCUMENT",
+  onUsage?: (tokens: number) => void
+): Promise<number[][]> {
+  const { embeddings, usage } = await embedMany({
+    model: google.embeddingModel(EMBEDDING_MODEL),
+    values: texts.map((t) => t.replace(/\n/g, " ")),
+    maxRetries: 5,
+    providerOptions: {
+      google: { outputDimensionality: EMBEDDING_DIMENSIONS, taskType },
+    },
+  });
+  onUsage?.(usage?.tokens ?? 0);
+  return embeddings;
 }
 
 // ── Contextual Retrieval (ingestion) ─────────────────────────────────────────

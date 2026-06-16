@@ -15,7 +15,7 @@
 import { db } from "@/lib/db";
 import { documents, documentChunks, ragSettings } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
-import { generateEmbedding, generateChunkContext } from "@/lib/ai";
+import { generateEmbeddings, generateChunkContext } from "@/lib/ai";
 import { logger } from "@/lib/axiom/server";
 import { chunkText, sanitizeText } from "@/lib/utils";
 import type { NewDocumentChunk } from "@/lib/schema";
@@ -150,33 +150,30 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   });
 
   // ── Step 4: Generate embeddings in batches ─────────────────────────────────
-  // Embed the contextualized text when available, else the raw chunk.
+  // Embed the contextualized text when available, else the raw chunk. Each batch
+  // is ONE Gemini request (embedMany) instead of one-request-per-chunk, so we
+  // stay well under the free-tier embedding rate limit; batches run sequentially
+  // and retry transient 429s (see generateEmbeddings). This mirrors the eval
+  // ingester so app and benchmark vectors match (CLAUDE.md parity rule).
   const allEmbeddings: Array<{ index: number; embedding: number[] }> = [];
 
   for (let batchStart = 0; batchStart < rawChunks.length; batchStart += EMBEDDING_BATCH_SIZE) {
     const batchEnd = Math.min(batchStart + EMBEDDING_BATCH_SIZE, rawChunks.length);
-    const batch = rawChunks.slice(batchStart, batchEnd);
+    const batchTexts = rawChunks
+      .slice(batchStart, batchEnd)
+      .map((chunk, idx) => contextualizedChunks[batchStart + idx] ?? chunk);
 
     logger.info("ingest.embedding_batch", {
       documentId,
       batchStart,
       batchEnd,
-      batchSize: batch.length,
+      batchSize: batchTexts.length,
     });
 
-    // Generate embeddings in parallel within the batch
-    const batchEmbeddings = await Promise.all(
-      batch.map(async (chunk, idx) => {
-        const index = batchStart + idx;
-        const embedding = await generateEmbedding(
-          contextualizedChunks[index] ?? chunk,
-          "RETRIEVAL_DOCUMENT"
-        );
-        return { index, embedding };
-      })
-    );
-
-    allEmbeddings.push(...batchEmbeddings);
+    const batchEmbeddings = await generateEmbeddings(batchTexts, "RETRIEVAL_DOCUMENT");
+    batchEmbeddings.forEach((embedding, idx) => {
+      allEmbeddings.push({ index: batchStart + idx, embedding });
+    });
   }
 
   logger.info("ingest.embeddings_complete", {

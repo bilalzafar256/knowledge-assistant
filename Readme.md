@@ -36,7 +36,7 @@ The Knowledge Assistant lets a team upload its internal documents and query them
 - **Grounded RAG chat** — streams cited answers; the system prompt forbids inventing numbers, dates, or names not present in retrieved chunks.
 - **Hybrid retrieval** — pgvector cosine + Postgres full-text (BM25-style) fused with Reciprocal Rank Fusion, then reranked.
 - **Conversation-aware search** — follow-up questions are rewritten into standalone queries using chat history.
-- **Multi-format ingestion** — PDF, DOC/DOCX, XLS/XLSX, JPG/PNG (OCR via Claude Sonnet vision), TXT, MD, JSON (up to 50 MB).
+- **Multi-format ingestion** — PDF, DOCX (legacy `.doc` → re-save as `.docx`), XLS/XLSX, JPG/PNG (OCR via Claude Sonnet vision), TXT, MD, JSON (up to 50 MB). Every format is extracted to text, then run through one shared pipeline (chunk → contextualize → embed → index), so retrieval quality is identical regardless of source format.
 - **Chat sessions** — multiple threads with full history, auto-titling, pin, inline rename, and public read-only share links.
 - **Cost tracking** — every query's full-pipeline LLM spend (synthesis + embedding + rerank + answer) is priced, persisted per message, and shown as a live per-session total in chat plus total/top-spender breakdowns on the dashboard.
 - **Collections** — group documents into folders.
