@@ -1,16 +1,13 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+// Next.js 16 ships eslint-config-next as native flat-config arrays, so they are
+// spread directly here. (The previous FlatCompat wrapper is incompatible with
+// Next 16 — it threw a circular-structure error during config validation, and
+// `next lint` was removed, so the lint script now invokes the ESLint CLI.)
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...coreWebVitals,
+  ...typescript,
   {
     rules: {
       // Enforce explicit return types on exported functions
@@ -25,6 +22,17 @@ const eslintConfig = [
       // Ensure consistent imports
       "import/no-duplicates": "warn",
     },
+  },
+  {
+    // Generated / vendored / data paths that should never be linted.
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "drizzle/**",
+      "evals/benchmarks/**/data/**",
+      "evals/benchmarks/**/runs/**",
+      "next-env.d.ts",
+    ],
   },
 ];
 

@@ -95,6 +95,88 @@ export async function generateEmbedding(
   return embedding;
 }
 
+// ── Contextual Retrieval (ingestion) ─────────────────────────────────────────
+
+// Anthropic's Contextual Retrieval: before embedding a chunk, generate a short
+// snippet situating it in its parent document, prepend it to the chunk, and
+// embed/index the combined text. Measured to cut retrieval-failure ~35% (≈49%
+// with reranking). Cost is controlled with prompt caching on the document block.
+// https://www.anthropic.com/news/contextual-retrieval
+
+const CONTEXT_MODEL = SYNTHESIS_MODEL; // claude-haiku-4-5 — cheap, fast, cacheable
+
+// Cap the document we put in the (cached) context block so an oversized upload
+// can't blow the model context window. ~100k chars ≈ 25k tokens, well within
+// Haiku's window and far above the ~4k-token cache minimum.
+const MAX_DOC_CONTEXT_CHARS = 100_000;
+
+const CHUNK_CONTEXT_PROMPT = (chunk: string) =>
+  `Here is the chunk we want to situate within the whole document:\n` +
+  `<chunk>\n${chunk}\n</chunk>\n\n` +
+  `Please give a short, succinct context to situate this chunk within the overall ` +
+  `document for the purposes of improving search retrieval of the chunk. Answer only ` +
+  `with the succinct context and nothing else.`;
+
+export type CacheMeta = { cacheReadTokens: number; cacheCreationTokens: number };
+
+/**
+ * Generates a ~100-token context snippet for `chunk` situated in `documentText`.
+ *
+ * The full document is sent as a separate, **prompt-cached** content part
+ * (`cacheControl: ephemeral`), so every subsequent chunk of the same document
+ * reads it from cache (~90% cheaper) within the 5-minute TTL. The caller should
+ * process the first chunk before fanning out the rest, so the cache is warm.
+ *
+ * Returns the context string, or `null` on any error / empty output — the caller
+ * then embeds the raw chunk (graceful degradation; ingestion must never fail
+ * because contextualization did).
+ */
+export async function generateChunkContext(
+  documentText: string,
+  chunk: string,
+  onCacheMeta?: (m: CacheMeta) => void
+): Promise<string | null> {
+  try {
+    const doc = documentText.slice(0, MAX_DOC_CONTEXT_CHARS);
+    const { text, usage, providerMetadata } = await generateText({
+      model: anthropic(CONTEXT_MODEL),
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `<document>\n${doc}\n</document>`,
+              providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
+            },
+            { type: "text", text: CHUNK_CONTEXT_PROMPT(chunk) },
+          ],
+        },
+      ],
+      maxOutputTokens: 200,
+      temperature: 0,
+    });
+
+    // Cache-read tokens are surfaced on the normalized AI SDK usage
+    // (`cachedInputTokens`); cache-creation is on the Anthropic provider metadata.
+    const meta = providerMetadata?.anthropic as
+      | { cacheCreationInputTokens?: number }
+      | undefined;
+    onCacheMeta?.({
+      cacheReadTokens: usage?.cachedInputTokens ?? 0,
+      cacheCreationTokens: meta?.cacheCreationInputTokens ?? 0,
+    });
+
+    const ctx = text.trim();
+    return ctx.length > 0 ? ctx : null;
+  } catch (error) {
+    logger.warn("ingest.contextualize_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
 // ── Conversation-aware query synthesis ───────────────────────────────────────
 
 export type ConversationMessage = { role: "user" | "assistant"; content: string };
@@ -110,6 +192,11 @@ export type ConversationMessage = { role: "user" | "assistant"; content: string 
  *
  * Uses Claude Haiku for speed and cost efficiency.
  * Falls back to the original query on any error.
+ *
+ * NOTE: a multi-query expansion variant of this was trialled (June 2026) and
+ * measured net-NEGATIVE on answer correctness/faithfulness in a controlled
+ * ablation (it lifted recall but pulled off-target chunks into the answer), so
+ * it was reverted to this single-query form. See docs/GO_LIVE_READINESS.md.
  */
 async function synthesizeSearchQuery(
   latestQuery: string,
@@ -172,6 +259,11 @@ const COHERE_RERANK_MODEL = "rerank-v3.5";
  *
  * On any error (network, rate limit, malformed response), falls back to
  * the original vector order so the main chat flow never breaks.
+ *
+ * NOTE: an adaptive relevance-floor (drop low-scoring tail chunks) was trialled
+ * (June 2026) alongside multi-query and measured net-negative on answer
+ * correctness in a controlled ablation, so it was reverted. See
+ * docs/GO_LIVE_READINESS.md.
  */
 async function rerankChunks(
   query: string,
@@ -253,7 +345,7 @@ async function llmRerank(
         `Output ONLY a JSON object: {"scores":[n,n,...]} with one number per chunk.\n\n` +
         `Query: ${query}\n\n` +
         `Chunks:\n${chunkList}`,
-      maxOutputTokens: 80,
+      maxOutputTokens: 120,
       temperature: 0,
     });
 
@@ -311,9 +403,11 @@ export function createSearchKnowledgeTool(
         .number()
         .min(1)
         .max(10)
-        .default(3)
+        .default(5)
         .describe(
-          "Number of relevant chunks to retrieve (default: 3). Use a small number; the reranker has already filtered for relevance."
+          "Maximum number of relevant chunks to retrieve (default: 5). The reranker " +
+          "trims to only the relevant ones, so prefer 5 for synthesis/multi-fact " +
+          "questions; a smaller number is rarely necessary."
         ),
     }),
     execute: async ({ query, limit }: { query: string; limit: number }) => {

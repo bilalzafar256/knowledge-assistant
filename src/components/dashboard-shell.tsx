@@ -15,8 +15,11 @@ export function DashboardShell({
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Auto-close drawer on navigation
+  // Auto-close the mobile drawer whenever the route changes. This is a genuine
+  // synchronization of UI state to an external system (the router), so the
+  // synchronous setState here is intentional.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);
   }, [pathname]);
 

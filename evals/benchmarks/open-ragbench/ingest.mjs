@@ -20,7 +20,7 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { sql } from "../../lib/db.mjs";
-import { embedBatch } from "../../lib/ai.mjs";
+import { embedBatch, generateChunkContext } from "../../lib/ai.mjs";
 import { OPEN_RAGBENCH_USER_ID, EMBEDDING_MODEL } from "../../lib/env.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
@@ -39,6 +39,7 @@ const RESET = flag("reset");
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 50;
 const EMBED_BATCH = 20;
+const CONTEXT_BATCH = 20;
 const INSERT_BATCH = 50;
 const USER_ID = OPEN_RAGBENCH_USER_ID;
 
@@ -56,20 +57,64 @@ if (RESET) {
   console.log(`  removed ${r.length} documents`);
 }
 
-// ── Chunker (mirrors src/lib/utils.ts) ────────────────────────────────────────
+// ── Chunker (byte-identical algorithm to src/lib/utils.ts → chunkText) ─────────
+// Structure-aware: packs whole sentences (by paragraph) up to the budget, never
+// breaks mid-sentence, carries whole-sentence overlap. Keep in lockstep with
+// src/lib/utils.ts (CLAUDE.md parity rule).
 function chunkText(text, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP) {
-  const words = text.split(/\s+/).filter(Boolean);
   const wordsPerChunk = Math.floor(chunkSize * 0.75);
   const overlapWords = Math.floor(overlap * 0.75);
-  const chunks = [];
-  let start = 0;
-  while (start < words.length) {
-    const end = Math.min(start + wordsPerChunk, words.length);
-    const chunk = words.slice(start, end).join(" ").trim();
-    if (chunk) chunks.push(chunk);
-    if (end === words.length) break;
-    start = end - overlapWords;
+  const wordCount = (s) => s.split(/\s+/).filter(Boolean).length;
+
+  const units = [];
+  for (const para of text.split(/\n\s*\n/)) {
+    const trimmed = para.trim();
+    if (!trimmed) continue;
+    const sentences = trimmed.match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/g) ?? [trimmed];
+    for (const s of sentences) {
+      const sent = s.trim();
+      if (sent) units.push(sent);
+    }
   }
+
+  const chunks = [];
+  let current = [];
+  let currentWords = 0;
+  const flush = () => {
+    const joined = current.join(" ").trim();
+    if (joined) chunks.push(joined);
+  };
+
+  for (const sent of units) {
+    const w = wordCount(sent);
+    if (w > wordsPerChunk) {
+      flush();
+      current = [];
+      currentWords = 0;
+      const words = sent.split(/\s+/).filter(Boolean);
+      for (let i = 0; i < words.length; i += wordsPerChunk) {
+        chunks.push(words.slice(i, i + wordsPerChunk).join(" "));
+      }
+      continue;
+    }
+    if (currentWords + w > wordsPerChunk && current.length > 0) {
+      flush();
+      const overlapSents = [];
+      let ow = 0;
+      for (let i = current.length - 1; i >= 0; i--) {
+        const sw = wordCount(current[i]);
+        if (ow + sw > overlapWords) break;
+        overlapSents.unshift(current[i]);
+        ow += sw;
+      }
+      current = overlapSents;
+      currentWords = ow;
+    }
+    current.push(sent);
+    currentWords += w;
+  }
+  flush();
+
   return chunks;
 }
 
@@ -80,7 +125,7 @@ function chunkText(text, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP) {
  * to the end of the section text. This keeps retrieval signal for table /
  * image queries without depending on exact placeholder resolution.
  */
-function flattenSection(section, paperId, sectionIndex) {
+function flattenSection(section, _paperId, _sectionIndex) {
   let text = (section.text ?? "").trim();
 
   const tables = section.tables ?? {};
@@ -126,6 +171,9 @@ console.log(`▸ Ingesting ${files.length} papers for user ${USER_ID}`);
 let totalDocs = 0;
 let totalChunks = 0;
 let totalEmbedTokens = 0;
+let totalContextualized = 0;
+let totalCacheReadTokens = 0;
+let totalCacheCreationTokens = 0;
 const startTime = Date.now();
 
 for (let i = 0; i < files.length; i++) {
@@ -200,11 +248,34 @@ for (let i = 0; i < files.length; i++) {
     continue;
   }
 
-  // Embed in batches of 20
+  // Contextual Retrieval: situate each chunk in the full document (prompt-cached
+  // doc block; first chunk warms the cache, rest fan out in batches). Mirrors
+  // src/app/workflows/ingest.ts. Falls back to raw content on failure.
+  for (let i = 0; i < allChunks.length; i++) allChunks[i].contextualized = null;
+  const onMeta = (m) => {
+    totalCacheReadTokens += m.cacheReadTokens;
+    totalCacheCreationTokens += m.cacheCreationTokens;
+  };
+  const buildCtx = (idx, ctx) => {
+    if (ctx) {
+      allChunks[idx].contextualized = `${ctx}\n\n${allChunks[idx].content}`;
+      totalContextualized++;
+    }
+  };
+  buildCtx(0, await generateChunkContext(fullDocContent, allChunks[0].content, onMeta));
+  for (let b = 1; b < allChunks.length; b += CONTEXT_BATCH) {
+    const slice = allChunks.slice(b, b + CONTEXT_BATCH);
+    const ctxs = await Promise.all(
+      slice.map((c) => generateChunkContext(fullDocContent, c.content, onMeta))
+    );
+    ctxs.forEach((ctx, j) => buildCtx(b + j, ctx));
+  }
+
+  // Embed the contextualized text when available, else the raw content.
   const embeddings = [];
   for (let b = 0; b < allChunks.length; b += EMBED_BATCH) {
     const batch = allChunks.slice(b, b + EMBED_BATCH);
-    const texts = batch.map((c) => c.content);
+    const texts = batch.map((c) => c.contextualized ?? c.content);
     const vecs = await embedBatch(texts);
     embeddings.push(...vecs);
     totalEmbedTokens += texts.reduce((s, t) => s + Math.ceil(t.length / 4), 0);
@@ -218,14 +289,15 @@ for (let i = 0; i < files.length; i++) {
     const placeholders = [];
     const params = [];
     batchChunks.forEach((c, j) => {
-      const off = j * 6;
+      const off = j * 7;
       placeholders.push(
-        `($${off + 1}::uuid, $${off + 2}::text, $${off + 3}::text, $${off + 4}::int, $${off + 5}::vector, $${off + 6}::jsonb, NOW())`
+        `($${off + 1}::uuid, $${off + 2}::text, $${off + 3}::text, $${off + 4}::text, $${off + 5}::int, $${off + 6}::vector, $${off + 7}::jsonb, NOW())`
       );
       params.push(
         documentId,
         USER_ID,
         c.content,
+        c.contextualized, // null → COALESCE falls back to content for BM25
         b + j,
         `[${batchVecs[j].join(",")}]`,
         JSON.stringify({
@@ -239,7 +311,7 @@ for (let i = 0; i < files.length; i++) {
 
     const stmt =
       `INSERT INTO document_chunks ` +
-      `(document_id, user_id, content, chunk_index, embedding, metadata, created_at) ` +
+      `(document_id, user_id, content, contextualized_content, chunk_index, embedding, metadata, created_at) ` +
       `VALUES ${placeholders.join(", ")}`;
     await sql(stmt, params);
     totalChunks += batchChunks.length;
@@ -254,6 +326,11 @@ for (let i = 0; i < files.length; i++) {
 console.log();
 const elapsedMin = ((Date.now() - startTime) / 60000).toFixed(1);
 console.log(`✓ Ingested ${totalDocs} documents, ${totalChunks} chunks in ${elapsedMin} min`);
+console.log(
+  `  Contextualized ${totalContextualized}/${totalChunks} chunks · ` +
+    `cache read ${totalCacheReadTokens.toLocaleString()} tok / created ${totalCacheCreationTokens.toLocaleString()} tok ` +
+    `(cache read > 0 ⇒ prompt caching is working)`
+);
 console.log(`  Approx embedding tokens: ${totalEmbedTokens.toLocaleString()}`);
 console.log(`  Approx embedding cost: $${((totalEmbedTokens / 1e6) * 0.15).toFixed(2)} ` +
   `(${EMBEDDING_MODEL} @ ~$0.15/MTok)`);

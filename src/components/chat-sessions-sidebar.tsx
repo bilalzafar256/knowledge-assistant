@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Plus, MessageSquare, Trash2, Loader2, Pencil, Check, X, Pin, PinOff, AlertTriangle } from "lucide-react";
+import { Plus, MessageSquare, Trash2, Loader2, Pencil, Check, X, Pin, PinOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

@@ -1,0 +1,151 @@
+# Eval run: `p1-ablation-noMQ-noFloor`
+
+- **Started:** 2026-06-15T23:59:48.292Z
+- **Duration:** 667s
+- **Chat model:** `claude-sonnet-4-6`
+- **Embedding model:** `gemini-embedding-001`
+- **Judge model:** `gemini-2.5-flash`
+- **Top-K:** 5
+- **Golden set:** 100 questions (generated 2026-06-15T23:45:44.148Z)
+
+## Retrieval
+| Metric | Value |
+| --- | --- |
+| Recall@5 (after rerank) | **89.0%** |
+| Recall@5 (candidate pool) | 83.0% |
+| Recall@10 (candidate pool) | 90.0% |
+| Recall@5 (pure vector — diagnostic) | 79.0% |
+| Recall@10 (pure vector — diagnostic) | 90.0% |
+| MRR (reranked) | 0.686 |
+| MRR (candidate pool) | 0.686 |
+| MRR (pure vector — diagnostic) | 0.625 |
+| Context precision | 53.4% |
+
+## Answer quality
+| Metric | Value |
+| --- | --- |
+| Faithfulness | **93.0%** |
+| Correctness | **62.6%** |
+| Citation accuracy | 95.0% |
+| Avg latency | 18894 ms |
+| Total input tokens | 544,928 |
+| Total output tokens | 60,143 |
+| Estimated cost | $2.5369 |
+
+## Breakdown by modality (`benchmark.source`)
+| Modality | Count | Recall@k | MRR | Faith | Corr |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| text | 66 | 90.9% | 0.722 | 95.5% | 68.9% |
+| text-image | 23 | 87.0% | 0.630 | 87.0% | 52.2% |
+| text-table-image | 8 | 75.0% | 0.521 | 100.0% | 45.0% |
+| text-table | 3 | 100.0% | 0.750 | 66.7% | 50.0% |
+
+## Breakdown by query type (`benchmark.type`)
+| Type | Count | Recall@k | MRR | Faith | Corr |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| abstractive | 58 | 89.7% | 0.638 | 93.1% | 51.2% |
+| extractive | 42 | 88.1% | 0.752 | 92.9% | 78.3% |
+
+## Per-question
+| ID | Recall@k | MRR | CtxP | Faith | Corr | Cite | Question |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| q_1 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is the probability that the receiver chooses any not $\gamma$-approximately opti |
+| q_2 | 0 | 0.00 | 0.40 | 1.00 | 0.20 | 1.00 | How do configurations impact the performance of regularized principal spline fun |
+| q_3 | 0 | 0.00 | 1.00 | 1.00 | 1.00 | 1.00 | Is streaming pattern matching related to regular languages in the sliding window |
+| q_4 | 1 | 1.00 | 0.80 | 0.00 | 0.00 | 0.00 | How do cumulant-based conditions affect different types of volatility models? |
+| q_5 | 0 | 0.00 | 0.60 | 1.00 | 1.00 | 1.00 | What is the best performing method for audio inpainting at a gap length of 10 ms |
+| q_6 | 1 | 0.33 | 0.80 | 1.00 | 0.50 | 1.00 | What is a single-hit dose-response model in the context of infection probability |
+| q_7 | 1 | 0.33 | 0.80 | 1.00 | 0.20 | 1.00 | How do randomized streaming algorithms differ from deterministic ones regarding  |
+| q_8 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Do closed-source models offer a better response than open-source models in this  |
+| q_9 | 0 | 0.00 | 1.00 | 1.00 | 0.20 | 1.00 | How do Fixed-Order-Quantity (FOQ) and Fixed-Order-Period (FOP) policies differ i |
+| q_10 | 1 | 0.50 | 0.40 | 1.00 | 0.50 | 1.00 | How do implementation shortfall (IS) and target close (TC) orders differ in trad |
+| q_11 | 1 | 1.00 | 0.60 | 1.00 | 0.50 | 1.00 | What type of algorithm does the agent use to decide on actions? |
+| q_12 | 1 | 1.00 | 0.80 | 1.00 | 0.20 | 1.00 | How do liquidity providers interact with an auction-managed AMM? |
+| q_13 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Is the chemical reaction network sensitive in $X_{4}$ when $r$ is close to 0? |
+| q_14 | 1 | 0.50 | 0.60 | 1.00 | 1.00 | 1.00 | What role does wind direction play in sailboat maneuvering strategies? |
+| q_15 | 0 | 0.00 | 0.60 | 1.00 | 0.00 | 1.00 | Can regular languages be recognized using constant space in streaming algorithms |
+| q_16 | 0 | 0.00 | 1.00 | 1.00 | 0.20 | 1.00 | How do different scenarios affect power output and efficiency in these systems? |
+| q_17 | 1 | 1.00 | 0.80 | 1.00 | 0.50 | 1.00 | What is the Optimal Prefix Hit Recursion (OPHR) algorithm used for in data analy |
+| q_18 | 1 | 0.33 | 0.80 | 1.00 | 0.50 | 1.00 | How does covariate adjustment impact the statistical power in simulation studies |
+| q_19 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is it possible to achieve a steady state point that satisfies complex balancing  |
+| q_20 | 1 | 0.50 | 0.00 | 0.00 | 0.00 | 0.50 | What file format is used to save the embeddings learned by the embedding model? |
+| q_21 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | What is the purpose of using bootstrap and quasi-Bayesian methods in treatment c |
+| q_22 | 1 | 1.00 | 0.40 | 0.00 | 0.00 | 0.00 | For which data-generating process does the conditional confidence interval have  |
+| q_23 | 1 | 1.00 | 0.40 | 1.00 | 0.00 | 1.00 | For which range of alpha does the ultrametric ball reduce to a single point? |
+| q_24 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Does the feature extraction process precede dataset preparation for training? |
+| q_25 | 1 | 0.33 | 0.20 | 1.00 | 1.00 | 1.00 | In which scenario does reducing bandwidth mainly shrink the envelope with minima |
+| q_26 | 1 | 1.00 | 0.60 | 0.00 | 0.00 | 1.00 | Which cyclin/Cdk complex is associated with the transition from G1 to S phase? |
+| q_27 | 1 | 0.50 | 0.80 | 1.00 | 1.00 | 1.00 | Do existing methods for AQA explore audio information in videos? |
+| q_28 | 1 | 1.00 | 0.80 | 1.00 | 0.00 | 1.00 | Does bounded invariance affect how probability shares are assigned when preferen |
+| q_29 | 1 | 1.00 | 0.60 | 1.00 | 0.50 | 1.00 | How do Hilbert space-valued stochastic equations contribute to understanding age |
+| q_30 | 1 | 0.50 | 0.60 | 1.00 | 1.00 | 1.00 | Can $\widehat{A}$ be an asymptotically OLPO without a strict $\sqrt{T}$-rate ass |
+| q_31 | 1 | 0.33 | 0.60 | 1.00 | 0.50 | 1.00 | In what ways is Borda's method susceptible to manipulation despite its design fo |
+| q_32 | 1 | 1.00 | 0.40 | 1.00 | 0.50 | 1.00 | What metrics were used to evaluate the performance of different sensor control m |
+| q_33 | 1 | 0.50 | 1.00 | 1.00 | 1.00 | 1.00 | How does the concept of disks relate to matchings between two point sets? |
+| q_34 | 1 | 1.00 | 1.00 | 1.00 | 0.10 | 1.00 | How does the concept of maxitive functions extend to general orders? |
+| q_35 | 1 | 1.00 | 0.40 | 1.00 | 0.50 | 1.00 | What challenges do large position holders face when executing trades in financia |
+| q_36 | 1 | 1.00 | 0.40 | 0.00 | 0.00 | 0.00 | Who were Edgeworth and Pareto, and how did they influence modern economic though |
+| q_37 | 1 | 0.33 | 0.80 | 1.00 | 1.00 | 1.00 | What is the purpose of Unsolvable Problem Detection (UPD)? |
+| q_38 | 1 | 1.00 | 0.40 | 1.00 | 0.20 | 1.00 | Can you explain how random serial dictatorships relate to HMDs when there are th |
+| q_39 | 1 | 0.33 | 1.00 | 1.00 | 0.00 | 1.00 | How can superconducting circuits demonstrate collective advantage over independe |
+| q_40 | 1 | 1.00 | 0.40 | 1.00 | 0.50 | 1.00 | What is the purpose of information fusion in sensor nodes? |
+| q_41 | 1 | 0.50 | 0.60 | 1.00 | 0.90 | 1.00 | What is a manifold in the context of hyperbolic geometry? |
+| q_42 | 1 | 1.00 | 0.20 | 0.00 | 0.50 | 1.00 | What is the expected value of the adjusted OLS estimator? |
+| q_43 | 1 | 0.50 | 0.80 | 1.00 | 1.00 | 1.00 | What is the relationship between coherent risk measures and uniform integrabilit |
+| q_44 | 1 | 0.50 | 0.80 | 0.00 | 0.00 | 0.00 | How does variability in microbe mortality impact average infectivity? |
+| q_45 | 1 | 1.00 | 0.80 | 1.00 | 1.00 | 1.00 | How can performance metrics typically defined at an aggregate level be evaluated |
+| q_46 | 1 | 1.00 | 0.80 | 1.00 | 0.50 | 1.00 | How do sensor configurations change over time during tracking experiments? |
+| q_47 | 1 | 1.00 | 0.40 | 1.00 | 0.90 | 1.00 | What effect does increasing the proportion of treated units have on statistical  |
+| q_48 | 1 | 0.50 | 0.80 | 1.00 | 0.00 | 1.00 | How do these geometric properties relate to Max-Plus algebras? |
+| q_49 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Why does standard inference fail when using quantiles from a normal distribution |
+| q_50 | 1 | 1.00 | 0.20 | 1.00 | 0.50 | 1.00 | How does a heatmap help in understanding peptide distribution? |
+| q_51 | 1 | 1.00 | 0.60 | 1.00 | 1.00 | 1.00 | Does Virtuoso allow for easy development of new OS routines without expert knowl |
+| q_52 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Are the embeddings used to initialize weights for models in an edge prediction t |
+| q_53 | 1 | 1.00 | 0.20 | 1.00 | 0.90 | 1.00 | What is the significance of Helly's Theorem in geometric proofs involving point  |
+| q_54 | 1 | 0.50 | 0.40 | 1.00 | 0.00 | 1.00 | Does a larger bandgap energy ($E_g \gg k_B T_h$) result in higher efficiency at  |
+| q_55 | 1 | 1.00 | 0.60 | 1.00 | 0.20 | 1.00 | What role does parameter $\kappa$ play in shaping trading trajectories for IS an |
+| q_56 | 1 | 1.00 | 0.60 | 1.00 | 1.00 | 1.00 | How do non-Euclidean embeddings compare to Euclidean embeddings for biological p |
+| q_57 | 1 | 1.00 | 0.20 | 1.00 | 0.50 | 1.00 | How do various physical memory allocation policies affect page fault latency in  |
+| q_58 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Were the animal experiments approved by an ethics review board? |
+| q_59 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | What is the maximum absolute value of the periodic pseudo-cosine function? |
+| q_60 | 1 | 0.50 | 0.80 | 1.00 | 0.20 | 1.00 | What influences the ATM skew in the Edgeworth series? |
+| q_61 | 1 | 0.50 | 0.40 | 1.00 | 1.00 | 1.00 | Is the beta-Poisson approximation valid for all values of \(\beta\) and \(\alpha |
+| q_62 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Can the best linear unbiased predictor of a stochastic process be expressed as a |
+| q_63 | 1 | 0.50 | 0.80 | 1.00 | 0.50 | 1.00 | What factors are considered in minimizing a cyclist's ascent time during an uphi |
+| q_64 | 1 | 0.20 | 0.80 | 1.00 | 0.20 | 1.00 | How do dose-response models help in understanding microbial infections? |
+| q_65 | 1 | 1.00 | 0.60 | 1.00 | 0.50 | 1.00 | How does local differential privacy affect the estimation process of a Gaussian  |
+| q_66 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | What is the optimization problem faced by a representative agent in the limiting |
+| q_67 | 1 | 0.50 | 0.20 | 1.00 | 1.00 | 1.00 | Does the posterior mean depend on the bases for type-2 null space? |
+| q_68 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Is the sentiment scoring system for product reviews the same as for movie review |
+| q_69 | 1 | 1.00 | 0.60 | 1.00 | 0.00 | 1.00 | How do the concepts of Deligne's conjecture extend to quantum analogs within mat |
+| q_70 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is there always a Hamiltonian cycle that is a Tverberg graph for finite planar p |
+| q_71 | 0 | 0.00 | 0.60 | 1.00 | 1.00 | 1.00 | How does the seemingly unrelated BART model improve upon traditional multivariat |
+| q_72 | 1 | 1.00 | 0.80 | 1.00 | 0.50 | 1.00 | How does the concept of absolute sensitivity differ from traditional sensitivity |
+| q_73 | 0 | 0.00 | 0.80 | 1.00 | 1.00 | 1.00 | Does the model of the generalized principal-agent problem involve Stackelberg ga |
+| q_74 | 1 | 1.00 | 0.40 | 1.00 | 1.00 | 1.00 | Is the Gene Ontology suitable for learning hyperbolic representations? |
+| q_75 | 0 | 0.00 | 0.60 | 1.00 | 0.00 | 1.00 | What is the optimal strategy hypothesized for sailboat trajectory optimization w |
+| q_76 | 1 | 0.20 | 0.60 | 1.00 | 1.00 | 1.00 | What is unambiguously efficient allocation? |
+| q_77 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is the prefix distance always greater than or equal to the Hamming distance? |
+| q_78 | 1 | 0.50 | 0.40 | 1.00 | 0.50 | 1.00 | What are the different types of college admission systems used globally? |
+| q_79 | 0 | 0.00 | 0.20 | 1.00 | 1.00 | 1.00 | What framework is used for enhanced multi-target tracking in dynamic environment |
+| q_80 | 1 | 0.25 | 0.80 | 1.00 | 0.20 | 1.00 | What role do trading trajectories play in optimal order execution strategies? |
+| q_81 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | What range does Spearman's rank correlation value fall within? |
+| q_82 | 1 | 0.33 | 0.60 | 1.00 | 0.20 | 1.00 | How do spline functions help address spatial confounding issues? |
+| q_83 | 1 | 0.25 | 0.60 | 1.00 | 1.00 | 1.00 | Why is it important to analyze short and long maturities in financial modeling? |
+| q_84 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is the function \( L(x, y, t_{\epsilon}) \) quadratic in \( x \)? |
+| q_85 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | Is the greater-than function's randomized one-way communication complexity $\The |
+| q_86 | 1 | 0.25 | 1.00 | 1.00 | 0.50 | 1.00 | Does optimizing field order in relational data analytics workloads lead to cost  |
+| q_87 | 1 | 1.00 | 0.20 | 1.00 | 0.10 | 1.00 | What theoretical rationale supports using multilevel metamodels in simulation st |
+| q_88 | 1 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | How does modeling a hill with straight-line segments help in cycling optimizatio |
+| q_89 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | What is the usual stochastic order on the set of random variables $\mathcal{M}$? |
+| q_90 | 0 | 0.00 | 0.80 | 1.00 | 0.50 | 1.00 | What were the long-term socio-economic effects on individuals who experienced ce |
+| q_91 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 1.00 | What is the significance of Euler's proof regarding the sum of reciprocals of pr |
+| q_92 | 1 | 0.50 | 0.80 | 1.00 | 0.50 | 1.00 | How do optimized techniques affect cost savings when using large language models |
+| q_93 | 1 | 1.00 | 0.60 | 1.00 | 1.00 | 1.00 | Did centralized admissions affect the regional destinations of elites? |
+| q_94 | 1 | 1.00 | 0.80 | 1.00 | 1.00 | 1.00 | Does the drivetrain-resistance coefficient affect the power calculation? |
+| q_95 | 1 | 1.00 | 0.20 | 1.00 | 1.00 | 0.50 | Does there exist a random variable such that its quantile function matches a giv |
+| q_96 | 1 | 1.00 | 0.60 | 1.00 | 0.00 | 1.00 | Is it challenging to quantify the landscape for high-dimensional oscillatory sys |
+| q_97 | 1 | 0.25 | 0.40 | 1.00 | 0.50 | 1.00 | What are some examples where switching from an oracle algorithm like OPHR to a m |
+| q_98 | 1 | 0.50 | 0.40 | 1.00 | 1.00 | 1.00 | Are emergency or urgent admissions more likely to result in a one-day stay? |
+| q_99 | 1 | 0.25 | 0.20 | 1.00 | 0.50 | 1.00 | How can lattice structures be used to visualize changes in subjective probabilit |
+| q_100 | 1 | 0.25 | 0.20 | 1.00 | 1.00 | 1.00 | Why is it important to study the social cost or benefit of learned manipulations |

@@ -47,7 +47,7 @@ flowchart TB
 
     subgraph Background["🔄 Background"]
         Inngest["Inngest<br/>ingest-document (retries: 3)"]
-        Ingest["src/app/workflows/ingest.ts<br/>parse → chunk → embed → upsert"]
+        Ingest["src/app/workflows/ingest.ts<br/>parse → chunk → contextualize → embed → upsert"]
     end
 
     subgraph Bot["🤖 Dev-only: Telegram → PR bot"]
@@ -152,8 +152,9 @@ flowchart LR
     subgraph Processing["ingestDocument() — src/app/workflows/ingest.ts"]
         direction TB
         P1["status → processing"] --> P2["load rag_settings<br/>(chunkSize / chunkOverlap)"]
-        P2 --> P3["sanitizeText() → chunkText()"]
-        P3 --> P4["generateEmbedding() × N<br/>(batched 20)"]
+        P2 --> P3["sanitizeText() → chunkText()<br/>(structure-aware: whole-sentence packing)"]
+        P3 --> PC["generateChunkContext() × N<br/>(Contextual Retrieval — Haiku, doc block prompt-cached;<br/>→ contextualized_content, graceful-null on fail)"]
+        PC --> P4["generateEmbedding() × N<br/>(batched 20; embeds contextualized_content ?? content)"]
         P4 --> P5["delete existing chunks<br/>(idempotent re-index)"]
         P5 --> P6["insert chunks + embeddings<br/>(batched 50)"]
     end
@@ -189,7 +190,7 @@ Architectural responsibility of every major directory.
 | `src/hooks/` | Client React hooks |
 | `src/proxy.ts` | **Next.js middleware** (named `proxy.ts`, not `middleware.ts`) — Clerk + Arcjet on all routes |
 | `src/instrumentation.ts` | Boot hook: Zod env validation, OTel tracer registration, `onRequestError` |
-| `evals/` | RAG eval harness mirroring production retrieval/answer logic + the Open RAG Benchmark suite |
+| `evals/` | RAG eval harness mirroring production retrieval/answer logic + two benchmark suites: `benchmarks/open-ragbench/` (arXiv) and `benchmarks/cuad/` (enterprise contracts, CC-BY) |
 | `drizzle/` | Generated + hand-written migration SQL (applied in order by `scripts/db-migrate.mjs`) |
 | `scripts/` | `db-migrate.mjs` (apply migrations) · `db-baseline.mjs` (brownfield register-only) |
 | `.github/workflows/`, `.github/scripts/` | Telegram → PR GitHub Actions (plan / code / pr / merge / main-pr) + their Neon↔Telegram glue scripts |
@@ -225,7 +226,7 @@ Every route honors two invariants (see [§6](#6-cross-cutting-invariants)). Arcj
 
 ### 5.4 Data layer — `src/lib/schema.ts`, `db.ts`, `drizzle/`
 
-`collections` → `documents` → `document_chunks` (embedding `vector(1536)` + generated `content_tsv`); `chat_sessions` (denormalized `total_cost_usd`) → `chat_messages` (assistant turns carry `input_tokens`/`output_tokens`/`cost_usd`); `rag_settings`; `audit_logs`; `telegram_tasks`. `document_chunks.userId` is **denormalized** so retrieval scopes by tenant without a join. Per-query LLM cost is summed via a cost sink threaded through the retrieval pipeline, priced by `src/lib/pricing.ts`. `src/lib/db.ts` exposes a lazy `neon-http` Drizzle client behind a Proxy (`db.*` works anywhere). The pgvector `ivfflat` index and the `content_tsv` generated column + GIN index live in **raw SQL** migrations (`0000`, `0005`), not in `schema.ts`. Schema flow: edit `schema.ts` → `pnpm db:generate` → `pnpm db:migrate` (never `db:push`). Full table list + 7-migration manifest in `PROJECT_PLAN.md`.
+`collections` → `documents` → `document_chunks` (embedding `vector(1536)`, nullable `contextualized_content`, + generated `content_tsv` = `to_tsvector(COALESCE(contextualized_content, content))`); `chat_sessions` (denormalized `total_cost_usd`) → `chat_messages` (assistant turns carry `input_tokens`/`output_tokens`/`cost_usd`); `rag_settings`; `audit_logs`; `telegram_tasks`. `document_chunks.userId` is **denormalized** so retrieval scopes by tenant without a join. Per-query LLM cost is summed via a cost sink threaded through the retrieval pipeline, priced by `src/lib/pricing.ts`. `src/lib/db.ts` exposes a lazy `neon-http` Drizzle client behind a Proxy (`db.*` works anywhere). The pgvector `ivfflat` index and the `content_tsv` generated column + GIN index live in **raw SQL** migrations (`0000`, `0005`; `content_tsv` redefined in `0007` for Contextual Retrieval), not in `schema.ts`. Schema flow: edit `schema.ts` → `pnpm db:generate` → `pnpm db:migrate` (never `db:push`). Full table list + 8-migration manifest in `PROJECT_PLAN.md`.
 
 ### 5.5 Observability — `src/lib/axiom/`, `src/instrumentation.ts`
 

@@ -15,7 +15,7 @@
 import { db } from "@/lib/db";
 import { documents, documentChunks, ragSettings } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
-import { generateEmbedding } from "@/lib/ai";
+import { generateEmbedding, generateChunkContext } from "@/lib/ai";
 import { logger } from "@/lib/axiom/server";
 import { chunkText, sanitizeText } from "@/lib/utils";
 import type { NewDocumentChunk } from "@/lib/schema";
@@ -34,6 +34,10 @@ export interface IngestResult {
 
 // Maximum chunks to embed in a single batch to avoid timeout
 const EMBEDDING_BATCH_SIZE = 20;
+
+// Chunks to contextualize concurrently (after the first, which warms the prompt
+// cache). Matches the embedding batch size to bound concurrent Haiku calls.
+const CONTEXT_BATCH_SIZE = 20;
 
 // Default chunk configuration (used when no user settings exist)
 const DEFAULT_CHUNK_TOKENS = 500;
@@ -96,7 +100,57 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     chunkCount: rawChunks.length,
   });
 
+  // ── Step 3.5: Contextualize chunks (Anthropic Contextual Retrieval) ─────────
+  // For each chunk, generate a short snippet situating it in the whole document,
+  // then embed/index the combined text. The document is prompt-cached, so we run
+  // the FIRST chunk alone (to warm the cache) before fanning the rest out in
+  // batches that read the warm cache. On failure a chunk's context is null and
+  // we fall back to embedding the raw chunk (graceful degradation).
+  const contextualizedChunks: Array<string | null> = new Array(rawChunks.length).fill(null);
+  let cacheReadTokens = 0;
+  let cacheCreationTokens = 0;
+  let contextualizedCount = 0;
+
+  if (rawChunks.length > 0) {
+    const onMeta = (m: { cacheReadTokens: number; cacheCreationTokens: number }) => {
+      cacheReadTokens += m.cacheReadTokens;
+      cacheCreationTokens += m.cacheCreationTokens;
+    };
+    const buildContextualized = (idx: number, ctx: string | null) => {
+      if (ctx) {
+        contextualizedChunks[idx] = `${ctx}\n\n${rawChunks[idx]}`;
+        contextualizedCount++;
+      }
+    };
+
+    // First chunk alone — warms the document prompt cache.
+    const firstChunk = rawChunks[0];
+    if (firstChunk !== undefined) {
+      buildContextualized(0, await generateChunkContext(sanitizedContent, firstChunk, onMeta));
+    }
+
+    // Remaining chunks — batched fan-out against the warm cache.
+    for (let start = 1; start < rawChunks.length; start += CONTEXT_BATCH_SIZE) {
+      const end = Math.min(start + CONTEXT_BATCH_SIZE, rawChunks.length);
+      const ctxBatch = await Promise.all(
+        rawChunks
+          .slice(start, end)
+          .map((chunk) => generateChunkContext(sanitizedContent, chunk, onMeta))
+      );
+      ctxBatch.forEach((ctx, j) => buildContextualized(start + j, ctx));
+    }
+  }
+
+  logger.info("ingest.contextualized", {
+    documentId,
+    chunkCount: rawChunks.length,
+    contextualizedCount, // chunks that got context; rest fall back to raw
+    cacheReadTokens,
+    cacheCreationTokens, // cacheReadTokens > 0 confirms prompt caching is working
+  });
+
   // ── Step 4: Generate embeddings in batches ─────────────────────────────────
+  // Embed the contextualized text when available, else the raw chunk.
   const allEmbeddings: Array<{ index: number; embedding: number[] }> = [];
 
   for (let batchStart = 0; batchStart < rawChunks.length; batchStart += EMBEDDING_BATCH_SIZE) {
@@ -113,8 +167,12 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     // Generate embeddings in parallel within the batch
     const batchEmbeddings = await Promise.all(
       batch.map(async (chunk, idx) => {
-        const embedding = await generateEmbedding(chunk, "RETRIEVAL_DOCUMENT");
-        return { index: batchStart + idx, embedding };
+        const index = batchStart + idx;
+        const embedding = await generateEmbedding(
+          contextualizedChunks[index] ?? chunk,
+          "RETRIEVAL_DOCUMENT"
+        );
+        return { index, embedding };
       })
     );
 
@@ -144,6 +202,9 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
       documentId,
       userId,
       content,
+      // Stored so BM25 (content_tsv = COALESCE(contextualized_content, content))
+      // indexes the context too; the answer model still reads `content`.
+      contextualizedContent: contextualizedChunks[idx],
       chunkIndex: idx,
       embedding: embeddingEntry?.embedding ?? null,
       metadata: {
