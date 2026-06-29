@@ -180,12 +180,12 @@ export function ChatActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem onClick={exportMarkdown} className="cursor-pointer gap-2">
-            <Download className="h-3.5 w-3.5 text-indigo-500" />
+            <Download className="h-3.5 w-3.5 text-teal-500" />
             <span>Markdown (.md)</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={printAsPDF} className="cursor-pointer gap-2">
-            <Printer className="h-3.5 w-3.5 text-violet-500" />
+            <Printer className="h-3.5 w-3.5 text-emerald-500" />
             <span>Print / PDF</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -199,7 +199,7 @@ export function ChatActions({
             size="sm"
             className={`h-8 px-2.5 gap-1 ${
               isShared
-                ? "border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400"
+                ? "border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400"
                 : "text-muted-foreground hover:text-foreground"
             }`}
             title="Share conversation"
@@ -238,7 +238,7 @@ export function ChatActions({
                 <Button
                   size="sm"
                   onClick={() => void copyLink()}
-                  className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 h-8 text-xs"
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 h-8 text-xs"
                 >
                   {copied ? <Check className="h-3.5 w-3.5 mr-1.5" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}
                   {copied ? "Copied!" : "Copy link"}
@@ -262,7 +262,7 @@ export function ChatActions({
             <Button
               onClick={() => void enableSharing()}
               disabled={sharing}
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 h-9"
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 h-9"
             >
               {sharing ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />

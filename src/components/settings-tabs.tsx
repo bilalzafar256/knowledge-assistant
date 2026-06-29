@@ -67,8 +67,8 @@ export function SettingsTabs({
         <Card className="border-border/60 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                <User className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 dark:bg-emerald-900/30">
+                <User className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               Profile
             </CardTitle>
@@ -91,19 +91,19 @@ export function SettingsTabs({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <InfoRow icon={Mail} label="Email" value={primaryEmail} accent="indigo" />
+              <InfoRow icon={Mail} label="Email" value={primaryEmail} accent="teal" />
               <InfoRow
                 icon={Key}
                 label="User ID"
                 value={userId.slice(0, 20) + "…"}
-                accent="violet"
+                accent="emerald"
               />
               <InfoRow icon={Calendar} label="Member since" value={createdAt} accent="emerald" />
               <InfoRow
                 icon={Shield}
                 label="Account status"
                 value={
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
+                  <Badge className="bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
                     Active
                   </Badge>
                 }
@@ -117,8 +117,8 @@ export function SettingsTabs({
         <Card className="border-border/60 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-base flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
-                <Mail className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 dark:bg-teal-900/30">
+                <Mail className="h-4 w-4 text-teal-600 dark:text-teal-400" />
               </div>
               Email Addresses
             </CardTitle>
@@ -185,8 +185,8 @@ export function SettingsTabs({
           <CardHeader className="pb-3 border-b border-border/40">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                  <Activity className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 dark:bg-emerald-900/30">
+                  <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 Activity Log
               </CardTitle>
@@ -232,7 +232,7 @@ const ACTION_META: Record<string, { label: string; Icon: React.ElementType; badg
   "document.upload": {
     label: "Uploaded",
     Icon: FileText,
-    badge: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
+    badge: "bg-teal-500/15 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
   },
   "document.delete": {
     label: "Deleted",
@@ -242,7 +242,7 @@ const ACTION_META: Record<string, { label: string; Icon: React.ElementType; badg
   "chat.message": {
     label: "Message",
     Icon: MessageSquare,
-    badge: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
+    badge: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
 };
 
@@ -302,12 +302,11 @@ function InfoRow({
   icon: React.ElementType;
   label: string;
   value: React.ReactNode;
-  accent: "indigo" | "violet" | "emerald";
+  accent: "teal" | "emerald";
 }) {
   const colors = {
-    indigo: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400",
-    violet: "bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400",
-    emerald: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+    teal: "bg-teal-500/15 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400",
+    emerald: "bg-emerald-500/15 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
   };
 
   return (

@@ -174,7 +174,7 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
                     </p>
                     <Button
                       asChild
-                      className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-md shadow-indigo-200 dark:shadow-indigo-900/30"
+                      className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 shadow-md shadow-teal-200 dark:shadow-teal-900/30"
                     >
                       <Link href="/dashboard/documents/upload">
                         <Upload className="mr-2 h-4 w-4" />
@@ -228,8 +228,8 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/30">
-                  <Bot className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 dark:bg-emerald-900/30">
+                  <Bot className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1 max-w-xl pt-1">
                   {status === "submitted" ? (
@@ -239,7 +239,7 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
                         {[0, 1, 2].map((i) => (
                           <span
                             key={i}
-                            className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-bounce"
+                            className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce"
                             style={{ animationDelay: `${i * 150}ms` }}
                           />
                         ))}
@@ -247,9 +247,9 @@ export function ChatInterface({ sessionId, initialMessages = [], hasDocuments = 
                     </div>
                   ) : (
                     <>
-                      <Skeleton className="h-4 w-3/4 bg-violet-100 dark:bg-violet-900/30" />
-                      <Skeleton className="h-4 w-1/2 bg-violet-100 dark:bg-violet-900/30" />
-                      <Skeleton className="h-4 w-2/3 bg-violet-100 dark:bg-violet-900/30" />
+                      <Skeleton className="h-4 w-3/4 bg-emerald-500/15 dark:bg-emerald-900/30" />
+                      <Skeleton className="h-4 w-1/2 bg-emerald-500/15 dark:bg-emerald-900/30" />
+                      <Skeleton className="h-4 w-2/3 bg-emerald-500/15 dark:bg-emerald-900/30" />
                     </>
                   )}
                 </div>
@@ -377,8 +377,8 @@ function MessageBubble({ message }: MessageBubbleProps) {
         className={cn(
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
           isUser
-            ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white"
-            : "bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"
+            ? "bg-gradient-to-br from-emerald-600 to-teal-600 text-white"
+            : "bg-emerald-500/15 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
         )}
       >
         {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -390,13 +390,13 @@ function MessageBubble({ message }: MessageBubbleProps) {
         {!isUser && toolParts.length > 0 && (
           <div className="flex items-center gap-1.5">
             {isSearching ? (
-              <Badge className="text-xs gap-1 bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 border-0">
+              <Badge className="text-xs gap-1 bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
                 <RefreshCw className="h-2.5 w-2.5 animate-spin" />
                 Searching knowledge base...
               </Badge>
             ) : sources.length > 0 ? (
               <button onClick={() => setShowSources(!showSources)} className="inline-flex items-center gap-1">
-                <Badge className="text-xs gap-1 cursor-pointer bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-0 hover:bg-indigo-200">
+                <Badge className="text-xs gap-1 cursor-pointer bg-teal-500/15 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border-0 hover:bg-teal-200">
                   <BookOpen className="h-2.5 w-2.5" />
                   {sources.length} source{sources.length !== 1 ? "s" : ""}
                   <ChevronDown
@@ -416,7 +416,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
           className={cn(
             "rounded-2xl px-4 py-2.5 text-sm",
             isUser
-              ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-tr-sm"
+              ? "bg-gradient-to-br from-emerald-600 to-teal-600 text-white rounded-tr-sm"
               : "bg-muted text-foreground rounded-tl-sm"
           )}
         >

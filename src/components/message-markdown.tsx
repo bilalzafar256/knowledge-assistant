@@ -30,7 +30,7 @@ const COMPONENTS: Components = {
   p: ({ children }) => <p className="my-2 leading-relaxed first:mt-0 last:mb-0">{children}</p>,
 
   // ── Lists ────────────────────────────────────────────────────────────────
-  ul: ({ children }) => <ul className="my-2 ml-1 list-disc space-y-1 pl-4 marker:text-violet-400">{children}</ul>,
+  ul: ({ children }) => <ul className="my-2 ml-1 list-disc space-y-1 pl-4 marker:text-emerald-400">{children}</ul>,
   ol: ({ children }) => <ol className="my-2 ml-1 list-decimal space-y-1 pl-4 marker:text-muted-foreground">{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed [&>ul]:my-1 [&>ol]:my-1">{children}</li>,
 
@@ -44,7 +44,7 @@ const COMPONENTS: Components = {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-medium text-violet-600 underline decoration-violet-300 underline-offset-2 hover:text-violet-700 dark:text-violet-400 dark:decoration-violet-700"
+      className="font-medium text-emerald-600 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-700 dark:text-emerald-400 dark:decoration-emerald-700"
     >
       {children}
     </a>
@@ -55,7 +55,7 @@ const COMPONENTS: Components = {
 
   // ── Blockquote ───────────────────────────────────────────────────────────
   blockquote: ({ children }) => (
-    <blockquote className="my-2 border-l-2 border-violet-300 pl-3 text-muted-foreground italic dark:border-violet-700">
+    <blockquote className="my-2 border-l-2 border-emerald-300 pl-3 text-muted-foreground italic dark:border-emerald-700">
       {children}
     </blockquote>
   ),
@@ -71,7 +71,7 @@ const COMPONENTS: Components = {
       );
     }
     return (
-      <code className="rounded bg-violet-100/70 px-1.5 py-0.5 font-mono text-[0.8em] text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
+      <code className="rounded bg-emerald-500/15/70 px-1.5 py-0.5 font-mono text-[0.8em] text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
         {children}
       </code>
     );

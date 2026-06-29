@@ -28,7 +28,7 @@ export default function DocumentsError({
       <div className="flex items-center gap-3">
         <Button
           onClick={reset}
-          className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0"
+          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0"
         >
           <RefreshCw className="mr-2 h-4 w-4" />
           Try again
