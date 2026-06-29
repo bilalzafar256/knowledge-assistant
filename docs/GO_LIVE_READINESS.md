@@ -67,6 +67,8 @@ Diagnostic: recall-HIT correctness **67.1%** (n=170), recall-MISS 54.7% (n=30), 
 > Note: baseline was 100-Q, gate-grade is 200-Q (different, larger sample with a higher abstractive share, 61.5% vs 56%), so the small deltas are partly sample, not purely pipeline. The *level* (~65% correctness, ~67% recall-hit correctness) is the robust signal.
 >
 > **Reranker caveat:** the Cohere trial key (1000 calls/month) was exhausted during these runs, so reranking fell back to the Claude Haiku scorer (graceful degradation worked). The gate-grade run's weaker MRR/context-precision vs the Cohere-era baseline is **partly this rerank downgrade, not the pipeline** — a production Cohere key is the operational fix.
+>
+> **Trial-key rate limit (confirmed 2026-06-29):** the Cohere key in `.env.local` is a **Trial key capped at 10 rerank calls/min**. At eval concurrency ≥ 2 the pool bursts past that → HTTP 429 → silent Haiku fallback (so multi-concurrency "Cohere" runs are actually Haiku). Re-running **at `--concurrency 1` stays under the limit** (0/40 questions hit 429 in the CUAD re-run) and gives genuine Cohere-reranked numbers, just slowly. A **production key is still required** for gate-grade runs at real concurrency — the trial limit, not the pipeline, is the constraint.
 
 #### Enterprise gate-grade result — CUAD, document-scoped (2026-06-16, n=40)
 
@@ -83,7 +85,22 @@ The true correctness gate is the enterprise domain. CUAD clause extraction, **sc
 
 \* With retrieval scoped to one ~18-chunk contract, the 5 returned chunks include the answer plus other clauses of the same contract — judged "not relevant to *this* clause", so precision is a misleading metric here.
 
-**Takeaway:** on the enterprise domain that actually matches the product, with realistic doc-scoped retrieval, **3 of 4 hard gates pass and correctness reaches 76.5%** — dramatically better than the adversarial arXiv ceiling (65%). The remaining correctness gap is plausibly closable with a production Cohere reranker (this ran on the Haiku fallback) and a larger sample. This validates the architecture; the arXiv 85%-correctness bar is confirmed to be the wrong gate for this product.
+**Takeaway:** on the enterprise domain that actually matches the product, with realistic doc-scoped retrieval, **3 of 4 hard gates pass and correctness reaches 76.5%** — dramatically better than the adversarial arXiv ceiling (65%). This validates the architecture; the arXiv 85%-correctness bar is confirmed to be the wrong gate for this product.
+
+#### Cohere re-run — hypothesis tested (2026-06-29, n=40, same doc-scoped golden, `--concurrency 1`, 0/40 Cohere 429s)
+
+The takeaway above hypothesized the gap was "plausibly closable with a production Cohere reranker (the baseline ran on Haiku fallback)." **Tested — real Cohere Rerank 3.5 helps, but does not close the gate:**
+
+| Metric | Haiku fallback (2026-06-16) | **Cohere 3.5 (2026-06-29)** | Δ |
+| --- | ---: | ---: | ---: |
+| Correctness | 76.5% | **79.1%** | **+2.6pp** |
+| Correctness (recall-hit) | 78.0% | **81.3%** | +3.3pp |
+| MRR (reranked) | 0.649 | 0.663 | +0.014 |
+| Faithfulness | 97.2% | 96.3% | −0.9 |
+| Citation | 100.0% | 97.5% | −2.5 |
+| Recall@5 (reranked) | 90.0% | 85.0% | −5.0pp |
+
+**Read:** Cohere lifts correctness ~+2.6pp (→ 79.1%, recall-hit 81.3%) but **leaves the 85% correctness gate open**. Notably it *trimmed* Recall@5 (90→85%) — the gold chunk stayed in the candidate pool (still 90%) but Cohere demoted it below top-5 in ~2 questions; at n=40 that's partly noise, but it confirms Cohere is **not uniformly better** than the Haiku scorer on this short-clause set. Conclusion: **the reranker is an operational upgrade (worth a production key for throughput + a small correctness/MRR gain), but the last open gate is the answer step, not retrieval.** Closing correctness to 85% needs answer-step work and/or a larger sample — or re-examining whether 85% is the right bar for abstractive enterprise QA. Hit-but-weak: 3/34. Production-key throughput at real concurrency still pending.
 
 ### Why correctness (70%) is below target — and why it's not a safety blocker
 - **It is not hallucination.** Faithfulness is 95%; the model stays grounded. Low correctness = faithfully *incomplete or partial* answers, not confidently wrong ones.
@@ -191,15 +208,57 @@ Run embeddings locally (e.g. Ollama `nomic-embed-text`, or `transformers.js` `bg
 
 ## 3a. Eval surfaces — domains beyond academic + legal
 
-**Done:** Open RAG Benchmark (arXiv academic) + **CUAD (enterprise contracts) — built & passing 3/4 hard gates doc-scoped** (`evals/benchmarks/cuad/`).
+**Done:** Open RAG Benchmark (arXiv academic) + **CUAD (enterprise contracts) — built & passing 3/4 hard gates doc-scoped** (`evals/benchmarks/cuad/`) + **RAGBench (multi-domain enterprise) — adapter built** (`evals/benchmarks/ragbench/`, 2026-06-29).
 
-**Gap:** a company's real document mix is far broader than "papers + contracts." The roadmap below covers every type — the highest-leverage next step is **RAGBench**, which bundles five enterprise domains in one already-RAG-formatted set, so a single adapter unlocks finance + support + legal + biomedical + general at once.
+**Gap:** a company's real document mix is far broader than "papers + contracts." The roadmap below covers every type — the highest-leverage next step **was RAGBench, now built**: it bundles five enterprise domains in one already-RAG-formatted set, so a single adapter unlocks finance + support + biomedical + general at once (legal stays on the dedicated CUAD adapter).
+
+### RAGBench adapter (`evals/benchmarks/ragbench/`) — built 2026-06-29
+
+Source `galileo-ai/ragbench` (renamed from `rungalileo/ragbench`), 12 configs across 5 domains. Each example is already RAG-formatted: a `question`, its gold `documents` (passages), a reference `response`, and **sentence-level relevance labels** (`all_relevant_sentence_keys` + `documents_sentences`). The adapter mirrors the production pipeline (structure-aware chunking → Contextual Retrieval → Gemini embeddings) exactly like CUAD, into the isolated tenant `user_ragbench_eval`.
+
+- **Corpus** = unique passages deduped by content hash → a realistic haystack where each question must find its own passages among cross-domain distractors.
+- **Recall needle** = the gold relevant sentence text → reuses `run.mjs`'s existing `expected_answer_text` substring match (sentence-grounded recall, finer than CUAD's span match). Validated: 69/75 sampled questions resolve a needle, **100% of needles appear verbatim in their passage**.
+- **Correctness reference** = RAGBench's `response`. **Citation** is a weak metric here (anonymous corpus passages have no natural title — like ctx-precision for single-doc CUAD); read it as N/A.
+- **Default domain spread:** `tatqa` (finance), `techqa` + `delucionqa` (IT-support), `covidqa` (biomedical), `hotpotqa` (general). Override with `--configs`.
+
+```bash
+pnpm eval:rb:download --per-config 60      # HF datasets-server rows API (no auth)
+pnpm eval:rb:ingest                        # dedup passages → Neon (user_ragbench_eval)
+pnpm eval:rb:golden -- --sample 150        # sentence-grounded golden set
+pnpm eval:rb:run -- --label rb-baseline --concurrency 1   # corpus-wide; add --scope-doc for single-doc framing
+```
+
+> Scripts are `eval:rb:*` to disambiguate from `eval:ragbench:*` (which is the arXiv **Open** RAG Benchmark).
+
+#### RAGBench gate-grade result (2026-06-30, n=199, corpus-wide, 5 domains, 1,178-passage haystack)
+
+First answer-run, concurrency 2 (Cohere trial → heavy Haiku fallback). Full combined report: `evals/report.md`.
+
+| Metric | RAGBench | arXiv (ref) | CUAD (ref) | Gate |
+| --- | ---: | ---: | ---: | ---: |
+| Recall@5 | 77.4% | 85.0% | 85.0% | 85% |
+| **Faithfulness** | **83.9%** | 95.6% | 96.3% | 90% (hard) |
+| Correctness | 56.5% | 65.2% | 79.1% | 85% (hard) |
+| Citation | n/a* | 97.3% | 97.5% | 90% |
+
+\* anonymous corpus passages have no natural title — citation is not meaningful here.
+
+**By domain — the faithfulness dip is localized, not global:**
+
+| Domain | n | Recall@5 | Faithfulness | Correctness |
+| --- | ---: | ---: | ---: | ---: |
+| finance (tatqa) | 35 | 65.7% | **94.3%** | 64.7% |
+| support (techqa/delucionqa) | 78 | 67.9% | **92.2%** | 57.3% |
+| general (hotpotqa) | 43 | 93.0% | 74.4% | 61.0% |
+| biomedical (covidqa) | 43 | 88.4% | **69.8%** | 44.0% |
+
+**Key finding — first sub-90% faithfulness on any surface.** Pooled faithfulness across all three domains is 90.3% (barely clears), but RAGBench alone is 83.9%, dragged down by **biomedical (69.8%) and general/multi-hop (74.4%)** — note these have *high* recall (88–93%), so it is **not** a retrieval-miss artifact: the model is answering ungrounded on covidqa/hotpotqa-style synthesis questions. Finance and support stay healthy (92–94%). Two confounds to weigh before treating this as a hard regression: (a) RAGBench reference `response` is **GPT-3.5-generated**, not a gold answer, which depresses the correctness judge; (b) hotpotqa is **multi-hop** (needs ≥2 passages) and single-pass retrieval feeds partial context, inviting the model to fill gaps. **Action:** spot-check low-faithfulness covidqa/hotpotqa answers to separate real ungrounding from judge/reference artifacts before scoping biomedical/multi-hop into GA. This is the strongest argument yet for a **domain-scoped launch** (policies/contracts/support) rather than blind GA across all content types.
 
 ### Recommended roadmap (priority order)
 
 | Priority | Dataset | Covers | Source | License | Notes |
 | --- | --- | --- | --- | --- | --- |
-| **1** | **RAGBench** | finance (TAT-QA), IT-support (TechQA/EManual/DelucionQA), legal (CUAD), biomedical, general (HotpotQA/MS-MARCO) | HF `rungalileo/ragbench` | mixed (per-source) | **best ROI — one adapter → 5 domains; already Q+context+answer** |
+| **1** | **RAGBench ✅ built** | finance (TAT-QA), IT-support (TechQA/EManual/DelucionQA), biomedical, general (HotpotQA/MS-MARCO); legal→CUAD adapter | HF `galileo-ai/ragbench` | mixed (per-source) | **adapter built 2026-06-29 (`evals/benchmarks/ragbench/`); one adapter → 5 domains. First answer-run pending.** |
 | **2** | **DocVQA / DUDE** | **scanned/visual docs** (invoices, forms, slides, charts) | HF / rrc.cvc.uab.es | research | exercises the **image-OCR path** — currently untested by any eval |
 | **3** | Synthetic from own uploads | the *actual* customer doc mix | self-generated | n/a | most representative; harness already matches `expected_chunk_id` |
 | 4 | **FinanceBench** | deep 10-K/10-Q financial QA | HF `PatronusAI/financebench` | open subset free | finance cross-check (single-doc → use `--scope-doc`) |

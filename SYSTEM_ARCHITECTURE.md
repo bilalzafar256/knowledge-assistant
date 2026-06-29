@@ -190,7 +190,7 @@ Architectural responsibility of every major directory.
 | `src/hooks/` | Client React hooks |
 | `src/proxy.ts` | **Next.js middleware** (named `proxy.ts`, not `middleware.ts`) — Clerk + Arcjet on all routes |
 | `src/instrumentation.ts` | Boot hook: Zod env validation, OTel tracer registration, `onRequestError` |
-| `evals/` | RAG eval harness mirroring production retrieval/answer logic + two benchmark suites: `benchmarks/open-ragbench/` (arXiv) and `benchmarks/cuad/` (enterprise contracts, CC-BY) |
+| `evals/` | RAG eval harness mirroring production retrieval/answer logic + three benchmark suites: `benchmarks/open-ragbench/` (arXiv), `benchmarks/cuad/` (enterprise contracts, CC-BY), and `benchmarks/ragbench/` (multi-domain enterprise — finance/IT-support/biomedical/general, `galileo-ai/ragbench`) |
 | `drizzle/` | Generated + hand-written migration SQL (applied in order by `scripts/db-migrate.mjs`) |
 | `scripts/` | `db-migrate.mjs` (apply migrations) · `db-baseline.mjs` (brownfield register-only) |
 | `.github/workflows/`, `.github/scripts/` | Telegram → PR GitHub Actions (plan / code / pr / merge / main-pr) + their Neon↔Telegram glue scripts |
