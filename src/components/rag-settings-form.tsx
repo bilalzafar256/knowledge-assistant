@@ -16,14 +16,14 @@ const PRESETS = [
     description: "General-purpose documents",
     chunkSize: 500,
     chunkOverlap: 50,
-    color: "violet",
+    color: "emerald",
   },
   {
     label: "Legal / Policy",
     description: "Dense formal text, long clauses",
     chunkSize: 800,
     chunkOverlap: 100,
-    color: "indigo",
+    color: "teal",
   },
   {
     label: "Code / Technical",
@@ -37,17 +37,17 @@ const PRESETS = [
     description: "Research papers, handbooks",
     chunkSize: 1000,
     chunkOverlap: 150,
-    color: "emerald",
+    color: "cyan",
   },
 ] as const;
 
-type PresetColor = "violet" | "indigo" | "sky" | "emerald";
+type PresetColor = "emerald" | "teal" | "sky" | "cyan";
 
 const PRESET_COLORS: Record<PresetColor, string> = {
-  violet: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-900/20 dark:text-violet-300",
-  indigo:  "border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
-  sky:     "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-900/20 dark:text-sky-300",
-  emerald: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300",
+  emerald: "border-emerald-300 bg-emerald-500/10 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300",
+  teal:  "border-teal-300 bg-teal-500/10 text-teal-700 dark:border-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+  sky:     "border-sky-300 bg-sky-500/10 text-sky-700 dark:border-sky-700 dark:bg-sky-900/20 dark:text-sky-300",
+  cyan:    "border-cyan-300 bg-cyan-500/10 text-cyan-700 dark:border-cyan-700 dark:bg-cyan-900/20 dark:text-cyan-300",
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -94,8 +94,8 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-base flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
-            <Settings2 className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 dark:bg-emerald-900/30">
+            <Settings2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           Knowledge Base Settings
         </CardTitle>
@@ -120,7 +120,7 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
                     "rounded-xl border p-3 text-left transition-all cursor-pointer hover:shadow-sm",
                     isActive
                       ? PRESET_COLORS[preset.color as PresetColor]
-                      : "border-border/60 hover:border-violet-300 dark:hover:border-violet-700"
+                      : "border-border/60 hover:border-emerald-300 dark:hover:border-emerald-700"
                   )}
                 >
                   <p className="text-xs font-semibold">{preset.label}</p>
@@ -141,7 +141,7 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
             </label>
             <div className="flex items-center gap-2">
               {activePreset && (
-                <Badge className="text-[10px] bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 border-0">
+                <Badge className="text-[10px] bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
                   {activePreset.label}
                 </Badge>
               )}
@@ -161,7 +161,7 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
               setChunkSize(v);
               if (chunkOverlap >= v) setChunkOverlap(Math.max(0, v - 50));
             }}
-            className="w-full accent-violet-600"
+            className="w-full accent-emerald-600"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>100 — fine-grained</span>
@@ -190,7 +190,7 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
             step={10}
             value={chunkOverlap}
             onChange={(e) => setChunkOverlap(Number(e.target.value))}
-            className="w-full accent-violet-600"
+            className="w-full accent-emerald-600"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>0 — no overlap</span>
@@ -204,8 +204,8 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
         {/* Preview */}
         <div className="rounded-xl bg-muted/50 border border-border/60 p-4 text-xs font-mono space-y-1">
           <p className="text-muted-foreground font-sans font-medium text-xs mb-2">Preview</p>
-          <p><span className="text-violet-600">chunkSize</span>    = <span className="text-foreground">{chunkSize}</span> tokens (~{Math.round(chunkSize * 4)} chars)</p>
-          <p><span className="text-indigo-600">chunkOverlap</span> = <span className="text-foreground">{chunkOverlap}</span> tokens (~{Math.round(chunkOverlap * 4)} chars)</p>
+          <p><span className="text-emerald-600">chunkSize</span>    = <span className="text-foreground">{chunkSize}</span> tokens (~{Math.round(chunkSize * 4)} chars)</p>
+          <p><span className="text-teal-600">chunkOverlap</span> = <span className="text-foreground">{chunkOverlap}</span> tokens (~{Math.round(chunkOverlap * 4)} chars)</p>
           <p><span className="text-muted-foreground">wordsPerChunk</span> ≈ <span className="text-foreground">{Math.floor(chunkSize * 0.75)}</span> words</p>
         </div>
 
@@ -214,7 +214,7 @@ export function RagSettingsForm({ initialChunkSize, initialChunkOverlap }: RagSe
           <Button
             onClick={() => void handleSave()}
             disabled={saving || !isDirty}
-            className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0"
+            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0"
           >
             {saving ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Saving…</>

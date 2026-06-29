@@ -99,9 +99,9 @@ export default async function DashboardPage() {
       icon: FileText,
       description: "Uploaded documents",
       href: "/dashboard/documents",
-      bg: "bg-violet-50 dark:bg-violet-900/20",
-      iconColor: "text-violet-600 dark:text-violet-400",
-      arrowColor: "group-hover:text-violet-600",
+      bg: "bg-emerald-500/10 dark:bg-emerald-900/20",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
+      arrowColor: "group-hover:text-emerald-600",
     },
     {
       label: "Knowledge Chunks",
@@ -109,9 +109,9 @@ export default async function DashboardPage() {
       icon: Database,
       description: "Indexed text segments",
       href: "/dashboard/documents",
-      bg: "bg-indigo-50 dark:bg-indigo-900/20",
-      iconColor: "text-indigo-600 dark:text-indigo-400",
-      arrowColor: "group-hover:text-indigo-600",
+      bg: "bg-teal-500/10 dark:bg-teal-900/20",
+      iconColor: "text-teal-600 dark:text-teal-400",
+      arrowColor: "group-hover:text-teal-600",
     },
     {
       label: "Conversations",
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
       icon: MessagesSquare,
       description: "Chat sessions started",
       href: "/dashboard/chat",
-      bg: "bg-emerald-50 dark:bg-emerald-900/20",
+      bg: "bg-emerald-500/10 dark:bg-emerald-900/20",
       iconColor: "text-emerald-600 dark:text-emerald-400",
       arrowColor: "group-hover:text-emerald-600",
     },
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
           Dashboard
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
           const Icon = stat.icon;
           return (
             <Link key={stat.label} href={stat.href}>
-              <Card className="p-6 hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-200 cursor-pointer group border-border/60">
+              <Card className="p-6 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer group border-border/60">
                 <div className="flex items-center justify-between mb-3">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg}`}>
                     <Icon className={`h-5 w-5 ${stat.iconColor}`} />
@@ -187,10 +187,10 @@ export default async function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 mb-8">
-        <Card className="p-6 border-border/60 hover:border-violet-200 dark:hover:border-violet-800 transition-colors">
+        <Card className="p-6 border-border/60 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors">
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
-              <MessageSquare className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 dark:bg-emerald-900/30">
+              <MessageSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
             <h2 className="font-semibold text-foreground">
               Start a conversation
@@ -200,7 +200,7 @@ export default async function DashboardPage() {
             Ask questions about your company knowledge base using natural
             language.
           </p>
-          <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-sm">
+          <Button asChild className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 shadow-sm">
             <Link href="/dashboard/chat">
               <MessageSquare className="mr-2 h-4 w-4" />
               Open Chat
@@ -208,10 +208,10 @@ export default async function DashboardPage() {
           </Button>
         </Card>
 
-        <Card className="p-6 border-border/60 hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors">
+        <Card className="p-6 border-border/60 hover:border-teal-200 dark:hover:border-teal-800 transition-colors">
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
-              <Upload className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 dark:bg-teal-900/30">
+              <Upload className="h-4 w-4 text-teal-600 dark:text-teal-400" />
             </div>
             <h2 className="font-semibold text-foreground">
               Add new knowledge
@@ -221,7 +221,7 @@ export default async function DashboardPage() {
             Upload documents to expand the knowledge base. Supports text,
             markdown, and more.
           </p>
-          <Button variant="outline" asChild className="border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+          <Button variant="outline" asChild className="border-teal-200 dark:border-teal-800 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 dark:hover:bg-teal-900/20">
             <Link href="/dashboard/documents/upload">
               <Upload className="mr-2 h-4 w-4" />
               Upload Document
@@ -265,7 +265,7 @@ export default async function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-foreground">Recent Documents</h2>
-          <Button variant="ghost" size="sm" asChild className="text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-900/20">
+          <Button variant="ghost" size="sm" asChild className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-500/10 dark:hover:bg-emerald-900/20">
             <Link href="/dashboard/documents">
               View all
               <ArrowRight className="ml-1 h-3 w-3" />
@@ -275,8 +275,8 @@ export default async function DashboardPage() {
 
         {recentDocs.length === 0 ? (
           <Card className="p-8 text-center border-dashed border-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 dark:bg-violet-900/20 mx-auto mb-3">
-              <FileText className="h-7 w-7 text-violet-400" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 dark:bg-emerald-900/20 mx-auto mb-3">
+              <FileText className="h-7 w-7 text-emerald-400" />
             </div>
             <h3 className="font-medium text-foreground mb-1">
               No documents yet
@@ -284,7 +284,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-muted-foreground mb-4">
               Upload your first document to get started.
             </p>
-            <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0">
+            <Button asChild className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0">
               <Link href="/dashboard/documents/upload">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Document
@@ -296,12 +296,12 @@ export default async function DashboardPage() {
             {recentDocs.map((doc) => (
               <Card
                 key={doc.id}
-                className="p-4 hover:shadow-sm hover:border-violet-200 dark:hover:border-violet-800 transition-all border-border/60"
+                className="p-4 hover:shadow-sm hover:border-emerald-200 dark:hover:border-emerald-800 transition-all border-border/60"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-900/20 mt-0.5">
-                      <FileText className="h-4 w-4 text-violet-500" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-900/20 mt-0.5">
+                      <FileText className="h-4 w-4 text-emerald-500" />
                     </div>
                     <div className="min-w-0">
                       <p className="font-medium text-foreground text-sm truncate">
@@ -313,7 +313,7 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Badge className="text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-0 uppercase font-semibold">
+                    <Badge className="text-xs bg-teal-500/15 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border-0 uppercase font-semibold">
                       {doc.fileType}
                     </Badge>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">

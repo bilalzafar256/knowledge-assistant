@@ -63,7 +63,7 @@ export default async function DocumentDetailPage({
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-md">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md">
             <FileText className="h-6 w-6 text-white" />
           </div>
           <div className="min-w-0 flex-1">
@@ -98,7 +98,7 @@ export default async function DocumentDetailPage({
       <Card className="mb-6 sm:mb-8 border-border/60">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-4 w-4 text-indigo-500" />
+            <FileText className="h-4 w-4 text-teal-500" />
             Document Content
           </CardTitle>
         </CardHeader>
@@ -112,7 +112,7 @@ export default async function DocumentDetailPage({
       {/* Chunks */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <Database className="h-4 w-4 text-violet-500" />
+          <Database className="h-4 w-4 text-emerald-500" />
           <h2 className="font-semibold text-foreground">
             Vector Chunks
             <span className="ml-2 text-sm font-normal text-muted-foreground">
@@ -129,14 +129,14 @@ export default async function DocumentDetailPage({
         ) : (
           <div className="space-y-3">
             {chunks.map((chunk) => (
-              <Card key={chunk.id} className="border-border/60 hover:border-violet-200 transition-colors">
+              <Card key={chunk.id} className="border-border/60 hover:border-emerald-200 transition-colors">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/30">
-                        <Hash className="h-3 w-3 text-violet-600 dark:text-violet-400" />
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 dark:bg-emerald-900/30">
+                        <Hash className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                       </div>
-                      <span className="text-xs font-semibold text-violet-600 dark:text-violet-400">
+                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                         Chunk {chunk.chunkIndex + 1}
                       </span>
                     </div>

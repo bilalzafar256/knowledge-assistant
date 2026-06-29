@@ -26,7 +26,7 @@ type ToastVariant = "default" | "success" | "destructive";
 
 const toastVariantClasses: Record<ToastVariant, string> = {
   default: "border bg-background text-foreground",
-  success: "border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-100",
+  success: "border-emerald-200 bg-emerald-500/10 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-100",
   destructive: "border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-800 dark:bg-rose-900/20 dark:text-rose-100",
 };
 

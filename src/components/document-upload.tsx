@@ -438,8 +438,8 @@ export function DocumentUpload() {
             className={cn(
               "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer",
               dragActive
-                ? "border-violet-500 bg-violet-50/60 dark:bg-violet-900/20"
-                : "border-border hover:border-violet-400 hover:bg-violet-50/30 dark:hover:bg-violet-900/10",
+                ? "border-emerald-500 bg-emerald-500/10/60 dark:bg-emerald-900/20"
+                : "border-border hover:border-emerald-400 hover:bg-emerald-500/10/30 dark:hover:bg-emerald-900/10",
               uploading && "opacity-50 cursor-not-allowed"
             )}
           >
@@ -452,8 +452,8 @@ export function DocumentUpload() {
               className="sr-only"
               disabled={uploading}
             />
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/30 mb-3">
-              <FileUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/15 dark:bg-emerald-900/30 mb-3">
+              <FileUp className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <p className="font-medium text-sm text-foreground">
               {dragActive ? "Drop files here" : "Drop files or click to browse"}
@@ -465,7 +465,7 @@ export function DocumentUpload() {
               {["PDF", "DOC", "DOCX", "XLS", "XLSX", "JPG", "PNG", "TXT"].map((ext) => (
                 <Badge
                   key={ext}
-                  className="text-xs bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 border-0"
+                  className="text-xs bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0"
                 >
                   {ext}
                 </Badge>
@@ -498,7 +498,7 @@ export function DocumentUpload() {
                   </span>
                 )}
                 {activeCount > 0 && (
-                  <span className="text-violet-600 dark:text-violet-400 font-medium flex items-center gap-1">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                     <Loader2 className="h-3 w-3 animate-spin" />
                     {activeCount} active
                   </span>
@@ -514,27 +514,27 @@ export function DocumentUpload() {
                   key={item.id}
                   className={cn(
                     "flex items-start gap-3 rounded-lg border p-3 transition-colors",
-                    item.status === "done" && "border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-900/10",
+                    item.status === "done" && "border-emerald-200 bg-emerald-500/10/50 dark:border-emerald-800 dark:bg-emerald-900/10",
                     item.status === "error" && "border-rose-200 bg-rose-50/50 dark:border-rose-800 dark:bg-rose-900/10",
                     item.status === "ready" && "border-border/60",
-                    (item.status === "queued" || item.status === "parsing" || item.status === "uploading" || item.status === "processing") && "border-violet-200/60 bg-violet-50/30 dark:border-violet-800/40 dark:bg-violet-900/10"
+                    (item.status === "queued" || item.status === "parsing" || item.status === "uploading" || item.status === "processing") && "border-emerald-200/60 bg-emerald-500/10/30 dark:border-emerald-800/40 dark:bg-emerald-900/10"
                   )}
                 >
                   {/* Icon */}
                   <div className={cn(
                     "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-                    item.status === "done" ? "bg-emerald-100 dark:bg-emerald-900/30" :
+                    item.status === "done" ? "bg-emerald-500/15 dark:bg-emerald-900/30" :
                     item.status === "error" ? "bg-rose-100 dark:bg-rose-900/30" :
-                    "bg-violet-100 dark:bg-violet-900/30"
+                    "bg-emerald-500/15 dark:bg-emerald-900/30"
                   )}>
                     {item.status === "done" ? (
                       <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600" />
                     ) : item.status === "error" ? (
                       <AlertCircle className="h-4.5 w-4.5 text-rose-600" />
                     ) : item.status === "parsing" || item.status === "uploading" || item.status === "processing" ? (
-                      <Loader2 className="h-4.5 w-4.5 text-violet-600 animate-spin" />
+                      <Loader2 className="h-4.5 w-4.5 text-emerald-600 animate-spin" />
                     ) : (
-                      <Icon className="h-4.5 w-4.5 text-violet-600 dark:text-violet-400" />
+                      <Icon className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
                     )}
                   </div>
 
@@ -544,7 +544,7 @@ export function DocumentUpload() {
                       value={item.title}
                       onChange={(e) => updateItem(item.id, { title: e.target.value })}
                       disabled={uploading || item.status === "done"}
-                      className="w-full text-sm font-medium text-foreground bg-transparent border-0 outline-none focus:ring-1 focus:ring-violet-400 rounded px-0.5 disabled:cursor-default"
+                      className="w-full text-sm font-medium text-foreground bg-transparent border-0 outline-none focus:ring-1 focus:ring-emerald-400 rounded px-0.5 disabled:cursor-default"
                       title="Click to rename"
                     />
                     <div className="flex items-center gap-2 mt-0.5">
@@ -576,7 +576,7 @@ export function DocumentUpload() {
               <Button
                 onClick={() => void uploadAll()}
                 disabled={!canUpload}
-                className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-sm"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 shadow-sm"
               >
                 {uploading ? (
                   <>
@@ -666,9 +666,9 @@ export function DocumentUpload() {
                       manualStatus === "error" &&
                         "bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-900/20 dark:border-rose-800 dark:text-rose-400",
                       manualStatus === "success" &&
-                        "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400",
+                        "bg-emerald-500/10 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400",
                       (manualStatus === "uploading" || manualStatus === "processing") &&
-                        "bg-violet-50 border-violet-200 text-violet-700 dark:bg-violet-900/20 dark:border-violet-800 dark:text-violet-400"
+                        "bg-emerald-500/10 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400"
                     )}
                   >
                     {manualStatus === "error" && <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />}
@@ -688,7 +688,7 @@ export function DocumentUpload() {
                     manualStatus === "uploading" ||
                     manualStatus === "processing"
                   }
-                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0"
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0"
                 >
                   {manualStatus === "uploading" || manualStatus === "processing" ? (
                     <>
@@ -716,11 +716,11 @@ export function DocumentUpload() {
 function StatusChip({ status, label }: { status: FileStatus; label?: string }) {
   const styles: Record<FileStatus, string> = {
     queued: "bg-muted text-muted-foreground",
-    parsing: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
-    ready: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-    uploading: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
+    parsing: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    ready: "bg-teal-500/15 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
+    uploading: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
     processing: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    done: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    done: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
     error: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
   };
   return (

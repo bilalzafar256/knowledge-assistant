@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 
 export function DashboardShell({
   sidebar,
@@ -34,7 +35,7 @@ export function DashboardShell({
   }, [open]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="dark flex h-screen overflow-hidden bg-background text-foreground">
       {/* Desktop sidebar — always visible */}
       <div className="hidden md:flex shrink-0">{sidebar}</div>
 
@@ -42,13 +43,8 @@ export function DashboardShell({
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Mobile sticky header */}
         <header className="md:hidden flex items-center justify-between h-14 px-4 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0 z-30">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 shadow-sm">
-              <BookOpen className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-              Knowledge Assistant
-            </span>
+          <Link href="/dashboard">
+            <BrandMark />
           </Link>
           <button
             onClick={() => setOpen(true)}

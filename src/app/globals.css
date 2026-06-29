@@ -34,36 +34,39 @@
     --sidebar-ring: 221.2 83.2% 53.3%;
   }
 
+  /* Dark theme = the "Aperture" system shared with the marketing site:
+     cool near-black surfaces, off-white text, a single emerald signal accent.
+     The dashboard opts into this by carrying the `dark` class on its shell. */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 220 13% 5%;       /* #0a0b0d */
+    --foreground: 213 14% 92%;      /* #e9ecef */
+    --card: 222 13% 8%;             /* #101216 */
+    --card-foreground: 213 14% 92%;
+    --popover: 222 13% 8%;
+    --popover-foreground: 213 14% 92%;
+    --primary: 158 64% 52%;         /* emerald #34d399 */
+    --primary-foreground: 152 70% 6%;
+    --secondary: 215 16% 11%;       /* #161a1f */
+    --secondary-foreground: 213 14% 92%;
+    --muted: 215 16% 11%;
+    --muted-foreground: 213 9% 64%; /* #9aa1ab */
+    --accent: 215 17% 14%;          /* #1d222a hover surface */
+    --accent-foreground: 213 14% 92%;
+    --destructive: 0 62% 46%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 216 12% 16%;          /* hairline */
+    --input: 216 12% 19%;
+    --ring: 158 64% 52%;
 
     /* Sidebar */
-    --sidebar-background: 222.2 84% 3%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 12%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --sidebar-background: 216 14% 6%;
+    --sidebar-foreground: 213 14% 92%;
+    --sidebar-primary: 158 64% 52%;
+    --sidebar-primary-foreground: 152 70% 6%;
+    --sidebar-accent: 215 16% 12%;
+    --sidebar-accent-foreground: 213 14% 92%;
+    --sidebar-border: 216 12% 14%;
+    --sidebar-ring: 158 64% 52%;
   }
 }
 

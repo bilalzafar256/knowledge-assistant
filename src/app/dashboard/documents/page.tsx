@@ -62,7 +62,7 @@ export default async function DocumentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
             Documents
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -71,7 +71,7 @@ export default async function DocumentsPage() {
         </div>
         <Button
           asChild
-          className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/30 border-0"
+          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md shadow-teal-200 dark:shadow-teal-900/30 border-0"
         >
           <Link href="/dashboard/documents/upload">
             <Upload className="mr-2 h-4 w-4" />

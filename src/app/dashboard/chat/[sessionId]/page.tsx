@@ -70,7 +70,7 @@ export default async function ChatSessionPage({
           <ArrowLeft className="h-4 w-4 text-muted-foreground" />
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="text-base font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent truncate">
+          <h1 className="text-base font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent truncate">
             {session.title}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5 hidden md:block">

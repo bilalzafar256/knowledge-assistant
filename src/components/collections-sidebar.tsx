@@ -41,8 +41,8 @@ interface Props {
 // ── Color palette ─────────────────────────────────────────────────────────────
 
 const COLORS = [
-  "#6366f1", // indigo
-  "#8b5cf6", // violet
+  "#6366f1", // teal
+  "#8b5cf6", // emerald
   "#ec4899", // pink
   "#f59e0b", // amber
   "#10b981", // emerald
@@ -132,7 +132,7 @@ function CollectionDialog({
             <Button
               onClick={() => void handleSave()}
               disabled={!name.trim() || saving}
-              className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0"
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0"
             >
               {saving ? "Saving…" : "Save"}
             </Button>
@@ -189,7 +189,7 @@ export function CollectionsSidebar({
         className={cn(
           "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer",
           activeCollectionId === null
-            ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
+            ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
             : "text-muted-foreground hover:bg-muted hover:text-foreground"
         )}
       >
@@ -208,7 +208,7 @@ export function CollectionsSidebar({
               className={cn(
                 "flex-1 flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer pr-8",
                 isActive
-                  ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >

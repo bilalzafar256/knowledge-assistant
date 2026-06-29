@@ -229,7 +229,7 @@ export function ChatSessionsSidebar() {
             onClick={() => void createSession()}
             disabled={creating}
             size="sm"
-            className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-sm"
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0 shadow-sm"
             title="New chat (⌘K)"
           >
             {creating ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Plus className="h-3.5 w-3.5 mr-1.5" />}
@@ -356,7 +356,7 @@ function SessionRow({
       className={cn(
         "group relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
         isActive
-          ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+          ? "bg-emerald-500/15 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
           : "text-foreground/70 hover:bg-muted/60 hover:text-foreground"
       )}
     >
@@ -368,11 +368,11 @@ function SessionRow({
             onChange={(e) => onSetEditTitle(e.target.value)}
             onKeyDown={(e) => onEditKeyDown(e, session.id)}
             onBlur={() => void onSaveEdit(session.id)}
-            className="flex-1 min-w-0 rounded border border-violet-300 dark:border-violet-700 bg-background px-2 py-0.5 text-xs text-foreground outline-none focus:ring-1 focus:ring-violet-400"
+            className="flex-1 min-w-0 rounded border border-emerald-300 dark:border-emerald-700 bg-background px-2 py-0.5 text-xs text-foreground outline-none focus:ring-1 focus:ring-emerald-400"
           />
           <button
             onMouseDown={(e) => { e.preventDefault(); void onSaveEdit(session.id); }}
-            className="shrink-0 text-violet-500 hover:text-violet-700 cursor-pointer"
+            className="shrink-0 text-emerald-500 hover:text-emerald-700 cursor-pointer"
           >
             <Check className="h-3.5 w-3.5" />
           </button>
@@ -387,9 +387,9 @@ function SessionRow({
         <>
           <Link href={`/dashboard/chat/${session.id}`} className="flex items-center gap-2 flex-1 min-w-0">
             {session.pinned ? (
-              <Pin className="h-3.5 w-3.5 shrink-0 text-violet-400" />
+              <Pin className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
             ) : (
-              <MessageSquare className={cn("h-3.5 w-3.5 shrink-0", isActive ? "text-violet-500" : "text-muted-foreground")} />
+              <MessageSquare className={cn("h-3.5 w-3.5 shrink-0", isActive ? "text-emerald-500" : "text-muted-foreground")} />
             )}
             <span className="flex-1 truncate text-xs leading-relaxed">{session.title}</span>
             {session.isShared && (
@@ -401,7 +401,7 @@ function SessionRow({
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
             <button
               onClick={(e) => onStartEdit(session, e)}
-              className="rounded p-0.5 hover:text-violet-500 hover:bg-violet-100 dark:hover:bg-violet-900/30 cursor-pointer transition-colors"
+              className="rounded p-0.5 hover:text-emerald-500 hover:bg-emerald-500/15 dark:hover:bg-emerald-900/30 cursor-pointer transition-colors"
               title="Rename"
             >
               <Pencil className="h-3 w-3" />

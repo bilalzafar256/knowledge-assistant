@@ -66,7 +66,7 @@ function IngestionStatusPill({ status }: { status: DocRow["status"] }) {
   }
   if (status === "processing" || status === "pending") {
     return (
-      <span className="inline-flex items-center gap-1 text-violet-600 dark:text-violet-400">
+      <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
         <Loader2 className="h-3 w-3 animate-spin" />
         {status === "pending" ? "Pending" : "Indexing…"}
       </span>
@@ -89,16 +89,16 @@ function FileIcon({ fileType }: { fileType: string | null }) {
   if (["xls", "xlsx", "csv"].includes(t)) return <Sheet className="h-5 w-5 text-emerald-500" />;
   if (["jpg", "jpeg", "png", "gif"].includes(t)) return <ImageIcon className="h-5 w-5 text-amber-500" />;
   if (["doc", "docx"].includes(t)) return <FileText className="h-5 w-5 text-blue-500" />;
-  return <FileText className="h-5 w-5 text-indigo-500" />;
+  return <FileText className="h-5 w-5 text-teal-500" />;
 }
 
 function badgeClass(fileType: string | null): string {
   const t = fileType?.toLowerCase() ?? "";
   if (t === "pdf") return "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-0";
-  if (["xls", "xlsx"].includes(t)) return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0";
+  if (["xls", "xlsx"].includes(t)) return "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0";
   if (["jpg", "jpeg", "png"].includes(t)) return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0";
   if (["doc", "docx"].includes(t)) return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0";
-  return "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-0";
+  return "bg-teal-500/15 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border-0";
 }
 
 // ── Sort options ──────────────────────────────────────────────────────────────
@@ -153,7 +153,7 @@ function MoveToCollectionMenu({
         <Button
           variant="ghost"
           size="sm"
-          className="text-muted-foreground hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+          className="text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 dark:hover:bg-emerald-900/20"
           title="Move to collection"
         >
           <Folder className="h-4 w-4" />
@@ -170,7 +170,7 @@ function MoveToCollectionMenu({
             onClick={() => void assign(col.id)}
             className={cn(
               "cursor-pointer gap-2 text-xs",
-              currentCollectionId === col.id && "text-violet-600 dark:text-violet-400 font-medium"
+              currentCollectionId === col.id && "text-emerald-600 dark:text-emerald-400 font-medium"
             )}
           >
             <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: col.color }} />
@@ -247,14 +247,14 @@ export function DocumentList({
   if (docs.length === 0) {
     return (
       <Card className="p-12 text-center border-dashed border-2">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 mx-auto mb-4">
-          <FileText className="h-8 w-8 text-indigo-400" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-500/10 dark:bg-teal-900/20 mx-auto mb-4">
+          <FileText className="h-8 w-8 text-teal-400" />
         </div>
         <h2 className="text-lg font-semibold text-foreground mb-2">No documents yet</h2>
         <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm">
           Upload your company documents to build your knowledge base.
         </p>
-        <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0">
+        <Button asChild className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border-0">
           <Link href="/dashboard/documents/upload">
             <Upload className="mr-2 h-4 w-4" />
             Upload your first document
@@ -301,7 +301,7 @@ export function DocumentList({
               <DropdownMenuItem
                 key={key}
                 onClick={() => setSort(key)}
-                className={cn("cursor-pointer gap-2 text-xs", sort === key && "text-violet-600 dark:text-violet-400 font-medium")}
+                className={cn("cursor-pointer gap-2 text-xs", sort === key && "text-emerald-600 dark:text-emerald-400 font-medium")}
               >
                 <Icon className="h-3.5 w-3.5" />
                 {label}
@@ -320,7 +320,7 @@ export function DocumentList({
             className={cn(
               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer",
               activeGroup === group
-                ? "bg-violet-600 text-white shadow-sm shadow-violet-200 dark:shadow-violet-900/40"
+                ? "bg-emerald-600 text-white shadow-sm shadow-emerald-200 dark:shadow-emerald-900/40"
                 : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
             )}
           >
@@ -351,7 +351,7 @@ export function DocumentList({
           <p className="text-sm text-muted-foreground">No documents match your filters.</p>
           <button
             onClick={() => { setSearch(""); setActiveGroup("All"); }}
-            className="mt-2 text-xs text-violet-600 dark:text-violet-400 hover:underline cursor-pointer"
+            className="mt-2 text-xs text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
           >
             Clear filters
           </button>
@@ -362,7 +362,7 @@ export function DocumentList({
       {filtered.map((doc) => (
         <Card
           key={doc.id}
-          className="p-5 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-200 border-border/60"
+          className="p-5 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-800 transition-all duration-200 border-border/60"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4 min-w-0">
@@ -382,7 +382,7 @@ export function DocumentList({
                   <IngestionStatusPill status={doc.status} />
                   {doc.status === "ready" && (
                     <span className="flex items-center gap-1">
-                      <Database className="h-3 w-3 text-violet-400" />
+                      <Database className="h-3 w-3 text-emerald-400" />
                       {Number(doc.chunkCount)} chunk{Number(doc.chunkCount) !== 1 ? "s" : ""}
                     </span>
                   )}
@@ -400,7 +400,7 @@ export function DocumentList({
                 variant="ghost"
                 size="sm"
                 asChild
-                className="text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                className="text-muted-foreground hover:text-teal-600 hover:bg-teal-500/10 dark:hover:bg-teal-900/20"
               >
                 <Link href={`/dashboard/documents/${doc.id}`}>
                   <Eye className="h-4 w-4" />

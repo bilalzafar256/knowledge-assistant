@@ -51,7 +51,7 @@ export function ReindexDocumentButton({ documentId }: { documentId: string }) {
       size="sm"
       onClick={() => void handleReindex()}
       disabled={loading}
-      className="gap-1.5 text-xs border-violet-200 text-violet-700 hover:bg-violet-50 dark:border-violet-800 dark:text-violet-400 dark:hover:bg-violet-900/20"
+      className="gap-1.5 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-500/10 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
     >
       <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
       {loading ? "Re-indexing…" : "Re-index"}

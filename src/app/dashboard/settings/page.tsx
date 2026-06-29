@@ -62,7 +62,7 @@ export default async function SettingsPage() {
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
           Settings
         </h1>
         <p className="text-muted-foreground mt-1">Manage your profile and account preferences</p>

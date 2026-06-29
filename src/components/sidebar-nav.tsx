@@ -8,10 +8,10 @@ import {
   MessageSquare,
   FileText,
   Upload,
-  BookOpen,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandMark } from "@/components/brand-mark";
 
 interface NavItem {
   href: string;
@@ -67,13 +67,8 @@ export function SidebarNav({ user }: SidebarNavProps) {
   return (
     <aside className="flex w-64 flex-col border-r border-sidebar-border bg-sidebar-background text-sidebar-foreground shrink-0">
       {/* Logo / Brand */}
-      <div className="flex items-center gap-2.5 px-5 py-4 border-b border-sidebar-border">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 shadow-sm">
-          <BookOpen className="h-4 w-4 text-white" />
-        </div>
-        <span className="font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-          Knowledge Assistant
-        </span>
+      <div className="px-5 py-4 border-b border-sidebar-border">
+        <BrandMark />
       </div>
 
       {/* Navigation */}
@@ -91,7 +86,7 @@ export function SidebarNav({ user }: SidebarNavProps) {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 active
-                  ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+                  ? "bg-emerald-500/15 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
               )}
             >
@@ -99,7 +94,7 @@ export function SidebarNav({ user }: SidebarNavProps) {
                 className={cn(
                   "h-4 w-4 shrink-0",
                   active
-                    ? "text-violet-600 dark:text-violet-400"
+                    ? "text-emerald-600 dark:text-emerald-400"
                     : "text-sidebar-foreground/50"
                 )}
               />
@@ -116,11 +111,11 @@ export function SidebarNav({ user }: SidebarNavProps) {
           className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             pathname === "/dashboard/settings"
-              ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+              ? "bg-emerald-500/15 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
               : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
           )}
         >
-          <Settings className={cn("h-4 w-4", pathname === "/dashboard/settings" ? "text-violet-600 dark:text-violet-400" : "text-sidebar-foreground/50")} />
+          <Settings className={cn("h-4 w-4", pathname === "/dashboard/settings" ? "text-emerald-600 dark:text-emerald-400" : "text-sidebar-foreground/50")} />
           Settings
         </Link>
 
@@ -128,8 +123,18 @@ export function SidebarNav({ user }: SidebarNavProps) {
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg">
           <UserButton
             appearance={{
+              variables: {
+                colorPrimary: "#34d399",
+                colorBackground: "#101216",
+                colorText: "#e9ecef",
+                colorTextSecondary: "#9aa1ab",
+                colorInputBackground: "#161a1f",
+                colorInputText: "#e9ecef",
+                borderRadius: "0.25rem",
+              },
               elements: {
                 avatarBox: "h-7 w-7",
+                userButtonPopoverCard: "border border-white/10",
               },
             }}
           />
