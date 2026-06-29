@@ -22,7 +22,11 @@
     "eval:cuad:ingest": "node evals/benchmarks/cuad/ingest.mjs",
     "eval:cuad:golden": "node evals/benchmarks/cuad/import-golden.mjs",
     "eval:cuad:run": "node evals/benchmarks/cuad/run.mjs",
-    "eval:cuad:report": "node evals/benchmarks/open-ragbench/report.mjs"
+    "eval:cuad:report": "node evals/benchmarks/open-ragbench/report.mjs",
+    "eval:rb:download": "node evals/benchmarks/ragbench/download.mjs",
+    "eval:rb:ingest": "node evals/benchmarks/ragbench/ingest.mjs",
+    "eval:rb:golden": "node evals/benchmarks/ragbench/import-golden.mjs",
+    "eval:rb:run": "node evals/benchmarks/ragbench/run.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.82",
@@ -57,6 +61,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.41.0",
+    "framer-motion": "^12.42.0",
     "inngest": "^4.1.0",
     "lucide-react": "^0.488.0",
     "mammoth": "^1.12.0",

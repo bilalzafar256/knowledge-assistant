@@ -114,63 +114,76 @@
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   Luxe landing tokens (scoped to .lux — never leaks into the app shell).
-   Refined-luxury editorial system: warm near-black ink, bone ivory text,
-   one restrained patinated-gold accent. All-sharp radius. Didone display.
+   Marketing tokens (scoped to .mkt — never leaks into the authed app shell).
+   "Aperture" system: cool near-black instrument ink, off-white text, a single
+   locked emerald SIGNAL accent. Emerald is semantic here — it is the colour of
+   a grounded, cited, verified answer, which is the whole RAG story. All-sharp
+   radius. Space Grotesk display + Geist body + Geist Mono for data.
    ─────────────────────────────────────────────────────────────────────────── */
-.lux {
-  /* surfaces */
-  --lux-ink: #0c0b0a;        /* warm near-black page bg (never pure #000) */
-  --lux-ink-2: #131210;      /* elevated panel */
-  --lux-ink-3: #1c1a17;      /* highest panel / hover */
+.mkt {
+  /* surfaces — cool neutral near-black, never pure #000 */
+  --bg: #0a0b0d;
+  --surface: #101216;
+  --surface-2: #161a1f;
+  --surface-3: #1d222a;
   /* type */
-  --lux-bone: #ece6da;       /* primary ivory text (never pure #fff) */
-  --lux-bone-dim: #9c968b;   /* secondary text */
-  --lux-bone-faint: #6b665d; /* tertiary / mono labels */
+  --text: #e9ecef;        /* primary off-white (never pure #fff) */
+  --text-dim: #9aa1ab;    /* secondary */
+  --text-faint: #5b626c;  /* tertiary / mono labels */
   /* hairlines */
-  --lux-line: rgba(236, 230, 218, 0.1);
-  --lux-line-strong: rgba(236, 230, 218, 0.2);
-  /* single locked accent */
-  --lux-gold: #c8a96a;
-  --lux-gold-deep: #8d7a4e;
+  --line: rgba(233, 236, 239, 0.08);
+  --line-strong: rgba(233, 236, 239, 0.16);
+  /* single locked accent — emerald signal */
+  --accent: #34d399;
+  --accent-strong: #10b981;
+  --accent-ink: #04130d;  /* text that sits on a filled accent surface */
+  --accent-wash: rgba(52, 211, 153, 0.1);
 
   /* fluid type scale */
-  --lux-display: clamp(3.1rem, 8.5vw, 8rem);
-  --lux-h2: clamp(2.1rem, 4.4vw, 3.6rem);
-  --lux-track-tight: -0.035em;
-  --lux-track-label: 0.3em;
+  --display: clamp(2.7rem, 7.5vw, 6.5rem);
+  --h2: clamp(1.95rem, 4.2vw, 3.5rem);
+  --track-tight: -0.03em;
+  --track-label: 0.22em;
 
-  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-  color: var(--lux-bone);
-  background-color: var(--lux-ink);
+  color: var(--text);
+  background-color: var(--bg);
+  font-feature-settings: "ss01" 1, "cv01" 1;
 }
 
-/* Reduced-motion is the floor: animations only attach under no-preference,
-   so reduce users get the final, fully-visible state with zero motion. */
-@keyframes lux-rise {
-  from { opacity: 0; transform: translateY(26px); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes lux-veil {
-  from { opacity: 0; transform: scale(1.04); }
-  to   { opacity: 1; transform: scale(1); }
+/* Mono numerals everywhere a metric is shown: tabular figures so columns line up. */
+.mkt .tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
+/* The one piece of CSS-only motion: a slow conic sweep on the hero signal ring.
+   Gated behind no-preference so reduced-motion users get a static ring. */
+@keyframes mkt-sweep {
+  to { transform: rotate(1turn); }
+}
 @media (prefers-reduced-motion: no-preference) {
-  .lux-rise {
-    opacity: 0;
-    animation: lux-rise 0.9s var(--ease-lux) both;
-    animation-delay: calc(var(--i, 0) * 90ms);
-  }
-  .lux-veil {
-    opacity: 0;
-    animation: lux-veil 1.5s var(--ease-lux) both;
+  .mkt-sweep { animation: mkt-sweep 14s linear infinite; }
+}
+
+/* Hide the native cursor only while the custom cursor is active, and only on
+   true mouse devices. The class is toggled by <CustomCursor/>; touch and
+   reduced-motion users never get it, so the native cursor is preserved. */
+@media (hover: hover) and (pointer: fine) {
+  .mkt-cursor-none,
+  .mkt-cursor-none * {
+    cursor: none !important;
   }
 }
 
-/* Duotone treatment: collapses arbitrary placeholder photography onto the
-   locked palette so it reads as on-brand editorial imagery. */
-.lux-duotone {
-  filter: grayscale(1) contrast(1.06) brightness(0.62);
+/* The custom cursor renders only on real-mouse devices with motion allowed.
+   Touch / coarse pointers and reduced-motion users keep the native cursor. */
+.mkt-cursor {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .mkt-cursor {
+    display: block;
+  }
 }
